@@ -1,0 +1,224 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Supplier' : 'Add Supplier'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading supplier data...</p>
+    </div>
+  }
+
+  <!-- Supplier Form -->
+  @if (!isLoading) {
+    <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()" class="supplier-form">
+      <div class="row">
+        <!-- Name Field -->
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">
+            Supplier Name <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+            placeholder="Enter supplier name (min 3 characters)"
+            [class.is-invalid]="hasError('name')"
+            (input)="onFieldChange('name')"
+          />
+          @if (hasError('name')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('name') }}
+            </div>
+          }
+          @if (!hasError('name')) {
+            <small class="text-muted">Minimum 3 characters, maximum 100 characters</small>
+          }
+        </div>
+
+        <!-- Contact Person Field -->
+        <div class="col-md-6 mb-3">
+          <label for="contactPerson" class="form-label">Contact Person</label>
+          <input
+            type="text"
+            class="form-control"
+            id="contactPerson"
+            formControlName="contactPerson"
+            placeholder="Enter contact person name"
+            [class.is-invalid]="hasError('contactPerson')"
+            (input)="onFieldChange('contactPerson')"
+          />
+          @if (hasError('contactPerson')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('contactPerson') }}
+            </div>
+          }
+          @if (!hasError('contactPerson')) {
+            <small class="text-muted">Maximum 100 characters</small>
+          }
+        </div>
+
+        <!-- Email Field -->
+        <div class="col-md-6 mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            formControlName="email"
+            placeholder="Enter email address"
+            [class.is-invalid]="hasError('email')"
+            (input)="onFieldChange('email')"
+          />
+          @if (hasError('email')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('email') }}
+            </div>
+          }
+          @if (!hasError('email')) {
+            <small class="text-muted">Valid email format required</small>
+          }
+        </div>
+
+        <!-- Phone Field -->
+        <div class="col-md-6 mb-3">
+          <label for="phone" class="form-label">Phone</label>
+          <input
+            type="text"
+            class="form-control"
+            id="phone"
+            formControlName="phone"
+            placeholder="Enter phone number (10-15 digits)"
+            [class.is-invalid]="hasError('phone')"
+            (input)="onFieldChange('phone')"
+          />
+          @if (hasError('phone')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('phone') }}
+            </div>
+          }
+          @if (!hasError('phone')) {
+            <small class="text-muted">10-15 digits required (numbers only)</small>
+          }
+        </div>
+
+        <!-- GST Number Field -->
+        <div class="col-md-6 mb-3">
+          <label for="gstNumber" class="form-label">
+            GST Number <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="gstNumber"
+            formControlName="gstNumber"
+            placeholder="Enter GST number"
+            [class.is-invalid]="hasError('gstNumber')"
+            maxlength="15"
+            (input)="onFieldChange('gstNumber')"
+          />
+          @if (hasError('gstNumber')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('gstNumber') }}
+            </div>
+          }
+          @if (!hasError('gstNumber')) {
+            <small class="text-muted">Maximum 15 characters</small>
+          }
+        </div>
+
+        <!-- TAN Number Field -->
+        <div class="col-md-6 mb-3">
+          <label for="tanNumber" class="form-label">
+            TAN Number <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="tanNumber"
+            formControlName="tanNumber"
+            placeholder="Enter TAN number"
+            [class.is-invalid]="hasError('tanNumber')"
+            maxlength="15"
+            (input)="onFieldChange('tanNumber')"
+          />
+          @if (hasError('tanNumber')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('tanNumber') }}
+            </div>
+          }
+          @if (!hasError('tanNumber')) {
+            <small class="text-muted">Maximum 15 characters</small>
+          }
+        </div>
+
+        <!-- Address Field -->
+        <div class="col-md-12 mb-3">
+          <label for="address" class="form-label">Address</label>
+          <textarea
+            class="form-control"
+            id="address"
+            formControlName="address"
+            placeholder="Enter complete address"
+            rows="3"
+            [class.is-invalid]="hasError('address')"
+            (input)="onFieldChange('address')"
+          ></textarea>
+          @if (hasError('address')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('address') }}
+            </div>
+          }
+          @if (!hasError('address')) {
+            <small class="text-muted">Maximum 255 characters</small>
+          }
+        </div>
+
+        <!-- Status Field -->
+        <div class="col-md-6 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+            (change)="onFieldChange('statusId')"
+          >
+            <option [ngValue]="1">Active</option>
+            <option [ngValue]="2">Inactive</option>
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="supplierForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

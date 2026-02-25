@@ -1,0 +1,119 @@
+<app-card cardTitle="Jewellery Item Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Jewellery Items</h5>
+    <button class="btn btn-primary" (click)="onAddJewelleryItem()">
+      <i class="feather icon-plus me-2"></i>Add Jewellery Item
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading jewellery items...</p>
+    </div>
+  }
+
+  <!-- Jewellery Items Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Item Code</th>
+            <th>Name</th>
+            <th>Metal</th>
+            <th>Purity</th>
+            <th>Gross Wt.</th>
+            <th>Net Wt.</th>
+            <th>Making Charge</th>
+            <th>Stone</th>
+            <th>Hallmark</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (jewelleryItems.length === 0) {
+            <tr>
+              <td colspan="11" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No jewellery items found. Click "Add Jewellery Item" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (item of jewelleryItems; track item.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">{{ item.itemCode || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-truncate d-inline-block" style="max-width: 150px;" [title]="item.name">
+                  {{ item.name }}
+                </span>
+              </td>
+              <td>{{ item.metalName || '-' }}</td>
+              <td>{{ item.purityName || '-' }}</td>
+              <td>{{ item.grossWeight | number:'1.2-3' }} g</td>
+              <td>{{ item.netMetalWeight | number:'1.2-3' }} g</td>
+              <td>
+                <span [ngClass]="getMakingChargeTypeClass(item.makingChargeType)">
+                  {{ getMakingChargeTypeLabel(item.makingChargeType) }}
+                </span>
+                <br>
+                <small class="text-muted">
+                  @if (item.makingChargeType === 1) {
+                    {{ item.makingChargeValue | currency:'INR':'symbol':'1.0-2' }}/g
+                  } @else if (item.makingChargeType === 2) {
+                    {{ item.makingChargeValue }}%
+                  } @else {
+                    {{ item.makingChargeValue | currency:'INR':'symbol':'1.0-2' }}
+                  }
+                </small>
+              </td>
+              <td>
+                @if (item.hasStone) {
+                  <span class="badge bg-info">Yes</span>
+                } @else {
+                  <span class="badge bg-secondary">No</span>
+                }
+              </td>
+              <td>
+                @if (item.isHallmarked) {
+                  <i class="feather icon-check-circle text-success"></i>
+                } @else {
+                  <i class="feather icon-x-circle text-muted"></i>
+                }
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(item.statusId)">
+                  {{ getStatusLabel(item.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditJewelleryItem(item.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteJewelleryItem(item.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

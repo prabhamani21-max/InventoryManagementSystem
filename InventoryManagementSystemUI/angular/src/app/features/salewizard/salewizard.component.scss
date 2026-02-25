@@ -1,0 +1,181 @@
+.sale-wizard-container {
+  padding: 1rem;
+}
+
+.wizard-header {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1rem;
+}
+
+// Stepper Styles
+.stepper-container {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.step-item {
+  position: relative;
+  
+  &:last-child {
+    flex-grow: 0;
+  }
+}
+
+.step-header {
+  position: relative;
+  z-index: 1;
+  
+  &.clickable {
+    cursor: pointer;
+    
+    &:hover {
+      .step-title {
+        color: var(--bs-primary);
+      }
+    }
+  }
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e9ecef;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background: var(--bs-primary);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(var(--bs-primary-rgb), 0.2);
+  }
+}
+
+.step-check {
+  color: var(--bs-success);
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  
+  i {
+    font-size: 32px;
+  }
+}
+
+.step-title {
+  font-size: 14px;
+  color: #6c757d;
+  transition: color 0.3s ease;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.step-connector {
+  position: absolute;
+  top: 16px;
+  left: calc(32px + 0.5rem + 50px);
+  right: -50%;
+  height: 2px;
+  background: #e9ecef;
+  z-index: 0;
+  
+  &.completed {
+    background: var(--bs-success);
+  }
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+// Step States
+.step-active {
+  .step-title {
+    color: var(--bs-primary);
+  }
+}
+
+.step-completed {
+  .step-title {
+    color: var(--bs-success);
+  }
+}
+
+.step-pending {
+  .step-title {
+    color: #6c757d;
+  }
+}
+
+// Content Styles
+.wizard-content {
+  min-height: 400px;
+  
+  .card {
+    border: none;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Footer Styles
+.wizard-footer {
+  border-top: 1px solid #e9ecef;
+  padding-top: 1rem;
+}
+
+// Progress Bar
+.progress-container {
+  .progress {
+    border-radius: 3px;
+    background: #e9ecef;
+  }
+  
+  .progress-bar {
+    transition: width 0.3s ease;
+  }
+}
+
+// Material Icons
+.material-icons-outlined {
+  vertical-align: middle;
+  font-size: 20px;
+}
+
+// Responsive Adjustments
+@media (max-width: 576px) {
+  .sale-wizard-container {
+    padding: 0.5rem;
+  }
+  
+  .stepper-container {
+    padding: 1rem;
+  }
+  
+  .step-number {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .step-check i {
+    font-size: 28px;
+  }
+  
+  .wizard-content {
+    min-height: 300px;
+  }
+}

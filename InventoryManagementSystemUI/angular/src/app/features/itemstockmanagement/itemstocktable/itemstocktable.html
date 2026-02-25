@@ -1,0 +1,106 @@
+<app-card cardTitle="Item Stock Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Item Stocks</h5>
+    <button class="btn btn-primary" (click)="onAddItemStock()">
+      <i class="feather icon-plus me-2"></i>Add Item Stock
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading item stocks...</p>
+    </div>
+  }
+
+  <!-- Item Stocks Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Jewellery Item</th>
+            <th>Warehouse</th>
+            <th>Quantity</th>
+            <th>Reserved</th>
+            <th>Available</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (itemStocks.length === 0) {
+            <tr>
+              <td colspan="8" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No item stocks found. Click "Add Item Stock" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (item of itemStocks; track item.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">#{{ item.id }}</span>
+              </td>
+              <td>
+                <div class="d-flex flex-column">
+                  <span class="fw-medium text-truncate d-inline-block" style="max-width: 150px;" [title]="getJewelleryItemName(item.jewelleryItemId)">
+                    {{ getJewelleryItemName(item.jewelleryItemId) }}
+                  </span>
+                  @if (getJewelleryItemCode(item.jewelleryItemId)) {
+                    <small class="text-muted">{{ getJewelleryItemCode(item.jewelleryItemId) }}</small>
+                  }
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark">
+                  <i class="feather icon-home me-1"></i>{{ getWarehouseName(item.warehouseId) }}
+                </span>
+              </td>
+              <td>
+                <span class="fw-medium">{{ item.quantity }}</span>
+              </td>
+              <td>
+                <span class="text-warning">{{ item.reservedQuantity }}</span>
+              </td>
+              <td>
+                @if (getAvailableQuantity(item) > 0) {
+                  <span class="text-success fw-medium">{{ getAvailableQuantity(item) }}</span>
+                } @else {
+                  <span class="text-danger fw-medium">{{ getAvailableQuantity(item) }}</span>
+                }
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(item.statusId)">
+                  {{ getStatusLabel(item.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditItemStock(item.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteItemStock(item.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

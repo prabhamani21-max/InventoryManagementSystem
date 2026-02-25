@@ -1,0 +1,296 @@
+<app-card cardTitle="Step 4: Payment">
+  <!-- Order Summary Section -->
+  <div class="order-summary mb-4">
+    <div class="row">
+      <div class="col-12">
+        <h6 class="text-muted mb-3">Order Summary</h6>
+        <hr class="mt-0">
+      </div>
+    </div>
+    
+    <div class="row">
+      <!-- Customer Info -->
+      <div class="col-md-6 mb-3">
+        <div class="summary-card p-3 bg-light rounded">
+          <small class="text-muted d-block">Customer</small>
+          <strong class="fs-5">{{ wizardState.selectedCustomer?.name || 'N/A' }}</strong>
+          <small class="text-muted d-block mt-1">ID: {{ wizardState.selectedCustomer?.id || 'N/A' }}</small>
+        </div>
+      </div>
+      
+      <!-- Order Info -->
+      <div class="col-md-6 mb-3">
+        <div class="summary-card p-3 bg-light rounded">
+          <small class="text-muted d-block">Sale Order</small>
+          <strong class="fs-5">#{{ wizardState.saleOrder?.id || 'N/A' }}</strong>
+          <small class="text-muted d-block mt-1">{{ wizardState.saleOrderItems.length || 0 }} item(s)</small>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Amount Summary -->
+    <div class="row mt-3">
+      <div class="col-12">
+        <div class="amount-summary p-3 border rounded">
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal:</span>
+            <span>{{ formatCurrency(wizardState.orderSubtotal) }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Discount:</span>
+            <span class="text-success">-{{ formatCurrency(wizardState.orderDiscount) }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Tax (GST):</span>
+            <span>{{ formatCurrency(wizardState.orderTaxAmount) }}</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between mb-2">
+            <strong>Total Amount to Pay:</strong>
+            <strong class="text-primary fs-5">{{ formatCurrency(getAmountToBePaid()) }}</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Amount Paid:</span>
+            <span class="text-success">{{ formatCurrency(getTotalPaid()) }}</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <strong>Balance Due:</strong>
+            <strong [class.text-danger]="getBalanceRemaining() > 0" [class.text-success]="getBalanceRemaining() <= 0">
+              {{ formatCurrency(getBalanceRemaining()) }}
+            </strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Complete Message -->
+  @if (isPaymentComplete()) {
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+      <i class="material-icons me-2">check_circle</i>
+      <div>
+        <strong>Payment Complete!</strong> All payments have been received. Proceeding to invoice generation...
+      </div>
+    </div>
+  }
+
+  <!-- Payment Form -->
+  @if (!isPaymentComplete()) {
+    <div class="payment-form-section">
+      <div class="row">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Record Payment</h6>
+          <hr class="mt-0">
+        </div>
+      </div>
+
+      <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" class="payment-form">
+        <div class="row">
+          <!-- Order ID (Auto-filled, disabled) -->
+          <div class="col-md-4 mb-3">
+            <label for="orderId" class="form-label">Order ID</label>
+            <input
+              type="number"
+              class="form-control bg-light"
+              id="orderId"
+              formControlName="orderId"
+              readonly
+            />
+            <small class="text-muted">Auto-filled from sale order</small>
+          </div>
+
+          <!-- Order Type (Auto-filled, disabled) -->
+          <div class="col-md-4 mb-3">
+            <label for="orderType" class="form-label">Order Type</label>
+            <input
+              type="text"
+              class="form-control bg-light"
+              id="orderType"
+              formControlName="orderType"
+              readonly
+            />
+            <small class="text-muted">Auto-filled as Sale</small>
+          </div>
+
+          <!-- Customer ID (Auto-filled, disabled) -->
+          <div class="col-md-4 mb-3">
+            <label for="customerId" class="form-label">Customer ID</label>
+            <input
+              type="number"
+              class="form-control bg-light"
+              id="customerId"
+              formControlName="customerId"
+              readonly
+            />
+            <small class="text-muted">Auto-filled from customer selection</small>
+          </div>
+
+          <!-- Amount Field -->
+          <div class="col-md-6 mb-3">
+            <label for="amount" class="form-label">
+              Payment Amount <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">₹</span>
+              <input
+                type="number"
+                class="form-control"
+                id="amount"
+                formControlName="amount"
+                placeholder="Enter amount"
+                step="0.01"
+                min="0"
+                [max]="getBalanceRemaining()"
+                [class.is-invalid]="hasError('amount')"
+              />
+            </div>
+            @if (hasError('amount')) {
+              <div class="invalid-feedback d-block">
+                Please enter a valid amount
+              </div>
+            }
+            <small class="text-muted">Max: {{ formatCurrency(getBalanceRemaining()) }}</small>
+          </div>
+
+          <!-- Payment Method Field -->
+          <div class="col-md-6 mb-3">
+            <label for="paymentMethod" class="form-label">
+              Payment Method <span class="text-danger">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="paymentMethod"
+              formControlName="paymentMethod"
+              [class.is-invalid]="hasError('paymentMethod')"
+            >
+              @for (method of paymentMethodOptions; track method.value) {
+                <option [ngValue]="method.value">
+                  {{ method.label }}
+                </option>
+              }
+            </select>
+            @if (hasError('paymentMethod')) {
+              <div class="invalid-feedback">
+                Please select a payment method
+              </div>
+            }
+          </div>
+
+          <!-- Payment Date Field -->
+          <div class="col-md-6 mb-3">
+            <label for="paymentDate" class="form-label">
+              Payment Date <span class="text-danger">*</span>
+            </label>
+            <input
+              type="date"
+              class="form-control"
+              id="paymentDate"
+              formControlName="paymentDate"
+              [class.is-invalid]="hasError('paymentDate')"
+            />
+            @if (hasError('paymentDate')) {
+              <div class="invalid-feedback">
+                Please select a payment date
+              </div>
+            }
+          </div>
+
+          <!-- Reference Number Field -->
+          <div class="col-md-6 mb-3">
+            <label for="referenceNumber" class="form-label">
+              Reference Number
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="referenceNumber"
+              formControlName="referenceNumber"
+              placeholder="Enter reference number (optional)"
+            />
+            <small class="text-muted">Transaction ID, cheque number, etc.</small>
+          </div>
+        </div>
+
+        <!-- Balance After Payment Preview -->
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="balance-preview p-3 bg-warning bg-opacity-10 border border-warning rounded">
+              <div class="d-flex justify-content-between align-items-center">
+                <span><i class="material-icons me-2">info</i>Balance After This Payment:</span>
+                <strong [class.text-danger]="getBalanceAfterPayment() > 0" [class.text-success]="getBalanceAfterPayment() <= 0" class="fs-5">
+                  {{ formatCurrency(getBalanceAfterPayment()) }}
+                </strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="skipPayment()"
+            [disabled]="wizardState.totalPaid < wizardState.orderTotal * 0.5"
+          >
+            Skip (Min 50% Required)
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="paymentForm.invalid || isSubmitting"
+          >
+            @if (isSubmitting) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            }
+            Record Payment
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- Payments Made in This Session -->
+  @if (sessionPayments.length > 0) {
+    <div class="payments-made mt-4">
+      <div class="row">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Payments Made in This Session</h6>
+          <hr class="mt-0">
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Date</th>
+              <th>Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (payment of sessionPayments; track payment.id; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ formatCurrency(payment.amount) }}</td>
+                <td>{{ getPaymentMethodLabel(payment.paymentMethod) }}</td>
+                <td>{{ payment.paymentDate | date:'dd-MM-yyyy' }}</td>
+                <td>{{ payment.referenceNumber || '-' }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot class="table-light">
+            <tr>
+              <td colspan="1"><strong>Total</strong></td>
+              <td><strong>{{ formatCurrency(getSessionPaymentsTotal()) }}</strong></td>
+              <td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  }
+</app-card>

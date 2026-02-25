@@ -1,0 +1,122 @@
+<div class="sale-wizard-container">
+  <!-- Header -->
+  <div class="wizard-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h4 class="mb-1">
+          <i class="material-icons-outlined me-2">point_of_sale</i>
+          Enter Sale
+        </h4>
+        <p class="text-muted mb-0">Complete the sale process step by step</p>
+      </div>
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+        <i class="material-icons-outlined me-1">close</i>
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-container mb-4">
+    <div class="progress" style="height: 6px;">
+      <div 
+        class="progress-bar bg-primary" 
+        role="progressbar" 
+        [style.width.%]="getProgressPercentage()"
+        [attr.aria-valuenow]="getProgressPercentage()"
+        aria-valuemin="0"
+        aria-valuemax="100">
+      </div>
+    </div>
+  </div>
+
+  <!-- Stepper Navigation -->
+  <div class="stepper-container mb-4">
+    <div class="stepper d-flex justify-content-between">
+      @for (step of steps; track step.number; let isLast = $last) {
+        <div class="step-item flex-grow-1" [class]="getStepClass(step.number)">
+          <div 
+            class="step-header d-flex align-items-center cursor-pointer"
+            (click)="goToStep(step)"
+            [class.clickable]="canNavigateToStep(step.number)">
+            
+            <!-- Step Icon/Number -->
+            <div class="step-indicator me-2">
+              @if (isStepCompleted(step.number)) {
+                <span class="step-check">
+                  <i class="material-icons-outlined">check_circle</i>
+                </span>
+              } @else {
+                <span class="step-number" [class.active]="isStepActive(step.number)">
+                  {{ step.number }}
+                </span>
+              }
+            </div>
+            
+            <!-- Step Title -->
+            <div class="step-info">
+              <span class="step-title" [class.fw-bold]="isStepActive(step.number)">
+                {{ step.title }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Connector Line -->
+          @if (!isLast) {
+            <div class="step-connector" [class.completed]="isStepCompleted(step.number)"></div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Step Content -->
+  <div class="wizard-content">
+    <div class="card">
+      <div class="card-body">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="wizard-footer mt-4">
+    <div class="d-flex justify-content-between">
+      <!-- Previous Button -->
+      <button 
+        type="button" 
+        class="btn btn-outline-secondary"
+        (click)="onPrevious()"
+        [disabled]="wizardState.currentStep === 1">
+        <i class="material-icons-outlined me-1">arrow_back</i>
+        Previous
+      </button>
+
+      <!-- Next/Complete Button -->
+      <div>
+        @if (wizardState.currentStep < 5) {
+          <button 
+            type="button" 
+            class="btn btn-primary"
+            (click)="onNext()"
+            [disabled]="!wizardService.canProceed() || wizardState.isSubmitting">
+            @if (wizardState.isSubmitting) {
+              <span class="spinner-border spinner-border-sm me-2"></span>
+            }
+            Next
+            <i class="material-icons-outlined ms-1">arrow_forward</i>
+          </button>
+        } @else {
+          <button 
+            type="button" 
+            class="btn btn-success"
+            (click)="onComplete()"
+            [disabled]="!wizardState.generatedInvoice">
+            <i class="material-icons-outlined me-1">check_circle</i>
+            Complete Sale
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

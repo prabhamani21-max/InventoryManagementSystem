@@ -1,0 +1,396 @@
+2026-02-25 09:46:54.9986|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-25 09:46:57.6634|0|INFO|InventoryManagementSystem.Repository.Data.DatabaseSeeder|Database already seeded. Skipping... 
+2026-02-25 09:46:59.3997|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/index.html | Body:  
+2026-02-25 09:46:59.7138|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  
+2026-02-25 12:57:50.5712|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-25 12:58:29.1887|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-25 12:58:32.5467|0|INFO|InventoryManagementSystem.Repository.Data.DatabaseSeeder|Database already seeded. Skipping... 
+2026-02-25 12:58:34.5595|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/index.html | Body:  
+2026-02-25 12:58:34.8280|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  
+2026-02-25 13:10:52.9127|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/login | Body:  
+2026-02-25 13:10:52.9329|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/User/login | Body: {"identifier":"santosh@gmail.com","password":"Password@123"} 
+2026-02-25 13:10:53.0174|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/login 
+2026-02-25 13:10:53.3756|0|INFO|InventoryManagementSystem.Controllers.UserController|Login attempt for identifier: santosh@gmail.com 
+2026-02-25 13:10:53.7399|0|INFO|InventoryManagementSystem.Controllers.UserController|Login Successfull 
+2026-02-25 13:11:01.0821|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/login | Body:  
+2026-02-25 13:11:01.0821|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/User/login | Body: {"identifier":"santosh@gmail.com","password":"Password@123"} 
+2026-02-25 13:11:01.1729|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/login 
+2026-02-25 13:11:01.1795|0|INFO|InventoryManagementSystem.Controllers.UserController|Login attempt for identifier: santosh@gmail.com 
+2026-02-25 13:11:01.2686|0|INFO|InventoryManagementSystem.Controllers.UserController|Login Successfull 
+2026-02-25 13:13:17.3458|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  
+2026-02-25 13:24:59.6953|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-25 13:25:02.7457|0|INFO|InventoryManagementSystem.Repository.Data.DatabaseSeeder|Database already seeded. Skipping... 
+2026-02-25 13:25:04.8295|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/index.html | Body:  
+2026-02-25 13:25:05.3912|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  
+2026-02-25 13:25:39.6222|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  
+2026-02-25 13:29:14.7777|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/login | Body:  
+2026-02-25 13:29:14.7960|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/User/login | Body: {"identifier":"santosh@gmail.com","password":"Password@123"} 
+2026-02-25 13:29:14.8785|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/login 
+2026-02-25 13:29:15.2285|0|INFO|InventoryManagementSystem.Controllers.UserController|Login attempt for identifier: santosh@gmail.com 
+2026-02-25 13:29:15.4492|0|INFO|InventoryManagementSystem.Controllers.UserController|Login Successfull 
+2026-02-25 13:29:21.9557|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Category | Body:  
+2026-02-25 13:29:21.9612|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Category | Body:  
+2026-02-25 13:29:22.0749|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Category 
+2026-02-25 13:29:26.3034|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-25 13:29:26.3034|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-25 13:29:26.3034|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-25 13:29:26.3292|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Purity | Body:  
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Category | Body:  
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Stone | Body:  
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Metal | Body:  
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Purity | Body:  
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Purity 
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Stone | Body:  
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Metal | Body:  
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Category | Body:  
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Category 
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Stone 
+2026-02-25 13:29:29.2437|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Metal 
+2026-02-25 13:29:29.2676|0|INFO|InventoryManagementSystem.Controllers.PurityController|Fetching all purities 
+2026-02-25 13:29:29.2676|0|INFO|InventoryManagementSystem.Controllers.MetalController|Fetching all metals 
+2026-02-25 13:29:29.2676|0|INFO|InventoryManagementSystem.Controllers.StoneController|Fetching all stones 
+2026-02-25 13:29:51.1724|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/MetalRate/current | Body:  
+2026-02-25 13:29:51.1724|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Purity | Body:  
+2026-02-25 13:29:51.1724|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Metal | Body:  
+2026-02-25 13:29:51.1786|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Purity | Body:  
+2026-02-25 13:29:51.1786|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/MetalRate/current | Body:  
+2026-02-25 13:29:51.1786|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/MetalRate/current 
+2026-02-25 13:29:51.1786|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Purity 
+2026-02-25 13:29:51.1786|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Metal | Body:  
+2026-02-25 13:29:51.1786|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Metal 
+2026-02-25 13:29:51.1786|0|INFO|InventoryManagementSystem.Controllers.PurityController|Fetching all purities 
+2026-02-25 13:29:51.1786|0|INFO|InventoryManagementSystem.Controllers.MetalController|Fetching all metals 
+2026-02-25 13:29:51.2490|0|INFO|InventoryManagementSystem.Controllers.MetalRateController|Getting all current rates 
+2026-02-25 13:29:51.2490|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting all current rates 
+2026-02-25 13:29:51.3357|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 1 
+2026-02-25 13:29:51.3867|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 1 
+2026-02-25 13:29:51.4291|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 2 
+2026-02-25 13:29:51.4374|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 3 
+2026-02-25 13:29:51.4374|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 2 
+2026-02-25 13:29:51.4374|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 5 
+2026-02-25 13:29:51.4563|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 4 
+2026-02-25 13:29:51.4563|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 3 
+2026-02-25 13:29:51.4709|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 6 
+2026-02-25 13:29:51.4760|0|WARN|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|No rate found for purity 6 
+2026-02-25 13:29:51.4760|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 7 
+2026-02-25 13:29:51.4760|0|WARN|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|No rate found for purity 7 
+2026-02-25 13:29:54.0129|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/MetalRate/history/metal/3 | Body:  
+2026-02-25 13:29:54.0129|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/MetalRate/history/metal/2 | Body:  
+2026-02-25 13:29:54.0129|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/MetalRate/history/metal/1 | Body:  
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/MetalRate/history/metal/3 | Body:  
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/MetalRate/history/metal/1 | Body:  
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/MetalRate/history/metal/2 | Body:  
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/MetalRate/history/metal/2 
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/MetalRate/history/metal/1 
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/MetalRate/history/metal/3 
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Controllers.MetalRateController|Getting rate history for metal 3 from 01/01/0001 00:00:00 to 01/01/0001 00:00:00 
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Controllers.MetalRateController|Getting rate history for metal 2 from 01/01/0001 00:00:00 to 01/01/0001 00:00:00 
+2026-02-25 13:29:54.0209|0|INFO|InventoryManagementSystem.Controllers.MetalRateController|Getting rate history for metal 1 from 01/01/0001 00:00:00 to 01/01/0001 00:00:00 
+2026-02-25 13:29:54.0477|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting rate history for metal 2 from 01/26/2026 07:59:54 to 02/25/2026 07:59:54 
+2026-02-25 13:29:54.0477|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting rate history for metal 1 from 01/26/2026 07:59:54 to 02/25/2026 07:59:54 
+2026-02-25 13:29:54.0477|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting rate history for metal 3 from 01/26/2026 07:59:54 to 02/25/2026 07:59:54 
+2026-02-25 13:29:57.3783|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/MetalRate/current | Body:  
+2026-02-25 13:29:57.3783|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/MetalRate/current | Body:  
+2026-02-25 13:29:57.3783|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/MetalRate/current 
+2026-02-25 13:29:57.3907|0|INFO|InventoryManagementSystem.Controllers.MetalRateController|Getting all current rates 
+2026-02-25 13:29:57.3907|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting all current rates 
+2026-02-25 13:29:57.4039|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 1 
+2026-02-25 13:29:57.4039|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 1 
+2026-02-25 13:29:57.4039|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 2 
+2026-02-25 13:29:57.4252|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 3 
+2026-02-25 13:29:57.4309|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 2 
+2026-02-25 13:29:57.4309|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 5 
+2026-02-25 13:29:57.4453|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 4 
+2026-02-25 13:29:57.4453|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 3 
+2026-02-25 13:29:57.4453|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 6 
+2026-02-25 13:29:57.4453|0|WARN|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|No rate found for purity 6 
+2026-02-25 13:29:57.4453|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 7 
+2026-02-25 13:29:57.4453|0|WARN|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|No rate found for purity 7 
+2026-02-25 13:30:06.4700|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/items | Body:  
+2026-02-25 13:30:06.4761|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/items | Body:  
+2026-02-25 13:30:06.4761|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/items 
+2026-02-25 13:30:06.5517|0|WARN|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Invoice with number items not found 
+2026-02-25 13:30:06.5562|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":{"success":false,"message":"Invoice not found"},"HttpStatus":"NotFound"} 
+2026-02-25 13:30:44.5759|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/items | Body:  
+2026-02-25 13:30:44.5759|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/items | Body:  
+2026-02-25 13:30:44.5759|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/items 
+2026-02-25 13:30:44.5931|0|WARN|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Invoice with number items not found 
+2026-02-25 13:30:44.5931|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":{"success":false,"message":"Invoice not found"},"HttpStatus":"NotFound"} 
+2026-02-25 13:32:38.8207|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/1 | Body:  
+2026-02-25 13:32:38.8344|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/1 | Body:  
+2026-02-25 13:32:38.8344|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/1 
+2026-02-25 13:32:38.8509|0|WARN|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Invoice with number 1 not found 
+2026-02-25 13:32:38.8509|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":{"success":false,"message":"Invoice not found"},"HttpStatus":"NotFound"} 
+2026-02-25 13:43:34.2239|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-25 13:43:38.2896|0|INFO|InventoryManagementSystem.Repository.Data.DatabaseSeeder|Database already seeded. Skipping... 
+2026-02-25 14:56:22.5174|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/login | Body:  
+2026-02-25 14:56:22.5626|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/User/login | Body: {"identifier":"santosh@gmail.com","password":"Password@123"} 
+2026-02-25 14:56:22.6752|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/login 
+2026-02-25 14:56:23.1857|0|INFO|InventoryManagementSystem.Controllers.UserController|Login attempt for identifier: santosh@gmail.com 
+2026-02-25 14:56:23.6284|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/User/login | Body: {"identifier":"santosh@gmail.com","password":"Password@123"} 
+2026-02-25 14:56:23.6284|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/login 
+2026-02-25 14:56:23.6382|0|INFO|InventoryManagementSystem.Controllers.UserController|Login attempt for identifier: santosh@gmail.com 
+2026-02-25 14:56:23.6655|0|INFO|InventoryManagementSystem.Controllers.UserController|Login Successfull 
+2026-02-25 14:56:23.7411|0|INFO|InventoryManagementSystem.Controllers.UserController|Login Successfull 
+2026-02-25 14:56:28.4731|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/items | Body:  
+2026-02-25 14:56:28.4780|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/items | Body:  
+2026-02-25 14:56:28.5461|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/items 
+2026-02-25 14:56:28.7968|0|WARN|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Invoice with number items not found 
+2026-02-25 14:56:28.8047|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":{"success":false,"message":"Invoice not found"},"HttpStatus":"NotFound"} 
+2026-02-25 15:05:45.9690|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:05:45.9818|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:05:45.9818|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:05:45.9969|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:05:45.9969|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:06:33.2675|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:06:33.2745|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:06:33.2745|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:06:33.2745|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:06:33.2745|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:07:00.5857|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:07:00.5857|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:07:00.5857|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:07:00.5857|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:07:00.5857|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:13:50.7776|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:13:50.7776|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:13:50.7776|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:13:50.8599|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:13:50.8599|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:15:05.3341|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:15:05.3341|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:15:05.3341|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:15:05.3490|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:15:05.3490|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:16:27.0266|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/INV/25-26/000002/regenerate | Body:  
+2026-02-25 15:16:27.0360|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Invoice/INV/25-26/000002/regenerate | Body:  
+2026-02-25 15:16:27.0365|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/INV/25-26/000002/regenerate 
+2026-02-25 15:16:27.0365|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":null,"HttpStatus":"NotFound"} 
+2026-02-25 15:16:42.4595|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/INV/25-26/000002/cancel | Body:  
+2026-02-25 15:16:42.4595|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Invoice/INV/25-26/000002/cancel | Body:  
+2026-02-25 15:16:42.4595|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/INV/25-26/000002/cancel 
+2026-02-25 15:16:42.4680|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":null,"HttpStatus":"NotFound"} 
+2026-02-25 15:16:47.0246|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/INV/25-26/000002 | Body:  
+2026-02-25 15:16:47.0246|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/INV/25-26/000002 | Body:  
+2026-02-25 15:16:47.0246|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/INV/25-26/000002 
+2026-02-25 15:16:47.0375|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":null,"HttpStatus":"NotFound"} 
+2026-02-25 15:16:47.0375|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:16:47.0534|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:16:47.0534|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:16:47.0534|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:16:47.0534|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:17:28.0971|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/generate | Body:  
+2026-02-25 15:17:28.1036|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Invoice/generate | Body: {"saleOrderId":2,"includeTermsAndConditions":true} 
+2026-02-25 15:17:28.1036|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/generate 
+2026-02-25 15:17:28.1245|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Invoice generation requested for Sale Order 2 
+2026-02-25 15:17:28.1245|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Generating invoice for Sale Order 2 
+2026-02-25 15:17:28.1426|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Generating invoice for Sale Order 2 
+2026-02-25 15:17:28.6555|0|ERROR|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Error generating invoice for Sale Order 2 System.InvalidOperationException: No items found in sale order
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.GenerateInvoiceAsync(Invoice invoice) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 160
+2026-02-25 15:17:28.7971|0|WARN|InventoryManagementSystem.Controllers.InvoiceController|Invoice generation failed - not found System.InvalidOperationException: No items found in sale order
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.GenerateInvoiceAsync(Invoice invoice) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 160
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.GenerateInvoiceAsync(Invoice invoice) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 324
+   at InventoryManagementSystem.Service.Implementation.InvoiceService.GenerateInvoiceAsync(InvoiceRequestDto request) in C:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Service\Implementation\InvoiceService.cs:line 49
+   at InventoryManagementSystem.Controllers.InvoiceController.GenerateInvoice(InvoiceRequestDto request) in C:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem\Controllers\InvoiceController.cs:line 63
+2026-02-25 15:17:28.7971|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":{"success":false,"message":"No items found in sale order"},"HttpStatus":"NotFound"} 
+2026-02-25 15:17:35.8070|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/SaleOrder/3 | Body:  
+2026-02-25 15:17:35.8070|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/SaleOrder/3 | Body:  
+2026-02-25 15:17:35.8070|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/SaleOrder/3 
+2026-02-25 15:17:35.8263|0|INFO|InventoryManagementSystem.Controllers.SaleOrderController|Fetching sale order by ID: 3 
+2026-02-25 15:17:40.7414|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/generate | Body:  
+2026-02-25 15:17:40.7414|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Invoice/generate | Body: {"saleOrderId":3,"includeTermsAndConditions":true} 
+2026-02-25 15:17:40.7414|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/generate 
+2026-02-25 15:17:40.7414|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Invoice generation requested for Sale Order 3 
+2026-02-25 15:17:40.7414|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Generating invoice for Sale Order 3 
+2026-02-25 15:17:40.7414|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Generating invoice for Sale Order 3 
+2026-02-25 15:17:40.8271|0|ERROR|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Error generating invoice for Sale Order 3 System.InvalidOperationException: No items found in sale order
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.GenerateInvoiceAsync(Invoice invoice) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 160
+2026-02-25 15:17:40.8807|0|WARN|InventoryManagementSystem.Controllers.InvoiceController|Invoice generation failed - not found System.InvalidOperationException: No items found in sale order
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.GenerateInvoiceAsync(Invoice invoice) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 160
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.GenerateInvoiceAsync(Invoice invoice) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 324
+   at InventoryManagementSystem.Service.Implementation.InvoiceService.GenerateInvoiceAsync(InvoiceRequestDto request) in C:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Service\Implementation\InvoiceService.cs:line 49
+   at InventoryManagementSystem.Controllers.InvoiceController.GenerateInvoice(InvoiceRequestDto request) in C:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem\Controllers\InvoiceController.cs:line 63
+2026-02-25 15:17:40.8807|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":{"success":false,"message":"No items found in sale order"},"HttpStatus":"NotFound"} 
+2026-02-25 15:17:43.2249|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:17:43.2249|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:17:43.2249|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:17:43.2249|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:17:43.2249|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:18:40.6790|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/INV/25-26/000007 | Body:  
+2026-02-25 15:18:40.7220|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/INV/25-26/000007 | Body:  
+2026-02-25 15:18:40.7220|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/INV/25-26/000007 
+2026-02-25 15:18:40.7254|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":null,"HttpStatus":"NotFound"} 
+2026-02-25 15:18:40.7479|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:18:40.7479|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:18:40.7479|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:18:40.7479|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:18:40.7554|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:25:03.4790|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:25:03.4790|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:25:03.4790|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:25:03.4921|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:25:03.4921|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:34:46.4273|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:34:46.4273|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:34:46.4273|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:34:46.4273|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:34:46.4273|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:40:54.6707|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:40:54.7068|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:40:54.7085|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:40:54.7085|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:40:54.7085|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:41:30.9609|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/by-number | Body:  
+2026-02-25 15:41:30.9980|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/by-number | Body:  
+2026-02-25 15:41:30.9980|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/by-number 
+2026-02-25 15:41:31.0152|0|WARN|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Invoice with number by-number not found 
+2026-02-25 15:41:31.0152|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 404: {"Status":false,"Message":"Not Found","Data":{"success":false,"message":"Invoice not found"},"HttpStatus":"NotFound"} 
+2026-02-25 15:41:31.0435|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:41:31.0435|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:41:31.0435|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:41:31.0538|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:41:31.0538|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:41:59.0313|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-25 15:42:02.3852|0|INFO|InventoryManagementSystem.Repository.Data.DatabaseSeeder|Database already seeded. Skipping... 
+2026-02-25 15:42:04.0163|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/index.html | Body:  
+2026-02-25 15:42:04.3055|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:42:04.3289|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  
+2026-02-25 15:42:08.5638|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/by-number | Body:  
+2026-02-25 15:42:08.5739|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/by-number | Body:  
+2026-02-25 15:42:08.8444|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/by-number 
+2026-02-25 15:42:33.9418|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:42:33.9460|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:42:33.9460|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:42:33.9612|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:42:33.9612|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:42:39.5717|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/by-number | Body:  
+2026-02-25 15:42:39.5717|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/by-number | Body:  
+2026-02-25 15:42:39.5717|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/by-number 
+2026-02-25 15:42:51.7094|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:42:51.7094|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:42:51.7094|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:42:51.7094|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:42:51.7094|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:42:55.7476|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/cancel | Body:  
+2026-02-25 15:42:55.7543|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Invoice/cancel | Body:  
+2026-02-25 15:42:55.7557|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/cancel 
+2026-02-25 15:42:55.7557|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Invoice INV/25-26/000001 cancellation requested 
+2026-02-25 15:42:55.7717|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Invoice INV/25-26/000001 cancellation requested 
+2026-02-25 15:42:56.2203|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Restored 1 units to stock for JewelleryItemId: 1. New Total: 6 
+2026-02-25 15:42:56.7582|0|ERROR|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Error cancelling invoice INV/25-26/000001 Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "invoice" violates foreign key constraint "FK_invoice_generic_status_status_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "invoice" violates foreign key constraint "FK_invoice_generic_status_status_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: invoice
+    ConstraintName: FK_invoice_generic_status_status_id
+    File: ri_triggers.c
+    Line: 2783
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.CancelInvoiceAsync(String invoiceNumber) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 473
+2026-02-25 15:42:56.9274|0|ERROR|InventoryManagementSystem.Controllers.InvoiceController|Invoice cancellation failed for INV/25-26/000001 Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Npgsql.PostgresException (0x80004005): 23503: insert or update on table "invoice" violates foreign key constraint "FK_invoice_generic_status_status_id"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23503
+    MessageText: insert or update on table "invoice" violates foreign key constraint "FK_invoice_generic_status_status_id"
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    SchemaName: public
+    TableName: invoice
+    ConstraintName: FK_invoice_generic_status_status_id
+    File: ri_triggers.c
+    Line: 2783
+    Routine: ri_ReportViolation
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.NpgsqlExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.CancelInvoiceAsync(String invoiceNumber) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 473
+   at InventoryManagementSystem.Repository.Implementation.InvoiceRepository.CancelInvoiceAsync(String invoiceNumber) in c:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Repository\Implementation\InvoiceRepository.cs:line 483
+   at InventoryManagementSystem.Service.Implementation.InvoiceService.CancelInvoiceAsync(String invoiceNumber) in C:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem.Service\Implementation\InvoiceService.cs:line 110
+   at InventoryManagementSystem.Controllers.InvoiceController.CancelInvoice(String invoiceNumber) in C:\Users\Prabhamani M V\source\repos\InventoryManagementSystem\InventoryManagementSystem\Controllers\InvoiceController.cs:line 220
+2026-02-25 15:42:56.9454|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Response] 500: {"Status":false,"Message":"Internal Server Error","Data":{"success":false,"message":"An error occurred while cancelling the invoice"},"HttpStatus":"InternalServerError"} 
+2026-02-25 15:43:10.7296|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/regenerate | Body:  
+2026-02-25 15:43:10.7296|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Invoice/regenerate | Body:  
+2026-02-25 15:43:10.7296|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/regenerate 
+2026-02-25 15:43:10.7594|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Updating invoice ID 1 
+2026-02-25 15:43:10.8238|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:43:10.8238|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:43:10.8238|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:43:10.8238|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:43:10.8238|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:43:24.1662|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/regenerate | Body:  
+2026-02-25 15:43:24.1779|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Invoice/regenerate | Body:  
+2026-02-25 15:43:24.1779|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/regenerate 
+2026-02-25 15:43:24.1779|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Updating invoice ID 2 
+2026-02-25 15:43:24.2210|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:43:24.2249|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:43:24.2249|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:43:24.2249|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:43:24.2249|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:43:30.3196|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:43:30.3196|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:43:30.3196|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:43:30.3196|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:43:30.3196|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:43:50.9958|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/by-number | Body:  
+2026-02-25 15:43:50.9958|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/by-number | Body:  
+2026-02-25 15:43:50.9958|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/by-number 
+2026-02-25 15:44:00.1452|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/by-number | Body:  
+2026-02-25 15:44:00.1452|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/by-number | Body:  
+2026-02-25 15:44:00.1452|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/by-number 
+2026-02-25 15:44:03.0447|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:44:03.0447|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:44:03.0447|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:44:03.0447|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:44:03.0565|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:44:09.7471|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:44:09.7471|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Invoice/GetAllInvoices | Body:  
+2026-02-25 15:44:09.7471|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/GetAllInvoices 
+2026-02-25 15:44:09.7471|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Fetching all invoices 
+2026-02-25 15:44:09.7584|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Fetching all invoices 
+2026-02-25 15:45:11.3668|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  

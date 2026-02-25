@@ -1,0 +1,582 @@
+<app-card [cardTitle]="isViewMode ? 'Invoice Details' : 'Generate Invoice'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading invoice data...</p>
+    </div>
+  }
+
+  <!-- View Mode - Display Invoice Details -->
+  @if (!isLoading && isViewMode && generatedInvoice) {
+    <div class="invoice-details">
+      <!-- Invoice Header -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h4 class="text-primary mb-1">{{ generatedInvoice.invoiceNumber }}</h4>
+          <p class="text-muted mb-0">Invoice Date: {{ generatedInvoice.invoiceDate | date:'mediumDate' }}</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <span [ngClass]="getStatusClass(generatedInvoice.statusId)" class="fs-6">
+            {{ getStatusLabel(generatedInvoice.statusId) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Company & Customer Details -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card bg-light">
+            <div class="card-body">
+              <h6 class="text-muted mb-2">From</h6>
+              <h6 class="mb-1">{{ generatedInvoice.companyName }}</h6>
+              @if (generatedInvoice.companyAddress) {
+                <p class="mb-1 small">{{ generatedInvoice.companyAddress }}</p>
+              }
+              @if (generatedInvoice.companyPhone) {
+                <p class="mb-1 small"><i class="feather icon-phone me-1"></i>{{ generatedInvoice.companyPhone }}</p>
+              }
+              @if (generatedInvoice.companyGSTIN) {
+                <p class="mb-0 small"><strong>GSTIN:</strong> {{ generatedInvoice.companyGSTIN }}</p>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card bg-light">
+            <div class="card-body">
+              <h6 class="text-muted mb-2">Bill To</h6>
+              <h6 class="mb-1">{{ generatedInvoice.partyName }}</h6>
+              @if (generatedInvoice.partyAddress) {
+                <p class="mb-1 small">{{ generatedInvoice.partyAddress }}</p>
+              }
+              @if (generatedInvoice.partyPhone) {
+                <p class="mb-1 small"><i class="feather icon-phone me-1"></i>{{ generatedInvoice.partyPhone }}</p>
+              }
+              @if (generatedInvoice.partyGSTIN) {
+                <p class="mb-0 small"><strong>GSTIN:</strong> {{ generatedInvoice.partyGSTIN }}</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Items Table -->
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Item</th>
+              <th>HUID</th>
+              <th>Qty</th>
+              <th>Net Wt</th>
+              <th>Metal Amt</th>
+              <th>Stone Amt</th>
+              <th>Making</th>
+              <th>Discount</th>
+              <th>GST</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of generatedInvoice.invoiceItems; track item.id) {
+              <tr>
+                <td>
+                  {{ item.itemName }}
+                  @if (item.isHallmarked) {
+                    <span class="badge bg-success ms-1" title="Hallmarked">H</span>
+                  }
+                </td>
+                <td>
+                  @if (item.huid) {
+                    <span class="badge bg-info" title="Hallmark Unique ID">{{ item.huid }}</span>
+                  } @else {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.netMetalWeight ? item.netMetalWeight + 'g' : '-' }}</td>
+                <td>{{ formatCurrency(item.metalAmount || 0) }}</td>
+                <td>{{ formatCurrency(item.stoneAmount || 0) }}</td>
+                <td>{{ formatCurrency(item.makingCharges || 0) }}</td>
+                <td>{{ formatCurrency(item.discount) }}</td>
+                <td>{{ formatCurrency(item.gstAmount) }}</td>
+                <td class="fw-medium">{{ formatCurrency(item.totalAmount) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Invoice Summary -->
+      <div class="row">
+        <!-- <div class="col-md-6">
+          @if (generatedInvoice.notes) {
+            <div class="mb-3">
+              <h6 class="text-muted mb-1">Notes</h6>
+              <p class="small">{{ generatedInvoice.notes }}</p>
+            </div>
+          }
+          @if (generatedInvoice.termsAndConditions) {
+            <div class="mb-3">
+              <h6 class="text-muted mb-1">Terms & Conditions</h6>
+              <!-- <p class="small">{{ generatedInvoice.termsAndConditions }}</p> -->
+          <!--  </div>-->
+          <!-- } -->
+       
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between mb-2">
+                <span>Sub Total:</span>
+                <span>{{ formatCurrency(generatedInvoice.subTotal) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Discount:</span>
+                <span class="text-danger">-{{ formatCurrency(generatedInvoice.discountAmount) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Taxable Amount:</span>
+                <span>{{ formatCurrency(generatedInvoice.taxableAmount) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>CGST:</span>
+                <span>{{ formatCurrency(generatedInvoice.cgstAmount) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>SGST:</span>
+                <span>{{ formatCurrency(generatedInvoice.sgstAmount) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>IGST:</span>
+                <span>{{ formatCurrency(generatedInvoice.igstAmount) }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Round Off:</span>
+                <span>{{ formatCurrency(generatedInvoice.roundOff) }}</span>
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between mb-2">
+                <strong>Grand Total:</strong>
+                <strong class="text-primary fs-5">{{ formatCurrency(generatedInvoice.grandTotal) }}</strong>
+              </div>
+              <p class="text-muted small mb-2">{{ generatedInvoice.grandTotalInWords }}</p>
+              <hr>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Total Paid:</span>
+                <span class="text-success">{{ formatCurrency(generatedInvoice.totalPaid) }}</span>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>Balance Due:</span>
+                <span [class.text-danger]="generatedInvoice.balanceDue > 0" [class.text-success]="generatedInvoice.balanceDue === 0">
+                  {{ formatCurrency(generatedInvoice.balanceDue) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- E-Invoice Section -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+              <h6 class="mb-0"><i class="feather icon-file-text me-2"></i>E-Invoice (GST Compliance)</h6>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <!-- E-Invoice Status -->
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <h6 class="text-muted mb-2">E-Invoice Status</h6>
+                    <span [ngClass]="getEInvoiceStatusClass(generatedInvoice.eInvoiceStatus)" class="fs-6">
+                      {{ getEInvoiceStatusLabel(generatedInvoice.eInvoiceStatus) }}
+                    </span>
+                  </div>
+
+                  @if (generatedInvoice.irn) {
+                    <div class="mb-3">
+                      <h6 class="text-muted mb-1">IRN (Invoice Reference Number)</h6>
+                      <p class="mb-0 font-monospace small">{{ generatedInvoice.irn }}</p>
+                    </div>
+                  }
+
+                  @if (generatedInvoice.acknowledgementNumber) {
+                    <div class="mb-3">
+                      <h6 class="text-muted mb-1">Acknowledgement Number</h6>
+                      <p class="mb-0">{{ generatedInvoice.acknowledgementNumber }}</p>
+                    </div>
+                  }
+
+                  @if (generatedInvoice.irnGeneratedDate) {
+                    <div class="mb-3">
+                      <h6 class="text-muted mb-1">IRN Generated Date</h6>
+                      <p class="mb-0">{{ formatDate(generatedInvoice.irnGeneratedDate) }}</p>
+                    </div>
+                  }
+
+                  @if (generatedInvoice.eInvoiceStatus === 'Cancelled' && generatedInvoice.eInvoiceCancelReason) {
+                    <div class="alert alert-warning small">
+                      <strong>Cancelled:</strong> {{ generatedInvoice.eInvoiceCancelReason }}
+                      @if (generatedInvoice.eInvoiceCancelledDate) {
+                        <br><small>{{ formatDate(generatedInvoice.eInvoiceCancelledDate) }}</small>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <!-- QR Code Display -->
+                <div class="col-md-6 text-center">
+                  @if (generatedInvoice.qrCode) {
+                    <div class="mb-3">
+                      <h6 class="text-muted mb-2">QR Code</h6>
+                      <img [src]="getQRCodeUrl()" alt="E-Invoice QR Code" class="img-fluid border rounded p-2" style="max-width: 200px;">
+                      <p class="small text-muted mt-2">Scan to verify e-invoice</p>
+                    </div>
+                  } @else {
+                    <div class="text-muted py-4">
+                      <i class="feather icon-grid fs-1"></i>
+                      <p class="mt-2">QR Code will be generated with IRN</p>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- E-Invoice Actions -->
+              <div class="row mt-3">
+                <div class="col-12">
+                  <div class="d-flex gap-2 flex-wrap">
+                    @if (canGenerateIRN()) {
+                      <button
+                        type="button"
+                        class="btn btn-success"
+                        (click)="onGenerateIRN()"
+                        [disabled]="isGeneratingIRN"
+                      >
+                        @if (isGeneratingIRN) {
+                          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        }
+                        <i class="feather icon-hash me-1"></i>Generate IRN
+                      </button>
+                    }
+
+                    @if (canCancelEInvoice()) {
+                      <button
+                        type="button"
+                        class="btn btn-danger"
+                        (click)="openCancelEInvoiceModal()"
+                      >
+                        <i class="feather icon-x-circle me-1"></i>Cancel E-Invoice
+                      </button>
+                    }
+
+                    @if (!generatedInvoice.irn && !canGenerateIRN()) {
+                      <div class="alert alert-info small mb-0">
+                        <i class="feather icon-info me-1"></i>
+                        E-invoicing is mandatory for B2B invoices with GSTIN and value above ₹5,00,000
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          <i class="feather icon-arrow-left me-1"></i>Back
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onPrintInvoice()">
+          <i class="feather icon-printer me-1"></i>Print
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Generate Mode - Form -->
+  @if (!isLoading && !isViewMode && !generatedInvoice) {
+    <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" class="invoice-form">
+      <div class="row">
+        <!-- Sale Order Selection Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Sale Order Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Sale Order ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="saleOrderId" class="form-label">
+            Sale Order ID <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <input
+              type="number"
+              class="form-control"
+              id="saleOrderId"
+              formControlName="saleOrderId"
+              placeholder="Enter Sale Order ID"
+              [class.is-invalid]="hasError('saleOrderId')"
+            />
+            <button type="button" class="btn btn-outline-secondary" (click)="loadSaleOrderForPreview()">
+              <i class="feather icon-search me-1"></i>Preview
+            </button>
+          </div>
+          @if (hasError('saleOrderId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('saleOrderId') }}
+            </div>
+          }
+          <small class="text-muted">Enter the Sale Order ID to generate invoice</small>
+        </div>
+
+        <!-- Sale Order Preview -->
+        @if (saleOrder) {
+          <div class="col-12 mb-3">
+            <div class="card bg-light">
+              <div class="card-body">
+                <h6 class="text-muted mb-2">Sale Order Preview</h6>
+                <div class="row">
+                  <div class="col-md-4">
+                    <p class="mb-1"><strong>Order Number:</strong> {{ saleOrder.orderNumber }}</p>
+                  </div>
+                  <div class="col-md-4">
+                    <p class="mb-1"><strong>Customer ID:</strong> {{ saleOrder.customerId }}</p>
+                  </div>
+                  <div class="col-md-4">
+                    <p class="mb-1"><strong>Order Date:</strong> {{ saleOrder.orderDate | date:'mediumDate' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Additional Options Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Additional Options</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Notes Field -->
+        <div class="col-md-6 mb-3">
+          <label for="notes" class="form-label">Notes</label>
+          <textarea
+            class="form-control"
+            id="notes"
+            formControlName="notes"
+            rows="3"
+            placeholder="Enter any notes for the invoice"
+          ></textarea>
+          <small class="text-muted">Optional notes to be included on the invoice</small>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Terms & Conditions</label>
+          <div class="form-check form-switch mb-2">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="includeTermsAndConditions"
+              formControlName="includeTermsAndConditions"
+            />
+            <label class="form-check-label" for="includeTermsAndConditions">
+              Include standard terms and conditions
+            </label>
+          </div>
+          <textarea
+            class="form-control"
+            id="customTermsAndConditions"
+            formControlName="customTermsAndConditions"
+            rows="3"
+            placeholder="Enter custom terms and conditions"
+          ></textarea>
+          <small class="text-muted">Override default terms with custom text</small>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="invoiceForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          <i class="feather icon-file-text me-1"></i>Generate Invoice
+        </button>
+      </div>
+    </form>
+  }
+
+  <!-- Generated Invoice Display -->
+  @if (!isLoading && !isViewMode && generatedInvoice) {
+    <div class="invoice-generated">
+      <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+        <i class="feather icon-check-circle me-2 fs-4"></i>
+        <div>
+          <strong>Invoice Generated Successfully!</strong>
+          <br>
+          <span>Invoice Number: <strong>{{ generatedInvoice.invoiceNumber }}</strong></span>
+        </div>
+      </div>
+
+      <!-- Quick Summary -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card bg-light">
+            <div class="card-body text-center">
+              <h6 class="text-muted mb-1">Grand Total</h6>
+              <h4 class="text-primary mb-0">{{ formatCurrency(generatedInvoice.grandTotal) }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light">
+            <div class="card-body text-center">
+              <h6 class="text-muted mb-1">Total GST</h6>
+              <h5 class="mb-0">{{ formatCurrency(generatedInvoice.totalGSTAmount) }}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light">
+            <div class="card-body text-center">
+              <h6 class="text-muted mb-1">Total Paid</h6>
+              <h5 class="text-success mb-0">{{ formatCurrency(generatedInvoice.totalPaid) }}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light">
+            <div class="card-body text-center">
+              <h6 class="text-muted mb-1">Balance Due</h6>
+              <h5 [class.text-danger]="generatedInvoice.balanceDue > 0" [class.text-success]="generatedInvoice.balanceDue === 0" class="mb-0">
+                {{ formatCurrency(generatedInvoice.balanceDue) }}
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Items Summary -->
+      <div class="table-responsive mb-4">
+        <table class="table table-sm table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Item</th>
+              <th>HUID</th>
+              <th>Qty</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of generatedInvoice.invoiceItems; track item.id) {
+              <tr>
+                <td>
+                  {{ item.itemName }}
+                  @if (item.isHallmarked) {
+                    <span class="badge bg-success ms-1" title="Hallmarked">H</span>
+                  }
+                </td>
+                <td>
+                  @if (item.huid) {
+                    <span class="badge bg-info">{{ item.huid }}</span>
+                  } @else {
+                    <span class="text-muted">-</span>
+                  }
+                </td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ formatCurrency(item.totalAmount) }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr class="table-light">
+              <td colspan="3"><strong>Grand Total</strong></td>
+              <td><strong>{{ formatCurrency(generatedInvoice.grandTotal) }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-primary" (click)="onGenerateAnother()">
+          <i class="feather icon-plus me-1"></i>Generate Another
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onViewInvoice(generatedInvoice.invoiceNumber)">
+          <i class="feather icon-eye me-1"></i>View Full Invoice
+        </button>
+        <button type="button" class="btn btn-success" (click)="onPrintInvoice()">
+          <i class="feather icon-printer me-1"></i>Print
+        </button>
+      </div>
+    </div>
+  }
+</app-card>
+
+<!-- Cancel E-Invoice Modal -->
+@if (showCancelModal) {
+  <div class="modal-backdrop fade show" style="z-index: 1050;"></div>
+  <div class="modal fade show d-block" tabindex="-1" style="z-index: 1055;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title"><i class="feather icon-alert-triangle me-2"></i>Cancel E-Invoice</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeCancelModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <i class="feather icon-alert-circle me-2"></i>
+            <strong>Warning:</strong> This action cannot be undone. The IRN will be cancelled on the NIC portal.
+          </div>
+          <div class="mb-3">
+            <label for="cancelReason" class="form-label">Reason for Cancellation <span class="text-danger">*</span></label>
+            <textarea
+              class="form-control"
+              id="cancelReason"
+              [(ngModel)]="cancelReason"
+              rows="3"
+              placeholder="Enter the reason for cancelling this e-invoice"
+              [required]="true"
+            ></textarea>
+            <small class="text-muted">Please provide a clear reason for the cancellation.</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeCancelModal()" [disabled]="isCancellingEInvoice">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            (click)="onCancelEInvoice()"
+            [disabled]="isCancellingEInvoice || !cancelReason.trim()"
+          >
+            @if (isCancellingEInvoice) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            }
+            <i class="feather icon-x-circle me-1"></i>Confirm Cancellation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

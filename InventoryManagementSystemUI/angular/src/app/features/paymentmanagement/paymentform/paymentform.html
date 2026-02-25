@@ -1,0 +1,198 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Payment' : 'Add Payment'" [customHeader]="true">
+  <!-- Header with Back Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">{{ isEditMode ? 'Edit Payment' : 'Add New Payment' }}</h5>
+    <button class="btn btn-secondary" (click)="onCancel()">
+      <i class="feather icon-arrow-left me-2"></i>Back to List
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading payment data...</p>
+    </div>
+  }
+
+  <!-- Payment Form -->
+  @if (!isLoading) {
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" class="payment-form">
+      <div class="row">
+        <!-- Order Type -->
+        <div class="col-md-6 mb-3">
+          <label for="orderType" class="form-label">Order Type <span class="text-danger">*</span></label>
+          <select 
+            class="form-select" 
+            id="orderType" 
+            formControlName="orderType"
+            [class.is-invalid]="hasError('orderType')">
+            @for (option of orderTypeOptions; track option.id) {
+              <option [value]="option.id">{{ option.name }}</option>
+            }
+          </select>
+          @if (hasError('orderType')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('orderType') }}
+            </div>
+          }
+        </div>
+
+        <!-- Order ID -->
+        <div class="col-md-6 mb-3">
+          <label for="orderId" class="form-label">Order ID</label>
+          <input 
+            type="number" 
+            class="form-control" 
+            id="orderId" 
+            formControlName="orderId"
+            [class.is-invalid]="hasError('orderId')"
+            placeholder="Enter Order ID">
+          @if (hasError('orderId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('orderId') }}
+            </div>
+          }
+        </div>
+
+        <!-- Amount -->
+        <div class="col-md-6 mb-3">
+          <label for="amount" class="form-label">Amount <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="amount" 
+              formControlName="amount"
+              [class.is-invalid]="hasError('amount')"
+              placeholder="Enter amount"
+              step="0.01"
+              min="0">
+          </div>
+          @if (hasError('amount')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('amount') }}
+            </div>
+          }
+        </div>
+
+        <!-- Payment Method -->
+        <div class="col-md-6 mb-3">
+          <label for="paymentMethod" class="form-label">Payment Method <span class="text-danger">*</span></label>
+          <select 
+            class="form-select" 
+            id="paymentMethod" 
+            formControlName="paymentMethod"
+            [class.is-invalid]="hasError('paymentMethod')">
+            @for (option of paymentMethodOptions; track option.id) {
+              <option [value]="option.id">{{ option.name }}</option>
+            }
+          </select>
+          @if (hasError('paymentMethod')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('paymentMethod') }}
+            </div>
+          }
+        </div>
+
+        <!-- Payment Date -->
+        <div class="col-md-6 mb-3">
+          <label for="paymentDate" class="form-label">Payment Date <span class="text-danger">*</span></label>
+          <input 
+            type="date" 
+            class="form-control" 
+            id="paymentDate" 
+            formControlName="paymentDate"
+            [class.is-invalid]="hasError('paymentDate')">
+          @if (hasError('paymentDate')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('paymentDate') }}
+            </div>
+          }
+        </div>
+
+        <!-- Reference Number -->
+        <div class="col-md-6 mb-3">
+          <label for="referenceNumber" class="form-label">Reference Number</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="referenceNumber" 
+            formControlName="referenceNumber"
+            placeholder="Enter reference number (optional)">
+        </div>
+
+        <!-- Customer ID -->
+        <div class="col-md-6 mb-3">
+          <label for="customerId" class="form-label">Customer ID</label>
+          <input 
+            type="number" 
+            class="form-control" 
+            id="customerId" 
+            formControlName="customerId"
+            placeholder="Enter Customer ID (optional)">
+        </div>
+
+        <!-- Sales Person ID -->
+        <div class="col-md-6 mb-3">
+          <label for="salesPersonId" class="form-label">Sales Person ID</label>
+          <input 
+            type="number" 
+            class="form-control" 
+            id="salesPersonId" 
+            formControlName="salesPersonId"
+            placeholder="Enter Sales Person ID (optional)">
+        </div>
+
+        <!-- Status -->
+        <div class="col-md-6 mb-3">
+          <label for="statusId" class="form-label">Status <span class="text-danger">*</span></label>
+          <select 
+            class="form-select" 
+            id="statusId" 
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')">
+            @for (option of statusOptions; track option.id) {
+              <option [value]="option.id">{{ option.name }}</option>
+            }
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="d-flex justify-content-end gap-2">
+            <button 
+              type="button" 
+              class="btn btn-secondary" 
+              (click)="onCancel()"
+              [disabled]="isSubmitting">
+              <i class="feather icon-x me-2"></i>Cancel
+            </button>
+            <button 
+              type="submit" 
+              class="btn btn-primary" 
+              [disabled]="isSubmitting || paymentForm.invalid">
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              }
+              @if (!isSubmitting) {
+                <i class="feather icon-save me-2"></i>
+              }
+              {{ isEditMode ? 'Update Payment' : 'Create Payment' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  }
+</app-card>

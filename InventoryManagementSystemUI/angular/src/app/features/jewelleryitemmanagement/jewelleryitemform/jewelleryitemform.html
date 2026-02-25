@@ -1,0 +1,482 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Jewellery Item' : 'Add Jewellery Item'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading jewellery item data...</p>
+    </div>
+  }
+
+  <!-- Jewellery Item Form -->
+  @if (!isLoading) {
+    <form [formGroup]="jewelleryItemForm" (ngSubmit)="onSubmit()" class="jewellery-item-form">
+      <div class="row">
+        <!-- Basic Information Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Basic Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Item Code Field -->
+        <div class="col-md-4 mb-3">
+          <label for="itemCode" class="form-label">Item Code / SKU</label>
+          <input
+            type="text"
+            class="form-control"
+            id="itemCode"
+            formControlName="itemCode"
+            placeholder="Enter item code (optional)"
+          />
+          <small class="text-muted">Auto-generated if left empty</small>
+        </div>
+
+        <!-- Name Field -->
+        <div class="col-md-4 mb-3">
+          <label for="name" class="form-label">
+            Item Name <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+            placeholder="Enter item name"
+            [class.is-invalid]="hasError('name')"
+          />
+          @if (hasError('name')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('name') }}
+            </div>
+          }
+        </div>
+
+        <!-- Category Field -->
+        <div class="col-md-4 mb-3">
+          <label for="categoryId" class="form-label">
+            Category <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="categoryId"
+            formControlName="categoryId"
+            [class.is-invalid]="hasError('categoryId')"
+          >
+            <option [ngValue]="null">Select Category</option>
+            @for (category of categories; track category.id) {
+              <option [ngValue]="category.id">
+                {{ category.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('categoryId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('categoryId') }}
+            </div>
+          }
+        </div>
+
+        <!-- Description Field -->
+        <div class="col-md-12 mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            class="form-control"
+            id="description"
+            formControlName="description"
+            rows="2"
+            placeholder="Enter item description (optional)"
+            [class.is-invalid]="hasError('description')"
+          ></textarea>
+          @if (hasError('description')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('description') }}
+            </div>
+          }
+        </div>
+
+        <!-- Metal Details Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Metal Details</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Metal Field -->
+        <div class="col-md-4 mb-3">
+          <label for="metalId" class="form-label">
+            Metal <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="metalId"
+            formControlName="metalId"
+            [class.is-invalid]="hasError('metalId')"
+          >
+            <option [ngValue]="null">Select Metal</option>
+            @for (metal of metals; track metal.id) {
+              <option [ngValue]="metal.id">
+                {{ metal.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('metalId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('metalId') }}
+            </div>
+          }
+        </div>
+
+        <!-- Purity Field -->
+        <div class="col-md-4 mb-3">
+          <label for="purityId" class="form-label">
+            Purity <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="purityId"
+            formControlName="purityId"
+            [class.is-invalid]="hasError('purityId')"
+          >
+            <option [ngValue]="null">Select Purity</option>
+            @for (purity of filteredPurities; track purity.id) {
+              <option [ngValue]="purity.id">
+                {{ purity.name }} ({{ purity.percentage }}%)
+              </option>
+            }
+          </select>
+          @if (hasError('purityId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('purityId') }}
+            </div>
+          }
+          <small class="text-muted">Select a metal first to see available purities</small>
+        </div>
+
+        <!-- Is Hallmarked Field -->
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Hallmark Status</label>
+          <div class="form-check mt-2">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="isHallmarked"
+              formControlName="isHallmarked"
+            />
+            <label class="form-check-label" for="isHallmarked">
+              Item is Hallmarked
+            </label>
+          </div>
+        </div>
+
+        <!-- Hallmark Details Section - Only shown when isHallmarked is true -->
+        @if (jewelleryItemForm.get('isHallmarked')?.value) {
+          <div class="col-12 mt-3">
+            <h6 class="text-muted mb-3">Hallmark Details</h6>
+            <hr class="mt-0">
+          </div>
+
+          <!-- HUID Field -->
+          <div class="col-md-3 mb-3">
+            <label for="huid" class="form-label">HUID</label>
+            <input
+              type="text"
+              class="form-control"
+              id="huid"
+              formControlName="huid"
+              placeholder="6-digit alphanumeric"
+              maxlength="6"
+              [class.is-invalid]="hasError('huid')"
+            />
+            @if (hasError('huid')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('huid') }}
+              </div>
+            }
+            <small class="text-muted">6-digit Hallmark Unique ID</small>
+          </div>
+
+          <!-- BIS Certification Number Field -->
+          <div class="col-md-3 mb-3">
+            <label for="bisCertificationNumber" class="form-label">BIS Certification Number</label>
+            <input
+              type="text"
+              class="form-control"
+              id="bisCertificationNumber"
+              formControlName="bisCertificationNumber"
+              placeholder="BIS certification number"
+              maxlength="50"
+              [class.is-invalid]="hasError('bisCertificationNumber')"
+            />
+            @if (hasError('bisCertificationNumber')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('bisCertificationNumber') }}
+              </div>
+            }
+          </div>
+
+          <!-- Hallmark Center Name Field -->
+          <div class="col-md-3 mb-3">
+            <label for="hallmarkCenterName" class="form-label">Hallmark Center Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="hallmarkCenterName"
+              formControlName="hallmarkCenterName"
+              placeholder="Hallmark center name"
+              maxlength="100"
+              [class.is-invalid]="hasError('hallmarkCenterName')"
+            />
+            @if (hasError('hallmarkCenterName')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('hallmarkCenterName') }}
+              </div>
+            }
+          </div>
+
+          <!-- Hallmark Date Field -->
+          <div class="col-md-3 mb-3">
+            <label for="hallmarkDate" class="form-label">Hallmark Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="hallmarkDate"
+              formControlName="hallmarkDate"
+              [class.is-invalid]="hasError('hallmarkDate')"
+            />
+            @if (hasError('hallmarkDate')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('hallmarkDate') }}
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Weight Details Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Weight Details</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Gross Weight Field -->
+        <div class="col-md-4 mb-3">
+          <label for="grossWeight" class="form-label">
+            Gross Weight (g) <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="grossWeight"
+            formControlName="grossWeight"
+            placeholder="0.000"
+            step="0.001"
+            min="0"
+            [class.is-invalid]="hasError('grossWeight')"
+          />
+          @if (hasError('grossWeight')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('grossWeight') }}
+            </div>
+          }
+          <small class="text-muted">Total weight including stones</small>
+        </div>
+
+        <!-- Net Metal Weight Field -->
+        <div class="col-md-4 mb-3">
+          <label for="netMetalWeight" class="form-label">
+            Net Metal Weight (g) <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="netMetalWeight"
+            formControlName="netMetalWeight"
+            placeholder="0.000"
+            step="0.001"
+            min="0"
+            [class.is-invalid]="hasError('netMetalWeight')"
+          />
+          @if (hasError('netMetalWeight')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('netMetalWeight') }}
+            </div>
+          }
+          <small class="text-muted">Metal weight excluding stones</small>
+        </div>
+
+        <!-- Wastage Percentage Field -->
+        <div class="col-md-4 mb-3">
+          <label for="wastagePercentage" class="form-label">
+            Wastage % <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="wastagePercentage"
+            formControlName="wastagePercentage"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            max="100"
+            [class.is-invalid]="hasError('wastagePercentage')"
+          />
+          @if (hasError('wastagePercentage')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('wastagePercentage') }}
+            </div>
+          }
+        </div>
+
+        <!-- Making Charges Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Making Charges</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Making Charge Type Field -->
+        <div class="col-md-4 mb-3">
+          <label for="makingChargeType" class="form-label">
+            Charge Type <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="makingChargeType"
+            formControlName="makingChargeType"
+            [class.is-invalid]="hasError('makingChargeType')"
+          >
+            @for (type of makingChargeTypes; track type.value) {
+              <option [ngValue]="type.value">
+                {{ type.label }}
+              </option>
+            }
+          </select>
+          @if (hasError('makingChargeType')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('makingChargeType') }}
+            </div>
+          }
+        </div>
+
+        <!-- Making Charge Value Field -->
+        <div class="col-md-4 mb-3">
+          <label for="makingChargeValue" class="form-label">
+            Charge Value <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="makingChargeValue"
+            formControlName="makingChargeValue"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            [class.is-invalid]="hasError('makingChargeValue')"
+          />
+          @if (hasError('makingChargeValue')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('makingChargeValue') }}
+            </div>
+          }
+          <small class="text-muted">
+            @if (jewelleryItemForm.get('makingChargeType')?.value === 1) {
+              Amount per gram (₹)
+            } @else if (jewelleryItemForm.get('makingChargeType')?.value === 2) {
+              Percentage of metal value (%)
+            } @else {
+              Fixed amount (₹)
+            }
+          </small>
+        </div>
+
+        <!-- Stone Details Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Stone Details</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Has Stone Field -->
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Stone Setting</label>
+          <div class="form-check mt-2">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="hasStone"
+              formControlName="hasStone"
+            />
+            <label class="form-check-label" for="hasStone">
+              Item has stones
+            </label>
+          </div>
+        </div>
+
+        <!-- Stone Field -->
+        <div class="col-md-4 mb-3">
+          <label for="stoneId" class="form-label">Stone Type</label>
+          <select
+            class="form-select"
+            id="stoneId"
+            formControlName="stoneId"
+            [disabled]="!jewelleryItemForm.get('hasStone')?.value"
+          >
+            <option [ngValue]="null">Select Stone</option>
+            @for (stone of stones; track stone.id) {
+              <option [ngValue]="stone.id">
+                {{ stone.name }}
+              </option>
+            }
+          </select>
+          <small class="text-muted">Enable "Item has stones" to select</small>
+        </div>
+
+        <!-- Status Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Status</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Status Field -->
+        <div class="col-md-4 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+          >
+            <option [ngValue]="1">Active</option>
+            <option [ngValue]="2">Inactive</option>
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="jewelleryItemForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

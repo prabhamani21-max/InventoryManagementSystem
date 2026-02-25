@@ -1,0 +1,73 @@
+<app-card cardTitle="Metal Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Metals</h5>
+    <button class="btn btn-primary" (click)="onAddMetal()">
+      <i class="feather icon-plus me-2"></i>Add Metal
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading metals...</p>
+    </div>
+  }
+
+  <!-- Metals Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (metals.length === 0) {
+            <tr>
+              <td colspan="4" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No metals found. Click "Add Metal" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (metal of metals; track metal.id) {
+            <tr>
+              <td>{{ metal.id }}</td>
+              <td class="fw-medium">{{ metal.name }}</td>
+              <td>
+                <span [ngClass]="getStatusClass(metal.statusId)">
+                  {{ getStatusLabel(metal.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditMetal(metal.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteMetal(metal.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

@@ -1,0 +1,600 @@
+<app-card [cardTitle]="'Add Items to Sale Order'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading jewellery items...</p>
+    </div>
+  }
+
+  @if (!isLoading) {
+    <!-- Wizard Mode: Item Selection Interface -->
+    @if (wizardMode) {
+      <!-- Sale Order Info -->
+      <div class="alert alert-info d-flex align-items-center mb-4">
+        <i class="material-icons-outlined me-2">info</i>
+        <span>Sale Order ID: <strong>{{ saleOrderItemForm.get('saleOrderId')?.value }}</strong></span>
+      </div>
+
+      <!-- Already Added Items List -->
+      @if (wizardState.saleOrderItems.length > 0) {
+        <div class="mb-4">
+          <h6 class="text-muted mb-3">
+            <i class="material-icons-outlined me-1" style="font-size: 18px; vertical-align: middle;">shopping_bag</i>
+            Items in this Order ({{ wizardState.saleOrderItems.length }})
+          </h6>
+          <div class="table-responsive">
+            <table class="table table-sm table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Item Code</th>
+                  <th>Item Name</th>
+                  <th>Qty</th>
+                  <th>Subtotal</th>
+                  <th>GST</th>
+                  <th>Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of wizardState.saleOrderItems; track item.id) {
+                  <tr>
+                    <td><code>{{ item.itemCode || '-' }}</code></td>
+                    <td>{{ item.itemName }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.itemSubtotal | number:'1.2-2' }}</td>
+                    <td>₹{{ item.gstAmount | number:'1.2-2' }}</td>
+                    <td class="fw-bold">₹{{ item.totalAmount | number:'1.2-2' }}</td>
+                    <td>
+                      <button 
+                        type="button" 
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="removeItemFromOrder(item.id)"
+                        [disabled]="isSubmitting">
+                        <i class="material-icons-outlined" style="font-size: 16px;">delete</i>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="table-light">
+                <tr>
+                  <td colspan="3" class="fw-bold">Totals</td>
+                  <td class="fw-bold">₹{{ wizardState.orderSubtotal | number:'1.2-2' }}</td>
+                  <td class="fw-bold">₹{{ wizardState.orderTaxAmount | number:'1.2-2' }}</td>
+                  <td class="fw-bold text-success">₹{{ wizardState.orderTotal | number:'1.2-2' }}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Add New Item Section -->
+      <div class="border rounded p-3 mb-3">
+        <h6 class="text-muted mb-3">
+          <i class="material-icons-outlined me-1" style="font-size: 18px; vertical-align: middle;">add_circle</i>
+          Add New Item
+        </h6>
+
+        <form [formGroup]="saleOrderItemForm" (ngSubmit)="onSubmit()" class="sale-order-item-form">
+          <!-- Hidden Sale Order ID -->
+          <input type="hidden" formControlName="saleOrderId" />
+
+          <div class="row">
+            <!-- Jewellery Item Search/Select -->
+            <div class="col-md-6 mb-3">
+              <label for="itemSearch" class="form-label">
+                Search Jewellery Item <span class="text-danger">*</span>
+              </label>
+              <div class="position-relative">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="itemSearch"
+                  placeholder="Enter item code or name to search..."
+                  [(ngModel)]="searchQuery"
+                  (ngModelChange)="searchItems()"
+                  [ngModelOptions]="{standalone: true}"
+                  [class.is-invalid]="hasError('jewelleryItemId')"
+                />
+                @if (isSearching) {
+                  <span class="position-absolute end-0 top-50 translate-middle-y me-2">
+                    <span class="spinner-border spinner-border-sm text-primary"></span>
+                  </span>
+                }
+                
+                <!-- Dropdown with search results -->
+                @if (searchQuery && searchQuery.length >= 2 && filteredItems.length > 0 && !selectedItem) {
+                  <div class="dropdown-menu show w-100" style="max-height: 300px; overflow-y: auto;">
+                    @for (item of filteredItems; track item.id) {
+                      <button 
+                        type="button"
+                        class="dropdown-item d-flex justify-content-between align-items-center"
+                        (click)="selectJewelleryItem(item)">
+                        <div>
+                          <code class="me-2">{{ item.itemCode }}</code>
+                          <span>{{ item.name }}</span>
+                        </div>
+                        <small class="text-muted">₹{{ item.sellingPrice | number:'1.2-2' }}</small>
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+              
+              <!-- Selected Item Display -->
+              @if (selectedItem) {
+                <div class="alert alert-success mt-2 mb-0 d-flex justify-content-between align-items-center">
+                  <div>
+                    <code class="me-2">{{ selectedItem.itemCode }}</code>
+                    <strong>{{ selectedItem.name }}</strong>
+                    <br>
+                    <small class="text-muted">
+                      Price: ₹{{ selectedItem.sellingPrice | number:'1.2-2' }} | 
+                      Stock: {{ selectedItem.stockQuantity || 0 }}
+                    </small>
+                  </div>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="clearSelectedItem()">
+                    <i class="material-icons-outlined" style="font-size: 16px;">close</i>
+                  </button>
+                </div>
+              }
+              
+              @if (hasError('jewelleryItemId')) {
+                <div class="invalid-feedback d-block">
+                  {{ getErrorMessage('jewelleryItemId') }}
+                </div>
+              }
+              <small class="text-muted">Type at least 2 characters to search</small>
+            </div>
+
+            <!-- Quantity -->
+            <div class="col-md-3 mb-3">
+              <label for="quantity" class="form-label">
+                Quantity <span class="text-danger">*</span>
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                id="quantity"
+                formControlName="quantity"
+                placeholder="1"
+                min="1"
+                [class.is-invalid]="hasError('quantity')"
+              />
+              @if (hasError('quantity')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('quantity') }}
+                </div>
+              }
+              <!-- Stock Availability Indicator -->
+              @if (isCheckingStock) {
+                <small class="text-muted">
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                  Checking stock...
+                </small>
+              } @else if (stockAvailable !== null) {
+                <small [class]="getStockStatusClass()">
+                  <i class="material-icons-outlined" style="font-size: 14px; vertical-align: middle;">
+                    {{ stockAvailable ? 'check_circle' : 'error' }}
+                  </i>
+                  {{ getStockStatusMessage() }}
+                </small>
+              }
+            </div>
+
+            <!-- Discount Amount -->
+            <div class="col-md-3 mb-3">
+              <label for="discountAmount" class="form-label">
+                Discount (₹)
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                id="discountAmount"
+                formControlName="discountAmount"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+              />
+            </div>
+
+            <!-- GST Percentage -->
+            <div class="col-md-4 mb-3">
+              <label for="gstPercentage" class="form-label">
+                GST % <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="gstPercentage"
+                  formControlName="gstPercentage"
+                  placeholder="3"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  [class.is-invalid]="hasError('gstPercentage')"
+                />
+                <span class="input-group-text">%</span>
+              </div>
+              @if (hasError('gstPercentage')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('gstPercentage') }}
+                </div>
+              }
+            </div>
+
+            <!-- Stone Amount -->
+            <div class="col-md-4 mb-3">
+              <label for="stoneAmount" class="form-label">
+                Stone Amount (₹)
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                id="stoneAmount"
+                formControlName="stoneAmount"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+              />
+            </div>
+
+            <!-- Status -->
+            <div class="col-md-4 mb-3">
+              <label for="statusId" class="form-label">
+                Status <span class="text-danger">*</span>
+              </label>
+              <select
+                class="form-select"
+                id="statusId"
+                formControlName="statusId"
+                [class.is-invalid]="hasError('statusId')">
+                @for (status of statusOptions; track status.id) {
+                  <option [ngValue]="status.id">{{ status.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Price Breakdown Preview -->
+          @if (selectedItem && priceBreakdown.totalAmount > 0) {
+            <div class="col-12 mt-3">
+              <h6 class="text-muted mb-3">
+                <i class="material-icons-outlined me-1" style="font-size: 18px; vertical-align: middle;">calculate</i>
+                Price Breakdown Preview
+              </h6>
+              <div class="card">
+                <div class="card-body p-2">
+                  <table class="table table-sm table-borderless mb-0">
+                    <tbody>
+                      <tr>
+                        <td>Metal Amount ({{ selectedItem.netMetalWeight || selectedItem.grossWeight }}g × Rate)</td>
+                        <td class="text-end">₹{{ priceBreakdown.metalAmount | number:'1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <td>Making Charges</td>
+                        <td class="text-end">₹{{ priceBreakdown.makingCharges | number:'1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <td>Wastage Charges ({{ selectedItem.wastagePercentage }}%)</td>
+                        <td class="text-end">₹{{ priceBreakdown.wastageAmount | number:'1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <td>Stone Amount</td>
+                        <td class="text-end">₹{{ priceBreakdown.stoneAmount | number:'1.2-2' }}</td>
+                      </tr>
+                      <tr class="table-light">
+                        <td class="fw-bold">Subtotal</td>
+                        <td class="text-end fw-bold">₹{{ priceBreakdown.subtotal | number:'1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <td>Discount</td>
+                        <td class="text-end text-danger">- ₹{{ priceBreakdown.discountAmount | number:'1.2-2' }}</td>
+                      </tr>
+                      <tr class="table-light">
+                        <td class="fw-bold">Taxable Amount</td>
+                        <td class="text-end fw-bold">₹{{ priceBreakdown.taxableAmount | number:'1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <td>GST ({{ saleOrderItemForm.get('gstPercentage')?.value }}%)</td>
+                        <td class="text-end">₹{{ priceBreakdown.gstAmount | number:'1.2-2' }}</td>
+                      </tr>
+                      <tr class="table-success">
+                        <td class="fw-bold">Total Amount</td>
+                        <td class="text-end fw-bold text-success">₹{{ priceBreakdown.totalAmount | number:'1.2-2' }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <small class="text-muted mt-1 d-block">
+                <i class="material-icons-outlined" style="font-size: 14px; vertical-align: middle;">info</i>
+                Final price will be calculated by the server. This is an estimate.
+              </small>
+            </div>
+          }
+
+          <!-- Add Item Button -->
+          <div class="d-flex justify-content-end gap-2">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="resetItemForm()"
+              [disabled]="isSubmitting">
+              Clear
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="saleOrderItemForm.invalid || isSubmitting || stockAvailable === false">
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              }
+              <i class="material-icons-outlined me-1" style="font-size: 18px; vertical-align: middle;">add</i>
+              Add Item to Order
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="d-flex justify-content-between mt-4">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="onCancel()">
+          <i class="material-icons-outlined me-1">arrow_back</i>
+          Back to Sale Order
+        </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="proceedToPayment()"
+          [disabled]="wizardState.saleOrderItems.length === 0">
+          Proceed to Payment
+          <i class="material-icons-outlined ms-1">arrow_forward</i>
+        </button>
+      </div>
+    }
+
+    <!-- Non-Wizard Mode: Original Form -->
+    @if (!wizardMode) {
+      <form [formGroup]="saleOrderItemForm" (ngSubmit)="onSubmit()" class="sale-order-item-form">
+        <div class="row">
+          <!-- Basic Information Section -->
+          <div class="col-12">
+            <h6 class="text-muted mb-3">Item Information</h6>
+            <hr class="mt-0">
+          </div>
+
+          <!-- Sale Order ID Field -->
+          <div class="col-md-6 mb-3">
+            <label for="saleOrderId" class="form-label">
+              Sale Order <span class="text-danger">*</span>
+            </label>
+            @if (isEditMode && existingItem?.saleOrderNumber) {
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="existingItem?.saleOrderNumber"
+                  disabled
+                />
+                <input
+                  type="hidden"
+                  formControlName="saleOrderId"
+                />
+              </div>
+              <small class="text-muted">Sale Order: {{ existingItem?.saleOrderNumber }}</small>
+            } @else {
+              <input
+                type="number"
+                class="form-control"
+                id="saleOrderId"
+                formControlName="saleOrderId"
+                placeholder="Enter sale order ID"
+                [class.is-invalid]="hasError('saleOrderId')"
+              />
+              @if (hasError('saleOrderId')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('saleOrderId') }}
+                </div>
+              }
+              <small class="text-muted">The sale order this item belongs to</small>
+            }
+          </div>
+
+          <!-- Jewellery Item ID Field -->
+          <div class="col-md-6 mb-3">
+            <label for="jewelleryItemId" class="form-label">
+              Jewellery Item ID <span class="text-danger">*</span>
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              id="jewelleryItemId"
+              formControlName="jewelleryItemId"
+              placeholder="Enter jewellery item ID"
+              [class.is-invalid]="hasError('jewelleryItemId')"
+            />
+            @if (hasError('jewelleryItemId')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('jewelleryItemId') }}
+              </div>
+            }
+            <small class="text-muted">The jewellery item to add to the order</small>
+          </div>
+
+          <!-- Quantity and Pricing Section -->
+          <div class="col-12 mt-3">
+            <h6 class="text-muted mb-3">Quantity & Pricing</h6>
+            <hr class="mt-0">
+          </div>
+
+          <!-- Quantity Field -->
+          <div class="col-md-4 mb-3">
+            <label for="quantity" class="form-label">
+              Quantity <span class="text-danger">*</span>
+            </label>
+            <input
+              type="number"
+              class="form-control"
+              id="quantity"
+              formControlName="quantity"
+              placeholder="Enter quantity"
+              min="1"
+              [class.is-invalid]="hasError('quantity')"
+            />
+            @if (hasError('quantity')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('quantity') }}
+              </div>
+            }
+          </div>
+
+          <!-- Discount Amount Field -->
+          <div class="col-md-4 mb-3">
+            <label for="discountAmount" class="form-label">
+              Discount Amount
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">₹</span>
+              <input
+                type="number"
+                class="form-control"
+                id="discountAmount"
+                formControlName="discountAmount"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <small class="text-muted">Discount to apply on this item</small>
+          </div>
+
+          <!-- GST Percentage Field -->
+          <div class="col-md-4 mb-3">
+            <label for="gstPercentage" class="form-label">
+              GST Percentage <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                id="gstPercentage"
+                formControlName="gstPercentage"
+                placeholder="3"
+                min="0"
+                max="100"
+                step="0.01"
+                [class.is-invalid]="hasError('gstPercentage')"
+              />
+              <span class="input-group-text">%</span>
+            </div>
+            @if (hasError('gstPercentage')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('gstPercentage') }}
+              </div>
+            }
+          </div>
+
+          <!-- Stone Amount Field -->
+          <div class="col-md-6 mb-3">
+            <label for="stoneAmount" class="form-label">
+              Stone Amount
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">₹</span>
+              <input
+                type="number"
+                class="form-control"
+                id="stoneAmount"
+                formControlName="stoneAmount"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <small class="text-muted">Stone amount if item has stones</small>
+          </div>
+
+          <!-- Status Field -->
+          <div class="col-md-6 mb-3">
+            <label for="statusId" class="form-label">
+              Status <span class="text-danger">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="statusId"
+              formControlName="statusId"
+              [class.is-invalid]="hasError('statusId')"
+            >
+              @for (status of statusOptions; track status.id) {
+                <option [ngValue]="status.id">
+                  {{ status.name }}
+                </option>
+              }
+            </select>
+            @if (hasError('statusId')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('statusId') }}
+              </div>
+            }
+          </div>
+
+          <!-- Auto Calculation Toggle (Create Mode Only) -->
+          @if (!isEditMode) {
+            <div class="col-12 mb-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="useAutoCalculation"
+                  [checked]="useAutoCalculation"
+                  (change)="toggleAutoCalculation()"
+                />
+                <label class="form-check-label" for="useAutoCalculation">
+                  Use Automatic Price Calculation
+                </label>
+              </div>
+              <small class="text-muted">
+                When enabled, metal rate, making charges, wastage, and tax will be calculated automatically based on jewellery item details.
+              </small>
+            </div>
+          }
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onCancel()"
+            [disabled]="isSubmitting"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="saleOrderItemForm.invalid || isSubmitting"
+          >
+            @if (isSubmitting) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            }
+            {{ isEditMode ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </form>
+    }
+  }
+</app-card>

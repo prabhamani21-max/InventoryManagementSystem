@@ -1,0 +1,58 @@
+// Step4 Payment Component Styles
+
+.order-summary {
+  .summary-card {
+    height: 100%;
+    
+    small {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+.amount-summary {
+  background-color: #f8f9fa;
+  
+  hr {
+    margin: 0.75rem 0;
+  }
+}
+
+.balance-preview {
+  .material-icons {
+    font-size: 1.2rem;
+    vertical-align: middle;
+  }
+}
+
+.payment-form-section {
+  .form-control,
+  .form-select {
+    &:read-only {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.payments-made {
+  table {
+    margin-bottom: 0;
+    
+    th, td {
+      vertical-align: middle;
+    }
+  }
+}
+
+// Alert styling
+.alert {
+  .material-icons {
+    font-size: 1.5rem;
+  }
+}
+
+// Button styling
+.btn {
+  min-width: 120px;
+}

@@ -1,0 +1,105 @@
+<app-card cardTitle="Payment Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Payments</h5>
+    <button class="btn btn-primary" (click)="onAddPayment()">
+      <i class="feather icon-plus me-2"></i>Add Payment
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading payments...</p>
+    </div>
+  }
+
+  <!-- Payments Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Order ID</th>
+            <th>Order Type</th>
+            <th>Amount</th>
+            <th>Payment Method</th>
+            <th>Payment Date</th>
+            <th>Reference Number</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (payments.length === 0) {
+            <tr>
+              <td colspan="9" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No payments found. Click "Add Payment" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (payment of payments; track payment.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">#{{ payment.id }}</span>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark">
+                  <i class="feather icon-hash me-1"></i>{{ payment.orderId || 'N/A' }}
+                </span>
+              </td>
+              <td>
+                <span [ngClass]="getOrderTypeClass(payment.orderType)">
+                  {{ getOrderTypeLabel(payment.orderType) }}
+                </span>
+              </td>
+              <td>
+                <span class="fw-medium text-success">
+                  {{ formatCurrency(payment.amount) }}
+                </span>
+              </td>
+              <td>
+                <span [ngClass]="getPaymentMethodClass(payment.paymentMethod)">
+                  {{ getPaymentMethodLabel(payment.paymentMethod) }}
+                </span>
+              </td>
+              <td>
+                <span>{{ formatDate(payment.paymentDate) }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ payment.referenceNumber || '-' }}</span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(payment.statusId)">
+                  {{ getStatusLabel(payment.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditPayment(payment.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeletePayment(payment.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

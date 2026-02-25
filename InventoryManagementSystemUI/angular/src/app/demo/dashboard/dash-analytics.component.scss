@@ -1,0 +1,50 @@
+.enter-sale-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card-footer {
+    transition: background-color 0.2s ease;
+  }
+  
+  &:hover .card-footer {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+// Avatar sizes
+.avatar-xl {
+  .avatar {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.avatar-lg {
+  .avatar {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+// Background utilities
+.bg-light-success {
+  background-color: rgba(25, 135, 84, 0.1) !important;
+}
+
+.bg-light-info {
+  background-color: rgba(13, 202, 240, 0.1) !important;
+}
+
+// Material Icons
+.material-icons-outlined {
+  vertical-align: middle;
+}

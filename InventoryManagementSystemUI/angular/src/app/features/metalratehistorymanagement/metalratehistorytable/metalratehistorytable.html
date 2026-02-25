@@ -1,0 +1,241 @@
+<app-card cardTitle="Metal Rate History Management" [customHeader]="true">
+  <!-- Header with Toggle, Filters, and Add Button -->
+  <div class="app-card-header mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Metal Rates</h5>
+      <div class="d-flex gap-2 align-items-center">
+        <!-- Toggle Switch -->
+        <div class="form-check form-switch me-3">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="rateToggle"
+            [checked]="!showCurrentRatesOnly"
+            (change)="showCurrentRatesOnly = !showCurrentRatesOnly; onToggleView()"
+          >
+          <label class="form-check-label" for="rateToggle">
+            {{ showCurrentRatesOnly ? 'Current Rates Only' : 'All Rate History' }}
+          </label>
+        </div>
+        <!-- Add Button -->
+        <button class="btn btn-primary" (click)="onAddMetalRate()">
+          <i class="feather icon-plus me-2"></i>Add Metal Rate
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters Row -->
+    <div class="row g-3">
+      <!-- Search Input -->
+      <div class="col-md-3">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by metal, purity..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+          />
+          <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
+            <i class="feather icon-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Metal Filter -->
+      <div class="col-md-2">
+        <select 
+          class="form-select" 
+          [(ngModel)]="selectedMetalId" 
+          (change)="onMetalFilterChange()"
+        >
+          <option [ngValue]="null">All Metals</option>
+          @for (metal of metals; track metal.id) {
+            <option [ngValue]="metal.id">{{ metal.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Purity Filter -->
+      <div class="col-md-2">
+        <select 
+          class="form-select" 
+          [(ngModel)]="selectedPurityId" 
+          (change)="onPurityFilterChange()"
+        >
+          <option [ngValue]="null">All Purities</option>
+          @for (purity of getFilteredPurities(); track purity.id) {
+            <option [ngValue]="purity.id">{{ purity.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Date Range Filters (only for history view) -->
+      @if (!showCurrentRatesOnly) {
+        <div class="col-md-2">
+          <input
+            type="date"
+            class="form-control"
+            placeholder="Start Date"
+            [(ngModel)]="startDate"
+            (change)="onDateFilterChange()"
+          />
+        </div>
+        <div class="col-md-2">
+          <input
+            type="date"
+            class="form-control"
+            placeholder="End Date"
+            [(ngModel)]="endDate"
+            (change)="onDateFilterChange()"
+          />
+        </div>
+      }
+
+      <!-- Clear Filters Button -->
+      <div class="col-md-1">
+        <button class="btn btn-outline-secondary w-100" type="button" (click)="onClearFilters()">
+          <i class="feather icon-x"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading metal rates...</p>
+    </div>
+  }
+
+  <!-- Current Rates Table -->
+  @if (!isLoading && showCurrentRatesOnly) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Metal Name</th>
+            <th>Purity Name</th>
+            <th>Percentage</th>
+            <th>Rate Per Gram</th>
+            <th>Effective Date</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredCurrentRates.length === 0) {
+            <tr>
+              <td colspan="7" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  @if (searchTerm || selectedMetalId || selectedPurityId) {
+                    No metal rates found matching the filters. Try different criteria.
+                  } @else {
+                    No metal rates found. Click "Add Metal Rate" to create one.
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+          @for (metalRate of filteredCurrentRates; track metalRate.purityId) {
+            <tr>
+              <td>
+                <span class="fw-medium">{{ metalRate.metalName || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ metalRate.purityName || '-' }}</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary">{{ formatPercentage(metalRate.percentage) }}</span>
+              </td>
+              <td>
+                <span class="fw-medium text-success">{{ formatCurrency(metalRate.currentRatePerGram) }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ formatDate(metalRate.effectiveDate) }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ metalRate.lastUpdated ? formatDate(metalRate.lastUpdated) : '-' }}</span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditMetalRate(metalRate.purityId)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- All Rate History Table -->
+  @if (!isLoading && !showCurrentRatesOnly) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Metal Name</th>
+            <th>Purity Name</th>
+            <th>Rate Per Gram</th>
+            <th>Effective Date</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredHistoryRates.length === 0) {
+            <tr>
+              <td colspan="6" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  @if (searchTerm || selectedMetalId || selectedPurityId || startDate || endDate) {
+                    No rate history found matching the filters. Try different criteria.
+                  } @else {
+                    No rate history found. Click "Add Metal Rate" to create one.
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+          @for (rate of filteredHistoryRates; track rate.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">{{ getMetalNameByPurity(rate.purityId) }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ rate.purityName || getPurityName(rate.purityId) }}</span>
+              </td>
+              <td>
+                <span class="fw-medium text-success">{{ formatCurrency(rate.ratePerGram) }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ formatDate(rate.effectiveDate) }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ formatDate(rate.createdDate) }}</span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditMetalRate(rate.purityId)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

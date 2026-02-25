@@ -1,0 +1,398 @@
+<div class="step5-invoice">
+  <!-- Step Title -->
+  <div class="step-header mb-4">
+    <h5 class="mb-1">
+      <i class="material-icons-outlined me-2">description</i>
+      Generate Invoice
+    </h5>
+    <p class="text-muted mb-0">Generate and print the final invoice</p>
+  </div>
+
+  <!-- Invoice Already Generated -->
+  @if (wizardState.generatedInvoice) {
+    <div class="invoice-generated">
+      <!-- Success Message -->
+      <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+        <i class="material-icons-outlined me-2">check_circle</i>
+        <div>
+          <strong>Invoice Generated Successfully!</strong>
+          <br>
+          Invoice Number: {{ wizardState.generatedInvoice.invoiceNumber }}
+        </div>
+      </div>
+
+      <!-- Invoice Preview Card -->
+      <div class="invoice-preview card" id="invoice-preview">
+        <div class="card-header bg-white">
+          <div class="row align-items-center">
+            <div class="col">
+              <h5 class="mb-0">Invoice Preview</h5>
+            </div>
+            <div class="col-auto">
+              <span class="badge bg-success">Generated</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Invoice Header -->
+          <div class="invoice-header mb-4 pb-3 border-bottom">
+            <div class="row">
+              <div class="col-md-6">
+                <h4 class="text-primary mb-1">{{ wizardState.generatedInvoice.companyName }}</h4>
+                @if (wizardState.generatedInvoice.companyAddress) {
+                  <p class="text-muted mb-0">{{ wizardState.generatedInvoice.companyAddress }}</p>
+                }
+                @if (wizardState.generatedInvoice.companyPhone) {
+                  <p class="text-muted mb-0">
+                    <i class="material-icons-outlined me-1" style="font-size: 14px;">phone</i>
+                    {{ wizardState.generatedInvoice.companyPhone }}
+                  </p>
+                }
+                @if (wizardState.generatedInvoice.companyEmail) {
+                  <p class="text-muted mb-0">
+                    <i class="material-icons-outlined me-1" style="font-size: 14px;">email</i>
+                    {{ wizardState.generatedInvoice.companyEmail }}
+                  </p>
+                }
+                @if (wizardState.generatedInvoice.companyGSTIN) {
+                  <p class="text-muted mb-0">
+                    <strong>GSTIN:</strong> {{ wizardState.generatedInvoice.companyGSTIN }}
+                  </p>
+                }
+              </div>
+              <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <h3 class="text-primary">TAX INVOICE</h3>
+                <p class="mb-0"><strong>Invoice No:</strong> {{ wizardState.generatedInvoice.invoiceNumber }}</p>
+                <p class="mb-0">
+                  <strong>Date:</strong> {{ wizardState.generatedInvoice.invoiceDate | date:'mediumDate' }}
+                </p>
+                @if (wizardState.generatedInvoice.saleOrderId) {
+                  <p class="mb-0">
+                    <strong>Order Ref:</strong> #{{ wizardState.generatedInvoice.saleOrderId }}
+                  </p>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Details -->
+          <div class="customer-details mb-4">
+            <h6 class="text-muted mb-2">Bill To:</h6>
+            <div class="p-3 bg-light rounded">
+              <h6 class="mb-1">{{ wizardState.generatedInvoice.partyName }}</h6>
+              @if (wizardState.generatedInvoice.partyAddress) {
+                <p class="text-muted mb-0">{{ wizardState.generatedInvoice.partyAddress }}</p>
+              }
+              @if (wizardState.generatedInvoice.partyPhone) {
+                <p class="text-muted mb-0">
+                  <i class="material-icons-outlined me-1" style="font-size: 14px;">phone</i>
+                  {{ wizardState.generatedInvoice.partyPhone }}
+                </p>
+              }
+              @if (wizardState.generatedInvoice.partyGSTIN) {
+                <p class="text-muted mb-0">
+                  <strong>GSTIN:</strong> {{ wizardState.generatedInvoice.partyGSTIN }}
+                </p>
+              }
+            </div>
+          </div>
+
+          <!-- Invoice Items -->
+          <div class="invoice-items mb-4">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-end">Subtotal</th>
+                    <th class="text-end">Discount</th>
+                    <th class="text-end">GST</th>
+                    <th class="text-end">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of wizardState.generatedInvoice.invoiceItems; track item.id; let i = $index) {
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td>
+                        <strong>{{ item.itemName }}</strong>
+                        @if (item.isHallmarked) {
+                          <br><small class="text-muted">Hallmarked</small>
+                        }
+                      </td>
+                      <td class="text-center">{{ item.quantity }}</td>
+                      <td class="text-end">{{ formatCurrency(item.itemSubtotal) }}</td>
+                      <td class="text-end text-danger">-{{ formatCurrency(item.discount) }}</td>
+                      <td class="text-end">{{ formatCurrency(item.gstAmount) }}</td>
+                      <td class="text-end fw-bold">{{ formatCurrency(item.totalAmount) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Invoice Summary -->
+          <div class="invoice-summary">
+            <div class="row">
+              <div class="col-md-6">
+                @if (wizardState.generatedInvoice.notes) {
+                  <div class="notes-section">
+                    <h6 class="text-muted mb-2">Notes:</h6>
+                    <p class="small">{{ wizardState.generatedInvoice.notes }}</p>
+                  </div>
+                }
+              </div>
+              <div class="col-md-6">
+                <table class="table table-sm">
+                  <tbody>
+                    <tr>
+                      <td>Subtotal:</td>
+                      <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.subTotal) }}</td>
+                    </tr>
+                    @if (wizardState.generatedInvoice.discountAmount > 0) {
+                      <tr>
+                        <td>Discount:</td>
+                        <td class="text-end text-danger">-{{ formatCurrency(wizardState.generatedInvoice.discountAmount) }}</td>
+                      </tr>
+                    }
+                    <tr>
+                      <td>CGST:</td>
+                      <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.cgstAmount) }}</td>
+                    </tr>
+                    <tr>
+                      <td>SGST:</td>
+                      <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.sgstAmount) }}</td>
+                    </tr>
+                    @if (wizardState.generatedInvoice.igstAmount > 0) {
+                      <tr>
+                        <td>IGST:</td>
+                        <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.igstAmount) }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                  <tfoot>
+                    <tr class="table-light">
+                      <td><strong>Grand Total:</strong></td>
+                      <td class="text-end">
+                        <strong class="fs-5 text-primary">{{ formatCurrency(wizardState.generatedInvoice.grandTotal) }}</strong>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+                
+                <!-- Amount in Words -->
+                <div class="amount-words p-2 bg-light rounded mt-2">
+                  <small class="text-muted">
+                    <strong>Amount in Words:</strong> {{ wizardState.generatedInvoice.grandTotalInWords }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Summary -->
+          <div class="payment-summary mt-4 pt-3 border-top">
+            <div class="row">
+              <div class="col-md-6">
+                <h6 class="text-muted mb-2">Payment Summary:</h6>
+                <p class="mb-0">
+                  <strong>Total Paid:</strong> 
+                  <span class="text-success">{{ formatCurrency(wizardState.generatedInvoice.totalPaid) }}</span>
+                </p>
+                <p class="mb-0">
+                  <strong>Balance Due:</strong> 
+                  <span [class.text-danger]="wizardState.generatedInvoice.balanceDue > 0" 
+                        [class.text-success]="wizardState.generatedInvoice.balanceDue <= 0">
+                    {{ formatCurrency(wizardState.generatedInvoice.balanceDue) }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms and Conditions -->
+          @if (wizardState.generatedInvoice.termsAndConditions) {
+            <div class="terms-section mt-4 pt-3 border-top">
+              <h6 class="text-muted mb-2">Terms & Conditions:</h6>
+              <p class="small text-muted">{{ wizardState.generatedInvoice.termsAndConditions }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="invoice-actions d-flex justify-content-end gap-2 mt-4">
+        <button 
+          type="button" 
+          class="btn btn-outline-primary"
+          (click)="downloadInvoice()">
+          <i class="material-icons-outlined me-1">download</i>
+          Download PDF
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary"
+          (click)="printInvoice()">
+          <i class="material-icons-outlined me-1">print</i>
+          Print Invoice
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Invoice Generation Form -->
+  @if (!wizardState.generatedInvoice) {
+    <!-- Pre-requisites Check -->
+    @if (!isPaymentComplete()) {
+      <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+        <i class="material-icons-outlined me-2">warning</i>
+        <div>
+          <strong>Payment Incomplete!</strong>
+          <br>
+          Please complete the payment before generating the invoice. 
+          Balance due: {{ formatCurrency(wizardState.balanceDue) }}
+        </div>
+      </div>
+    }
+
+    <!-- Sale Summary -->
+    <div class="sale-summary card mb-4">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="material-icons-outlined me-2">summarize</i>
+          Sale Summary
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <!-- Customer Info -->
+          <div class="col-md-4 mb-3">
+            <div class="summary-item p-3 bg-light rounded h-100">
+              <h6 class="text-muted mb-2">Customer</h6>
+              @if (wizardState.selectedCustomer) {
+                <p class="mb-0 fw-medium">{{ wizardState.selectedCustomer.name }}</p>
+                <small class="text-muted">{{ wizardState.selectedCustomer.contactNumber }}</small>
+              } @else {
+                <p class="mb-0 text-muted">No customer selected</p>
+              }
+            </div>
+          </div>
+          
+          <!-- Order Info -->
+          <div class="col-md-4 mb-3">
+            <div class="summary-item p-3 bg-light rounded h-100">
+              <h6 class="text-muted mb-2">Order</h6>
+              @if (wizardState.saleOrder) {
+                <p class="mb-0 fw-medium">#{{ wizardState.saleOrder.orderNumber }}</p>
+                <small class="text-muted">{{ wizardState.saleOrder.orderDate | date:'mediumDate' }}</small>
+              } @else {
+                <p class="mb-0 text-muted">No order created</p>
+              }
+            </div>
+          </div>
+          
+          <!-- Items Info -->
+          <div class="col-md-4 mb-3">
+            <div class="summary-item p-3 bg-light rounded h-100">
+              <h6 class="text-muted mb-2">Items</h6>
+              <p class="mb-0 fw-medium">{{ wizardState.saleOrderItems.length }} items</p>
+              <small class="text-muted">Total: {{ formatCurrency(wizardState.orderTotal) }}</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="payment-summary mt-3 pt-3 border-top">
+          <div class="row align-items-center">
+            <div class="col-md-3">
+              <small class="text-muted">Order Total</small>
+              <h5 class="mb-0">{{ formatCurrency(wizardState.orderTotal) }}</h5>
+            </div>
+            <div class="col-md-3">
+              <small class="text-muted">Amount Paid</small>
+              <h5 class="mb-0 text-success">{{ formatCurrency(wizardState.totalPaid) }}</h5>
+            </div>
+            <div class="col-md-3">
+              <small class="text-muted">Balance Due</small>
+              <h5 class="mb-0" [class.text-danger]="wizardState.balanceDue > 0" [class.text-success]="wizardState.balanceDue <= 0">
+                {{ formatCurrency(wizardState.balanceDue) }}
+              </h5>
+            </div>
+            <div class="col-md-3">
+              <div class="progress" style="height: 8px;">
+                <div 
+                  class="progress-bar bg-success" 
+                  role="progressbar" 
+                  [style.width.%]="(wizardState.totalPaid / wizardState.orderTotal) * 100">
+                </div>
+              </div>
+              <small class="text-muted">{{ (wizardState.totalPaid / wizardState.orderTotal * 100) | number:'1.0-0' }}% paid</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invoice Options -->
+    <div class="invoice-options card mb-4">
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="material-icons-outlined me-2">settings</i>
+          Invoice Options
+        </h6>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="invoiceForm">
+          <div class="row">
+            <div class="col-12 mb-3">
+              <label for="notes" class="form-label">Notes</label>
+              <textarea 
+                class="form-control" 
+                id="notes"
+                formControlName="notes"
+                rows="3"
+                placeholder="Add any notes to appear on the invoice...">
+              </textarea>
+            </div>
+            
+            <div class="col-12">
+              <div class="form-check">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  id="includeTermsAndConditions"
+                  formControlName="includeTermsAndConditions">
+                <label class="form-check-label" for="includeTermsAndConditions">
+                  Include Terms & Conditions
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <div class="generate-section">
+      <button 
+        type="button" 
+        class="btn btn-primary btn-lg w-100"
+        (click)="generateInvoice()"
+        [disabled]="!isPaymentComplete() || isGenerating">
+        @if (isGenerating) {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+        }
+        <i class="material-icons-outlined me-2">description</i>
+        Generate Invoice
+      </button>
+      @if (!isPaymentComplete()) {
+        <p class="text-center text-danger mt-2 mb-0">
+          <small>Complete payment to enable invoice generation</small>
+        </p>
+      }
+    </div>
+  }
+</div>

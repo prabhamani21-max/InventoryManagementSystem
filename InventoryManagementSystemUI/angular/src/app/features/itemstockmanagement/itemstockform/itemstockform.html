@@ -1,0 +1,187 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Item Stock' : 'Add Item Stock'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading item stock data...</p>
+    </div>
+  }
+
+  <!-- Item Stock Form -->
+  @if (!isLoading) {
+    <form [formGroup]="itemStockForm" (ngSubmit)="onSubmit()" class="item-stock-form">
+      <div class="row">
+        <!-- Basic Information Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Stock Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Jewellery Item Field -->
+        <div class="col-md-6 mb-3">
+          <label for="jewelleryItemId" class="form-label">
+            Jewellery Item <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="jewelleryItemId"
+            formControlName="jewelleryItemId"
+            [class.is-invalid]="hasError('jewelleryItemId')"
+          >
+            <option [ngValue]="null">Select Jewellery Item</option>
+            @for (item of jewelleryItems; track item.id) {
+              <option [ngValue]="item.id">
+                {{ item.name }} ({{ item.itemCode || 'No Code' }})
+              </option>
+            }
+          </select>
+          @if (hasError('jewelleryItemId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('jewelleryItemId') }}
+            </div>
+          }
+        </div>
+
+        <!-- Warehouse Field -->
+        <div class="col-md-6 mb-3">
+          <label for="warehouseId" class="form-label">
+            Warehouse <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="warehouseId"
+            formControlName="warehouseId"
+            [class.is-invalid]="hasError('warehouseId')"
+          >
+            <option [ngValue]="null">Select Warehouse</option>
+            @for (warehouse of warehouses; track warehouse.id) {
+              <option [ngValue]="warehouse.id">
+                {{ warehouse.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('warehouseId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('warehouseId') }}
+            </div>
+          }
+        </div>
+
+        <!-- Quantity Details Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Quantity Details</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Quantity Field -->
+        <div class="col-md-4 mb-3">
+          <label for="quantity" class="form-label">
+            Quantity <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="quantity"
+            formControlName="quantity"
+            placeholder="0"
+            min="0"
+            [class.is-invalid]="hasError('quantity')"
+          />
+          @if (hasError('quantity')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('quantity') }}
+            </div>
+          }
+          <small class="text-muted">Total stock quantity</small>
+        </div>
+
+        <!-- Reserved Quantity Field -->
+        <div class="col-md-4 mb-3">
+          <label for="reservedQuantity" class="form-label">
+            Reserved Quantity <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="reservedQuantity"
+            formControlName="reservedQuantity"
+            placeholder="0"
+            min="0"
+            [class.is-invalid]="hasError('reservedQuantity')"
+          />
+          @if (hasError('reservedQuantity')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('reservedQuantity') }}
+            </div>
+          }
+          <small class="text-muted">Quantity reserved for orders</small>
+        </div>
+
+        <!-- Available Quantity (Calculated) -->
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Available Quantity</label>
+          <div class="form-control bg-light">
+            <span class="fw-medium">
+              {{ (itemStockForm.get('quantity')?.value || 0) - (itemStockForm.get('reservedQuantity')?.value || 0) }}
+            </span>
+          </div>
+          <small class="text-muted">Auto-calculated: Quantity - Reserved</small>
+        </div>
+
+        <!-- Status Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Status</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Status Field -->
+        <div class="col-md-4 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+          >
+            @for (status of statusOptions; track status.id) {
+              <option [ngValue]="status.id">
+                {{ status.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="itemStockForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

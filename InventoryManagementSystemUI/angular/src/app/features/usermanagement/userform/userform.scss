@@ -1,0 +1,25 @@
+/**
+ * User Form Component Styles
+ */
+
+.avatar-circle-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-initial-large {
+  font-size: 40px;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.user-form {
+  .form-section {
+    margin-bottom: 1.5rem;
+  }
+}

@@ -1,0 +1,257 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Stone Rate' : 'Add Stone Rate'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading stone rate data...</p>
+    </div>
+  }
+
+  <!-- Stone Rate Form -->
+  @if (!isLoading) {
+    <form [formGroup]="stoneRateForm" (ngSubmit)="onSubmit()" class="stone-rate-form">
+      <div class="row">
+        <!-- Stone Selection Field -->
+        <div class="col-md-6 mb-3">
+          <label for="stoneId" class="form-label">
+            Stone <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="stoneId"
+            formControlName="stoneId"
+            [class.is-invalid]="hasError('stoneId')"
+            (change)="onFieldChange('stoneId')"
+            [disabled]="isEditMode"
+          >
+            <option [ngValue]="null">Select a stone</option>
+            @for (stone of stones; track stone.id) {
+              <option [ngValue]="stone.id">
+                {{ stone.name }} @if (stone.unit) { ({{ stone.unit }}) }
+              </option>
+            }
+          </select>
+          @if (hasError('stoneId')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('stoneId') }}
+            </div>
+          }
+          @if (!hasError('stoneId')) {
+            <small class="text-muted">Select the stone for this rate</small>
+          }
+        </div>
+
+        <!-- Carat Field -->
+        <div class="col-md-6 mb-3">
+          <label for="carat" class="form-label">
+            Carat <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="carat"
+            formControlName="carat"
+            placeholder="Enter carat weight (0.01 - 10)"
+            step="0.01"
+            min="0.01"
+            max="10"
+            [class.is-invalid]="hasError('carat')"
+            (input)="onFieldChange('carat')"
+          />
+          @if (hasError('carat')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('carat') }}
+            </div>
+          }
+          @if (!hasError('carat')) {
+            <small class="text-muted">Carat weight between 0.01 and 10</small>
+          }
+        </div>
+
+        <!-- Cut Field (for Diamonds) -->
+        <div class="col-md-6 mb-3">
+          <label for="cut" class="form-label">Cut (Diamond)</label>
+          <select
+            class="form-select"
+            id="cut"
+            formControlName="cut"
+            [class.is-invalid]="hasError('cut')"
+            (change)="onFieldChange('cut')"
+          >
+            <option value="">Select cut quality</option>
+            @for (cut of cutOptions; track cut) {
+              <option [ngValue]="cut">{{ cut }}</option>
+            }
+          </select>
+          @if (hasError('cut')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('cut') }}
+            </div>
+          }
+          @if (!hasError('cut')) {
+            <small class="text-muted">Cut quality for diamonds (Excellent, Very Good, Good, Fair)</small>
+          }
+        </div>
+
+        <!-- Color Field (for Diamonds) -->
+        <div class="col-md-6 mb-3">
+          <label for="color" class="form-label">Color (Diamond)</label>
+          <select
+            class="form-select"
+            id="color"
+            formControlName="color"
+            [class.is-invalid]="hasError('color')"
+            (change)="onFieldChange('color')"
+          >
+            <option value="">Select color grade</option>
+            @for (color of colorOptions; track color) {
+              <option [ngValue]="color">{{ color }}</option>
+            }
+          </select>
+          @if (hasError('color')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('color') }}
+            </div>
+          }
+          @if (!hasError('color')) {
+            <small class="text-muted">Color grade for diamonds (D-J, D being colorless)</small>
+          }
+        </div>
+
+        <!-- Clarity Field (for Diamonds) -->
+        <div class="col-md-6 mb-3">
+          <label for="clarity" class="form-label">Clarity (Diamond)</label>
+          <select
+            class="form-select"
+            id="clarity"
+            formControlName="clarity"
+            [class.is-invalid]="hasError('clarity')"
+            (change)="onFieldChange('clarity')"
+          >
+            <option value="">Select clarity grade</option>
+            @for (clarity of clarityOptions; track clarity) {
+              <option [ngValue]="clarity">{{ clarity }}</option>
+            }
+          </select>
+          @if (hasError('clarity')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('clarity') }}
+            </div>
+          }
+          @if (!hasError('clarity')) {
+            <small class="text-muted">Clarity grade for diamonds (IF, VVS1, VVS2, VS1, VS2, SI1, SI2)</small>
+          }
+        </div>
+
+        <!-- Grade Field (for Colored Stones) -->
+        <div class="col-md-6 mb-3">
+          <label for="grade" class="form-label">Grade (Colored Stones)</label>
+          <select
+            class="form-select"
+            id="grade"
+            formControlName="grade"
+            [class.is-invalid]="hasError('grade')"
+            (change)="onFieldChange('grade')"
+          >
+            <option value="">Select grade</option>
+            @for (grade of gradeOptions; track grade) {
+              <option [ngValue]="grade">{{ grade }}</option>
+            }
+          </select>
+          @if (hasError('grade')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('grade') }}
+            </div>
+          }
+          @if (!hasError('grade')) {
+            <small class="text-muted">Grade for colored stones (AAA, AA, A, Lab-Grown)</small>
+          }
+        </div>
+
+        <!-- Rate Per Unit Field -->
+        <div class="col-md-6 mb-3">
+          <label for="ratePerUnit" class="form-label">
+            Rate Per Unit (₹) <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="ratePerUnit"
+              formControlName="ratePerUnit"
+              placeholder="Enter rate per unit"
+              step="0.01"
+              min="0.01"
+              [class.is-invalid]="hasError('ratePerUnit')"
+              (input)="onFieldChange('ratePerUnit')"
+            />
+          </div>
+          @if (hasError('ratePerUnit')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('ratePerUnit') }}
+            </div>
+          }
+          @if (!hasError('ratePerUnit')) {
+            <small class="text-muted">Rate per unit in INR</small>
+          }
+        </div>
+
+        <!-- Effective Date Field -->
+        <div class="col-md-6 mb-3">
+          <label for="effectiveDate" class="form-label">
+            Effective Date <span class="text-danger">*</span>
+          </label>
+          <input
+            type="date"
+            class="form-control"
+            id="effectiveDate"
+            formControlName="effectiveDate"
+            [class.is-invalid]="hasError('effectiveDate')"
+            (change)="onFieldChange('effectiveDate')"
+          />
+          @if (hasError('effectiveDate')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('effectiveDate') }}
+            </div>
+          }
+          @if (!hasError('effectiveDate')) {
+            <small class="text-muted">Date from which this rate is effective</small>
+          }
+        </div>
+      </div>
+
+      <!-- Info Box -->
+      <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+        <i class="feather icon-info me-2"></i>
+        <div>
+          <strong>Note:</strong> For diamonds, use Cut, Color, and Clarity fields. For colored stones, use the Grade field.
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="stoneRateForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

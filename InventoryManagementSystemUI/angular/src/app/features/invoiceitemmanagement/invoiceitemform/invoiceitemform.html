@@ -1,0 +1,583 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Invoice Item' : 'Add Invoice Item'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading invoice item data...</p>
+    </div>
+  }
+
+  <!-- Invoice Item Form -->
+  @if (!isLoading) {
+    <form [formGroup]="invoiceItemForm" (ngSubmit)="onSubmit()" class="invoice-item-form">
+      <div class="row">
+        <!-- Basic Information Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Item Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Invoice ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="invoiceId" class="form-label">
+            Invoice <span class="text-danger">*</span>
+          </label>
+          @if (isEditMode && existingItem?.invoiceNumber) {
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                [value]="existingItem?.invoiceNumber"
+                disabled
+              />
+              <input
+                type="hidden"
+                formControlName="invoiceId"
+              />
+            </div>
+            <small class="text-muted">Invoice: {{ existingItem?.invoiceNumber }}</small>
+          } @else {
+            <input
+              type="number"
+              class="form-control"
+              id="invoiceId"
+              formControlName="invoiceId"
+              placeholder="Enter invoice ID"
+              [class.is-invalid]="hasError('invoiceId')"
+            />
+            @if (hasError('invoiceId')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('invoiceId') }}
+              </div>
+            }
+            <small class="text-muted">The invoice this item belongs to</small>
+          }
+        </div>
+
+        <!-- Reference Item ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="referenceItemId" class="form-label">
+            Reference Item ID
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="referenceItemId"
+            formControlName="referenceItemId"
+            placeholder="Enter reference item ID (optional)"
+          />
+          <small class="text-muted">SaleOrderItemId or PurchaseOrderItemId if applicable</small>
+        </div>
+
+        <!-- Item Name Field -->
+        <div class="col-md-6 mb-3">
+          <label for="itemName" class="form-label">
+            Item Name <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="itemName"
+            formControlName="itemName"
+            placeholder="Enter item name"
+            [class.is-invalid]="hasError('itemName')"
+          />
+          @if (hasError('itemName')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('itemName') }}
+            </div>
+          }
+        </div>
+
+        <!-- Quantity Field -->
+        <div class="col-md-6 mb-3">
+          <label for="quantity" class="form-label">
+            Quantity <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="quantity"
+            formControlName="quantity"
+            placeholder="Enter quantity"
+            min="1"
+            [class.is-invalid]="hasError('quantity')"
+          />
+          @if (hasError('quantity')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('quantity') }}
+            </div>
+          }
+        </div>
+
+        <!-- Metal Details Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Metal Details</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Metal ID Field -->
+        <div class="col-md-4 mb-3">
+          <label for="metalId" class="form-label">
+            Metal ID <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="metalId"
+            formControlName="metalId"
+            placeholder="Enter metal ID"
+            [class.is-invalid]="hasError('metalId')"
+          />
+          @if (hasError('metalId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('metalId') }}
+            </div>
+          }
+          <small class="text-muted">Gold, Silver, Platinum, etc.</small>
+        </div>
+
+        <!-- Purity ID Field -->
+        <div class="col-md-4 mb-3">
+          <label for="purityId" class="form-label">
+            Purity ID <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="purityId"
+            formControlName="purityId"
+            placeholder="Enter purity ID"
+            [class.is-invalid]="hasError('purityId')"
+          />
+          @if (hasError('purityId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('purityId') }}
+            </div>
+          }
+          <small class="text-muted">22K, 24K, 18K, etc.</small>
+        </div>
+
+        <!-- Net Metal Weight Field -->
+        <div class="col-md-4 mb-3">
+          <label for="netMetalWeight" class="form-label">
+            Net Metal Weight (g)
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="netMetalWeight"
+            formControlName="netMetalWeight"
+            placeholder="0.000"
+            min="0"
+            step="0.001"
+          />
+        </div>
+
+        <!-- Metal Amount Field -->
+        <div class="col-md-6 mb-3">
+          <label for="metalAmount" class="form-label">
+            Metal Amount
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="metalAmount"
+              formControlName="metalAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <!-- Stone Details Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Stone Details (Optional)</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Stone ID Field -->
+        <div class="col-md-4 mb-3">
+          <label for="stoneId" class="form-label">
+            Stone ID
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="stoneId"
+            formControlName="stoneId"
+            placeholder="Enter stone ID"
+          />
+        </div>
+
+        <!-- Stone Weight Field -->
+        <div class="col-md-4 mb-3">
+          <label for="stoneWeight" class="form-label">
+            Stone Weight (g)
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="stoneWeight"
+            formControlName="stoneWeight"
+            placeholder="0.000"
+            min="0"
+            step="0.001"
+          />
+        </div>
+
+        <!-- Stone Amount Field -->
+        <div class="col-md-4 mb-3">
+          <label for="stoneAmount" class="form-label">
+            Stone Amount
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="stoneAmount"
+              formControlName="stoneAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <!-- Making Charges Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Making Charges</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Making Charges Field -->
+        <div class="col-md-6 mb-3">
+          <label for="makingCharges" class="form-label">
+            Making Charges
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="makingCharges"
+              formControlName="makingCharges"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <!-- Wastage Amount Field -->
+        <div class="col-md-6 mb-3">
+          <label for="wastageAmount" class="form-label">
+            Wastage Amount
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="wastageAmount"
+              formControlName="wastageAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Pricing</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Item Subtotal Field -->
+        <div class="col-md-4 mb-3">
+          <label for="itemSubtotal" class="form-label">
+            Item Subtotal <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="itemSubtotal"
+              formControlName="itemSubtotal"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              [class.is-invalid]="hasError('itemSubtotal')"
+            />
+          </div>
+          @if (hasError('itemSubtotal')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('itemSubtotal') }}
+            </div>
+          }
+        </div>
+
+        <!-- Discount Field -->
+        <div class="col-md-4 mb-3">
+          <label for="discount" class="form-label">
+            Discount
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="discount"
+              formControlName="discount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <!-- Taxable Amount Field -->
+        <div class="col-md-4 mb-3">
+          <label for="taxableAmount" class="form-label">
+            Taxable Amount <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="taxableAmount"
+              formControlName="taxableAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              [class.is-invalid]="hasError('taxableAmount')"
+            />
+          </div>
+          @if (hasError('taxableAmount')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('taxableAmount') }}
+            </div>
+          }
+        </div>
+
+        <!-- GST Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">GST Breakdown</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- CGST Amount Field -->
+        <div class="col-md-4 mb-3">
+          <label for="cgstAmount" class="form-label">
+            CGST Amount
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="cgstAmount"
+              formControlName="cgstAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <!-- SGST Amount Field -->
+        <div class="col-md-4 mb-3">
+          <label for="sgstAmount" class="form-label">
+            SGST Amount
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="sgstAmount"
+              formControlName="sgstAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <!-- IGST Amount Field -->
+        <div class="col-md-4 mb-3">
+          <label for="igstAmount" class="form-label">
+            IGST Amount
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="igstAmount"
+              formControlName="igstAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <!-- GST Amount Field -->
+        <div class="col-md-6 mb-3">
+          <label for="gstAmount" class="form-label">
+            Total GST Amount <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="gstAmount"
+              formControlName="gstAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              [class.is-invalid]="hasError('gstAmount')"
+            />
+          </div>
+          @if (hasError('gstAmount')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('gstAmount') }}
+            </div>
+          }
+        </div>
+
+        <!-- Total Amount Field -->
+        <div class="col-md-6 mb-3">
+          <label for="totalAmount" class="form-label">
+            Total Amount <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="totalAmount"
+              formControlName="totalAmount"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              [class.is-invalid]="hasError('totalAmount')"
+            />
+          </div>
+          @if (hasError('totalAmount')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('totalAmount') }}
+            </div>
+          }
+        </div>
+
+        <!-- Hallmark Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Hallmark</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Is Hallmarked Field -->
+        <div class="col-md-6 mb-3">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="isHallmarked"
+              formControlName="isHallmarked"
+            />
+            <label class="form-check-label" for="isHallmarked">
+              Is Hallmarked
+            </label>
+          </div>
+          <small class="text-muted">Check if the item is BIS hallmarked</small>
+        </div>
+
+        <!-- Existing Item Details (Edit Mode) -->
+        @if (isEditMode && existingItem) {
+          <div class="col-12 mt-3">
+            <h6 class="text-muted mb-3">Item Details (Read-only)</h6>
+            <hr class="mt-0">
+          </div>
+
+          @if (existingItem) {
+            <!-- Metal Details -->
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Metal Type</label>
+              <p class="form-control-plaintext">{{ existingItem.metalType || '-' }}</p>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Purity</label>
+              <p class="form-control-plaintext">{{ existingItem.purity || '-' }}</p>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Net Metal Weight</label>
+              <p class="form-control-plaintext">{{ existingItem.netMetalWeight ? formatWeight(existingItem.netMetalWeight) : '-' }}</p>
+            </div>
+
+            <!-- Stone Details -->
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Stone Type</label>
+              <p class="form-control-plaintext">{{ existingItem.stoneType || '-' }}</p>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Stone Weight</label>
+              <p class="form-control-plaintext">{{ existingItem.stoneWeight ? formatWeight(existingItem.stoneWeight) : '-' }}</p>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Stone Amount</label>
+              <p class="form-control-plaintext">{{ existingItem.stoneAmount ? formatCurrency(existingItem.stoneAmount) : '-' }}</p>
+            </div>
+
+            <!-- Price Summary -->
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Metal Amount</label>
+              <p class="form-control-plaintext">{{ existingItem.metalAmount ? formatCurrency(existingItem.metalAmount) : '-' }}</p>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Making Charges</label>
+              <p class="form-control-plaintext">{{ existingItem.makingCharges ? formatCurrency(existingItem.makingCharges) : '-' }}</p>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted fw-bold">Total Amount</label>
+              <p class="form-control-plaintext fw-bold text-success">{{ formatCurrency(existingItem.totalAmount) }}</p>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="invoiceItemForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

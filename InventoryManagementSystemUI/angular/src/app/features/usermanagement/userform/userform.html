@@ -1,0 +1,572 @@
+<!-- Wizard Mode - Customer Search & Selection -->
+@if (wizardMode) {
+  <app-card cardTitle="Select Customer">
+    <!-- Customer Search Section -->
+    <div class="customer-search mb-4">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="feather icon-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search by name, phone, or email..."
+              [(ngModel)]="searchQuery"
+              (input)="searchCustomers()"
+            />
+            @if (searchQuery) {
+              <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
+                <i class="feather icon-x"></i>
+              </button>
+            }
+          </div>
+        </div>
+        <div class="col-md-4 text-end">
+          <button class="btn btn-primary" (click)="showCustomerSearch = false; userForm.reset()">
+            <i class="feather icon-plus me-2"></i>New Customer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    @if (isSearching) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading customers...</p>
+      </div>
+    }
+
+    <!-- Customer List -->
+    @if (!isSearching && showCustomerSearch) {
+      <div class="customer-list">
+        @if (filteredCustomers.length === 0) {
+          <div class="text-center py-4">
+            <i class="feather icon-users text-muted" style="font-size: 48px;"></i>
+            <p class="text-muted mt-2">No customers found</p>
+            <button class="btn btn-primary" (click)="showCustomerSearch = false; userForm.reset()">
+              <i class="feather icon-plus me-2"></i>Add New Customer
+            </button>
+          </div>
+        } @else {
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (customer of filteredCustomers; track customer.id) {
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-circle me-2">
+                          {{ customer.name.charAt(0).toUpperCase() }}
+                        </div>
+                        <span>{{ customer.name }}</span>
+                      </div>
+                    </td>
+                    <td>{{ customer.contactNumber }}</td>
+                    <td>{{ customer.email || '-' }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary" (click)="selectCustomer(customer)">
+                        <i class="feather icon-check me-1"></i>Select
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- New Customer Form (shown when showCustomerSearch is false) -->
+    @if (!showCustomerSearch) {
+      <div class="new-customer-form mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="mb-0">Create New Customer</h6>
+          <button class="btn btn-link" (click)="showCustomerSearch = true">
+            <i class="feather icon-arrow-left me-1"></i>Back to Search
+          </button>
+        </div>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
+          <div class="row">
+            <!-- Name Field -->
+            <div class="col-md-6 mb-3">
+              <label for="name" class="form-label">
+                Full Name <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                placeholder="Enter full name"
+                [class.is-invalid]="hasError('name')"
+              />
+              @if (hasError('name')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('name') }}
+                </div>
+              }
+            </div>
+
+            <!-- Contact Number Field -->
+            <div class="col-md-6 mb-3">
+              <label for="contactNumber" class="form-label">
+                Contact Number <span class="text-danger">*</span>
+              </label>
+              <input
+                type="tel"
+                class="form-control"
+                id="contactNumber"
+                formControlName="contactNumber"
+                placeholder="Enter 10-digit contact number"
+                [class.is-invalid]="hasError('contactNumber')"
+              />
+              @if (hasError('contactNumber')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('contactNumber') }}
+                </div>
+              }
+            </div>
+
+            <!-- Email Field -->
+            <div class="col-md-6 mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                formControlName="email"
+                placeholder="Enter email address (optional)"
+                [class.is-invalid]="hasError('email')"
+              />
+              @if (hasError('email')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('email') }}
+                </div>
+              }
+            </div>
+
+            <!-- Gender Field -->
+            <div class="col-md-6 mb-3">
+              <label for="gender" class="form-label">
+                Gender <span class="text-danger">*</span>
+              </label>
+              <select
+                class="form-select"
+                id="gender"
+                formControlName="gender"
+                [class.is-invalid]="hasError('gender')"
+              >
+                @for (gender of genderOptions; track gender.id) {
+                  <option [ngValue]="gender.id">
+                    {{ gender.name }}
+                  </option>
+                }
+              </select>
+              @if (hasError('gender')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('gender') }}
+                </div>
+              }
+            </div>
+
+            <!-- Date of Birth Field -->
+            <div class="col-md-6 mb-3">
+              <label for="dob" class="form-label">Date of Birth</label>
+              <input
+                type="date"
+                class="form-control"
+                id="dob"
+                formControlName="dob"
+                [class.is-invalid]="hasError('dob')"
+              />
+              @if (hasError('dob')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('dob') }}
+                </div>
+              }
+            </div>
+
+            <!-- Address Field -->
+            <div class="col-md-12 mb-3">
+              <label for="address" class="form-label">Address</label>
+              <textarea
+                class="form-control"
+                id="address"
+                formControlName="address"
+                rows="3"
+                placeholder="Enter full address (optional)"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="showCustomerSearch = true"
+              [disabled]="isSubmitting"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="userForm.invalid || isSubmitting"
+            >
+              @if (isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              }
+              Create Customer
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+  </app-card>
+}
+
+<!-- Non-Wizard Mode - Original Form -->
+@if (!wizardMode) {
+  <app-card [cardTitle]="isViewMode ? 'View User' : (isEditMode ? 'Edit User' : 'Add User')">
+    <!-- Loading Spinner -->
+    @if (isLoading) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading user data...</p>
+      </div>
+    }
+
+    <!-- View Mode - User Details -->
+    @if (!isLoading && isViewMode && user) {
+      <div class="user-details">
+        <!-- Profile Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="text-center mb-4">
+              @if (user.profileImage) {
+                <img [src]="user.profileImage" alt="{{ user.name }}" class="rounded-circle mb-3" width="100" height="100">
+              } @else {
+                <div class="avatar-circle-large mx-auto mb-3">
+                  <span class="avatar-initial-large">{{ user.name.charAt(0).toUpperCase() }}</span>
+                </div>
+              }
+              <h4 class="mb-1">{{ user.name }}</h4>
+              <p class="text-muted mb-0">{{ user.email }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Information -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <h6 class="text-muted mb-3">User Information</h6>
+            <hr class="mt-0">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-muted">User ID</label>
+            <p class="fw-medium">#{{ user.id }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-muted">Contact Number</label>
+            <p class="fw-medium">{{ user.contactNumber }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-muted">Role</label>
+            <p><span class="badge" [ngClass]="user.roleId === 1 ? 'bg-danger' : user.roleId === 2 ? 'bg-primary' : 'bg-info'">{{ getRoleLabel(user.roleId) }}</span></p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-muted">Status</label>
+            <p><span [ngClass]="getStatusClass(user.statusId)">{{ getStatusLabel(user.statusId) }}</span></p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-muted">Gender</label>
+            <p class="fw-medium">{{ getGenderLabel(user.gender) }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-muted">Date of Birth</label>
+            <p class="fw-medium">{{ formatDate(user.dob) }}</p>
+          </div>
+          @if (user.address) {
+            <div class="col-md-12 mb-3">
+              <label class="form-label text-muted">Address</label>
+              <p class="fw-medium">{{ user.address }}</p>
+            </div>
+          }
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-secondary" (click)="onCancel()">
+            Back to List
+          </button>
+          <button type="button" class="btn btn-primary" (click)="onCancel()">
+            <i class="feather icon-edit me-2"></i>Edit User
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Create/Edit Form -->
+    @if (!isLoading && !isViewMode) {
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="user-form">
+        <div class="row">
+          <!-- Basic Information Section -->
+          <div class="col-12">
+            <h6 class="text-muted mb-3">Basic Information</h6>
+            <hr class="mt-0">
+          </div>
+
+          <!-- Name Field -->
+          <div class="col-md-6 mb-3">
+            <label for="name" class="form-label">
+              Full Name <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              formControlName="name"
+              placeholder="Enter full name"
+              [class.is-invalid]="hasError('name')"
+            />
+            @if (hasError('name')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('name') }}
+              </div>
+            }
+          </div>
+
+          <!-- Email Field -->
+          <div class="col-md-6 mb-3">
+            <label for="email" class="form-label">
+              Email Address <span class="text-danger">*</span>
+            </label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              formControlName="email"
+              placeholder="Enter email address"
+              [class.is-invalid]="hasError('email')"
+            />
+            @if (hasError('email')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('email') }}
+              </div>
+            }
+          </div>
+
+          <!-- Password Field (only for create mode) -->
+          @if (!isEditMode) {
+            <div class="col-md-6 mb-3">
+              <label for="password" class="form-label">
+                Password <span class="text-danger">*</span>
+              </label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                formControlName="password"
+                placeholder="Enter password"
+                [class.is-invalid]="hasError('password')"
+              />
+              @if (hasError('password')) {
+                <div class="invalid-feedback">
+                  {{ getErrorMessage('password') }}
+                </div>
+              }
+              <small class="text-muted">Password must be at least 6 characters</small>
+            </div>
+          }
+
+          <!-- Contact Number Field -->
+          <div class="col-md-6 mb-3">
+            <label for="contactNumber" class="form-label">
+              Contact Number <span class="text-danger">*</span>
+            </label>
+            <input
+              type="tel"
+              class="form-control"
+              id="contactNumber"
+              formControlName="contactNumber"
+              placeholder="Enter 10-digit contact number"
+              [class.is-invalid]="hasError('contactNumber')"
+            />
+            @if (hasError('contactNumber')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('contactNumber') }}
+              </div>
+            }
+          </div>
+
+          <!-- Additional Information Section -->
+          <div class="col-12 mt-3">
+            <h6 class="text-muted mb-3">Additional Information</h6>
+            <hr class="mt-0">
+          </div>
+
+          <!-- Gender Field -->
+          <div class="col-md-6 mb-3">
+            <label for="gender" class="form-label">
+              Gender <span class="text-danger">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="gender"
+              formControlName="gender"
+              [class.is-invalid]="hasError('gender')"
+            >
+              @for (gender of genderOptions; track gender.id) {
+                <option [ngValue]="gender.id">
+                  {{ gender.name }}
+                </option>
+              }
+            </select>
+            @if (hasError('gender')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('gender') }}
+              </div>
+            }
+          </div>
+
+          <!-- Date of Birth Field -->
+          <div class="col-md-6 mb-3">
+            <label for="dob" class="form-label">
+              Date of Birth <span class="text-danger">*</span>
+            </label>
+            <input
+              type="date"
+              class="form-control"
+              id="dob"
+              formControlName="dob"
+              [class.is-invalid]="hasError('dob')"
+            />
+            @if (hasError('dob')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('dob') }}
+              </div>
+            }
+          </div>
+
+          <!-- Role and Status Section -->
+          <div class="col-12 mt-3">
+            <h6 class="text-muted mb-3">Role & Status</h6>
+            <hr class="mt-0">
+          </div>
+
+          <!-- Role Field -->
+          <div class="col-md-6 mb-3">
+            <label for="roleId" class="form-label">
+              Role <span class="text-danger">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="roleId"
+              formControlName="roleId"
+              [class.is-invalid]="hasError('roleId')"
+            >
+              @for (role of roleOptions; track role.id) {
+                <option [ngValue]="role.id">
+                  {{ role.name }}
+                </option>
+              }
+            </select>
+            @if (hasError('roleId')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('roleId') }}
+              </div>
+            }
+          </div>
+
+          <!-- Status Field -->
+          <div class="col-md-6 mb-3">
+            <label for="statusId" class="form-label">
+              Status <span class="text-danger">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="statusId"
+              formControlName="statusId"
+              [class.is-invalid]="hasError('statusId')"
+            >
+              @for (status of statusOptions; track status.id) {
+                <option [ngValue]="status.id">
+                  {{ status.name }}
+                </option>
+              }
+            </select>
+            @if (hasError('statusId')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('statusId') }}
+              </div>
+            }
+          </div>
+
+          <!-- Address Field -->
+          <div class="col-md-12 mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea
+              class="form-control"
+              id="address"
+              formControlName="address"
+              rows="3"
+              placeholder="Enter full address (optional)"
+            ></textarea>
+          </div>
+
+          <!-- Profile Image URL Field -->
+          <div class="col-md-12 mb-3">
+            <label for="profileImage" class="form-label">Profile Image URL</label>
+            <input
+              type="url"
+              class="form-control"
+              id="profileImage"
+              formControlName="profileImage"
+              placeholder="Enter profile image URL (optional)"
+            />
+            <small class="text-muted">Enter a valid URL for the profile image</small>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onCancel()"
+            [disabled]="isSubmitting"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="userForm.invalid || isSubmitting"
+          >
+            @if (isSubmitting) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            }
+            {{ isEditMode ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </form>
+    }
+  </app-card>
+}

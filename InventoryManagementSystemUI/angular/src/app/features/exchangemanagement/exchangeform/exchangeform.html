@@ -1,0 +1,462 @@
+<app-card [cardTitle]="isViewMode ? 'View Exchange Order' : (isEditMode ? 'Edit Exchange Order' : 'Add Exchange Order')">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading exchange order data...</p>
+    </div>
+  }
+
+  <!-- View Mode - Order Details -->
+  @if (!isLoading && isViewMode && exchangeOrder) {
+    <div class="exchange-order-details">
+      <!-- Order Summary -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Order Summary</h6>
+          <hr class="mt-0">
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label text-muted">Order Number</label>
+          <p class="fw-medium">{{ exchangeOrder.orderNumber }}</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label text-muted">Customer</label>
+          <p class="fw-medium">{{ exchangeOrder.customerName || 'Customer #' + exchangeOrder.customerId }}</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label text-muted">Exchange Type</label>
+          <p><span class="badge" [ngClass]="exchangeOrder.exchangeType === 'EXCHANGE' ? 'bg-primary' : 'bg-info'">{{ exchangeOrder.exchangeType }}</span></p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label text-muted">Exchange Date</label>
+          <p class="fw-medium">{{ formatDate(exchangeOrder.exchangeDate) }}</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label text-muted">Status</label>
+          <p><span [ngClass]="getStatusClass(exchangeOrder.statusId)">{{ getStatusLabel(exchangeOrder.statusId) }}</span></p>
+        </div>
+      </div>
+
+      <!-- Weight & Value Summary -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Weight & Value Summary</h6>
+          <hr class="mt-0">
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label text-muted">Total Gross Weight</label>
+          <p class="fw-medium">{{ formatWeight(exchangeOrder.totalGrossWeight) }}</p>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label text-muted">Total Net Weight</label>
+          <p class="fw-medium">{{ formatWeight(exchangeOrder.totalNetWeight) }}</p>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label text-muted">Total Pure Weight</label>
+          <p class="fw-medium">{{ formatWeight(exchangeOrder.totalPureWeight) }}</p>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label text-muted">Total Market Value</label>
+          <p class="fw-medium">{{ formatCurrency(exchangeOrder.totalMarketValue) }}</p>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label text-muted">Total Deduction</label>
+          <p class="fw-medium text-danger">{{ formatCurrency(exchangeOrder.totalDeductionAmount) }}</p>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label text-muted">Total Credit Amount</label>
+          <p class="fw-medium text-success">{{ formatCurrency(exchangeOrder.totalCreditAmount) }}</p>
+        </div>
+        @if (exchangeOrder.newPurchaseAmount) {
+          <div class="col-md-3 mb-3">
+            <label class="form-label text-muted">New Purchase Amount</label>
+            <p class="fw-medium">{{ formatCurrency(exchangeOrder.newPurchaseAmount) }}</p>
+          </div>
+        }
+        @if (exchangeOrder.balanceRefund) {
+          <div class="col-md-3 mb-3">
+            <label class="form-label text-muted">Balance Refund</label>
+            <p class="fw-medium text-info">{{ formatCurrency(exchangeOrder.balanceRefund) }}</p>
+          </div>
+        }
+        @if (exchangeOrder.cashPayment) {
+          <div class="col-md-3 mb-3">
+            <label class="form-label text-muted">Cash Payment</label>
+            <p class="fw-medium text-warning">{{ formatCurrency(exchangeOrder.cashPayment) }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Items Table -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Exchange Items</h6>
+          <hr class="mt-0">
+        </div>
+        <div class="col-12">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Metal</th>
+                  <th>Purity</th>
+                  <th>Gross Wt</th>
+                  <th>Net Wt</th>
+                  <th>Pure Wt</th>
+                  <th>Rate/g</th>
+                  <th>Market Value</th>
+                  <th>Deduction %</th>
+                  <th>Deduction Amt</th>
+                  <th>Credit Amt</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of exchangeOrder.items; track item.id; let i = $index) {
+                  <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.metalName || '-' }}</td>
+                    <td>{{ item.purityName || '-' }}</td>
+                    <td>{{ formatWeight(item.grossWeight) }}</td>
+                    <td>{{ formatWeight(item.netWeight) }}</td>
+                    <td>{{ formatWeight(item.pureWeight) }}</td>
+                    <td>{{ formatCurrency(item.currentRatePerGram) }}</td>
+                    <td>{{ formatCurrency(item.marketValue) }}</td>
+                    <td>{{ item.totalDeductionPercent }}%</td>
+                    <td class="text-danger">{{ formatCurrency(item.deductionAmount) }}</td>
+                    <td class="text-success">{{ formatCurrency(item.creditAmount) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      @if (exchangeOrder.notes) {
+        <div class="row mb-4">
+          <div class="col-12">
+            <h6 class="text-muted mb-3">Notes</h6>
+            <hr class="mt-0">
+            <p>{{ exchangeOrder.notes }}</p>
+          </div>
+        </div>
+      }
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          Back to List
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Create/Edit Form -->
+  @if (!isLoading && !isViewMode) {
+    <form [formGroup]="exchangeForm" (ngSubmit)="onSubmit()" class="exchange-form">
+      <!-- Basic Information Section -->
+      <div class="row">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Basic Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Customer ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="customerId" class="form-label">
+            Customer ID <span class="text-danger">*</span>
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="customerId"
+            formControlName="customerId"
+            placeholder="Enter customer ID"
+            [class.is-invalid]="hasError('customerId')"
+          />
+          @if (hasError('customerId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('customerId') }}
+            </div>
+          }
+          <small class="text-muted">Enter the customer ID for this exchange</small>
+        </div>
+
+        <!-- Exchange Type Field -->
+        <div class="col-md-6 mb-3">
+          <label for="exchangeType" class="form-label">
+            Exchange Type <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="exchangeType"
+            formControlName="exchangeType"
+            [class.is-invalid]="hasError('exchangeType')"
+          >
+            @for (type of exchangeTypeOptions; track type.id) {
+              <option [ngValue]="type.id">
+                {{ type.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('exchangeType')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('exchangeType') }}
+            </div>
+          }
+        </div>
+
+        <!-- New Purchase Amount (for Exchange type) -->
+        @if (exchangeForm.get('exchangeType')?.value === 1) {
+          <div class="col-md-6 mb-3">
+            <label for="newPurchaseAmount" class="form-label">
+              New Purchase Amount
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              class="form-control"
+              id="newPurchaseAmount"
+              formControlName="newPurchaseAmount"
+              placeholder="Enter new purchase amount"
+              [class.is-invalid]="hasError('newPurchaseAmount')"
+            />
+            @if (hasError('newPurchaseAmount')) {
+              <div class="invalid-feedback">
+                {{ getErrorMessage('newPurchaseAmount') }}
+              </div>
+            }
+            <small class="text-muted">Amount of new purchase (for exchange transactions)</small>
+          </div>
+        }
+
+        <!-- Notes Field -->
+        <div class="col-md-6 mb-3">
+          <label for="notes" class="form-label">Notes</label>
+          <textarea
+            class="form-control"
+            id="notes"
+            formControlName="notes"
+            rows="2"
+            placeholder="Enter any additional notes"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Exchange Items Section -->
+      <div class="row mt-3">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="text-muted mb-0">Exchange Items</h6>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="addItem()">
+              <i class="feather icon-plus me-1"></i>Add Item
+            </button>
+          </div>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Items Form Array -->
+        @for (item of itemsArray.controls; track $index; let i = $index) {
+          <div class="col-12 mb-3">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center py-2">
+                <span class="fw-medium">Item {{ i + 1 }}</span>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeItem(i)" [disabled]="itemsArray.length === 1">
+                  <i class="feather icon-trash-2"></i>
+                </button>
+              </div>
+              <div class="card-body" [formGroupName]="i">
+                <div class="row">
+                  <!-- Metal ID -->
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Metal ID <span class="text-danger">*</span></label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      formControlName="metalId"
+                      placeholder="Metal ID"
+                      [class.is-invalid]="hasItemError(i, 'metalId')"
+                    />
+                  </div>
+
+                  <!-- Purity ID -->
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Purity ID <span class="text-danger">*</span></label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      formControlName="purityId"
+                      placeholder="Purity ID"
+                      [class.is-invalid]="hasItemError(i, 'purityId')"
+                    />
+                  </div>
+
+                  <!-- Gross Weight -->
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Gross Weight (g) <span class="text-danger">*</span></label>
+                    <input
+                      type="number"
+                      step="0.001"
+                      class="form-control form-control-sm"
+                      formControlName="grossWeight"
+                      placeholder="Gross weight"
+                      [class.is-invalid]="hasItemError(i, 'grossWeight')"
+                    />
+                  </div>
+
+                  <!-- Net Weight -->
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Net Weight (g) <span class="text-danger">*</span></label>
+                    <input
+                      type="number"
+                      step="0.001"
+                      class="form-control form-control-sm"
+                      formControlName="netWeight"
+                      placeholder="Net weight"
+                      [class.is-invalid]="hasItemError(i, 'netWeight')"
+                    />
+                  </div>
+
+                  <!-- Making Charge Deduction -->
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Making Charge Deduction %</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="100"
+                      class="form-control form-control-sm"
+                      formControlName="makingChargeDeductionPercent"
+                      placeholder="0-100"
+                    />
+                  </div>
+
+                  <!-- Wastage Deduction -->
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label">Wastage Deduction %</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="100"
+                      class="form-control form-control-sm"
+                      formControlName="wastageDeductionPercent"
+                      placeholder="0-100"
+                    />
+                  </div>
+
+                  <!-- Item Description -->
+                  <div class="col-md-12 mb-0">
+                    <label class="form-label">Item Description</label>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm"
+                      formControlName="itemDescription"
+                      placeholder="Optional description"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Calculate Button -->
+      <div class="row mt-3">
+        <div class="col-12 text-center">
+          <button
+            type="button"
+            class="btn btn-outline-info"
+            (click)="onCalculate()"
+            [disabled]="exchangeForm.invalid || isCalculating"
+          >
+            @if (isCalculating) {
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            }
+            <i class="feather icon-calculator me-2"></i>Calculate Exchange Value
+          </button>
+        </div>
+      </div>
+
+      <!-- Calculation Results -->
+      @if (calculatedResponse) {
+        <div class="row mt-4">
+          <div class="col-12">
+            <h6 class="text-muted mb-3">Calculation Results</h6>
+            <hr class="mt-0">
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label text-muted">Total Gross Weight</label>
+            <p class="fw-medium">{{ formatWeight(calculatedResponse.totalGrossWeight) }}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label text-muted">Total Net Weight</label>
+            <p class="fw-medium">{{ formatWeight(calculatedResponse.totalNetWeight) }}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label text-muted">Total Pure Weight</label>
+            <p class="fw-medium">{{ formatWeight(calculatedResponse.totalPureWeight) }}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label text-muted">Total Market Value</label>
+            <p class="fw-medium">{{ formatCurrency(calculatedResponse.totalMarketValue) }}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label text-muted">Total Deduction</label>
+            <p class="fw-medium text-danger">{{ formatCurrency(calculatedResponse.totalDeductionAmount) }}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label text-muted">Total Credit Amount</label>
+            <p class="fw-medium text-success fs-5">{{ formatCurrency(calculatedResponse.totalCreditAmount) }}</p>
+          </div>
+          @if (calculatedResponse.newPurchaseAmount) {
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">New Purchase Amount</label>
+              <p class="fw-medium">{{ formatCurrency(calculatedResponse.newPurchaseAmount) }}</p>
+            </div>
+          }
+          @if (calculatedResponse.balanceRefund) {
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Balance Refund</label>
+              <p class="fw-medium text-info">{{ formatCurrency(calculatedResponse.balanceRefund) }}</p>
+            </div>
+          }
+          @if (calculatedResponse.cashPayment) {
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-muted">Cash Payment</label>
+              <p class="fw-medium text-warning">{{ formatCurrency(calculatedResponse.cashPayment) }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="exchangeForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          Create Exchange Order
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

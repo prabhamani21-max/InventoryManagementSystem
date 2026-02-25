@@ -1,0 +1,113 @@
+<app-card cardTitle="Exchange Order Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Exchange Orders</h5>
+    <button class="btn btn-primary" (click)="onAddExchangeOrder()">
+      <i class="feather icon-plus me-2"></i>Add Exchange Order
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading exchange orders...</p>
+    </div>
+  }
+
+  <!-- Exchange Orders Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Order Number</th>
+            <th>Customer</th>
+            <th>Type</th>
+            <th>Exchange Date</th>
+            <th>Total Credit</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (exchangeOrders.length === 0) {
+            <tr>
+              <td colspan="8" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No exchange orders found. Click "Add Exchange Order" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (order of exchangeOrders; track order.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">#{{ order.id }}</span>
+              </td>
+              <td>
+                <span class="fw-medium">{{ order.orderNumber }}</span>
+              </td>
+              <td>
+                @if (order.customerName) {
+                  <span class="badge bg-light text-dark">
+                    <i class="feather icon-user me-1"></i>{{ order.customerName }}
+                  </span>
+                } @else {
+                  <span class="badge bg-light text-dark">
+                    <i class="feather icon-user me-1"></i>Customer #{{ order.customerId }}
+                  </span>
+                }
+              </td>
+              <td>
+                <span [ngClass]="getExchangeTypeClass(order.exchangeType)">
+                  {{ getExchangeTypeLabel(order.exchangeType) }}
+                </span>
+              </td>
+              <td>
+                <span>{{ formatDate(order.exchangeDate) }}</span>
+              </td>
+              <td>
+                <span class="fw-medium text-success">{{ formatCurrency(order.totalCreditAmount) }}</span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(order.statusId)">
+                  {{ getStatusLabel(order.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- View Button -->
+                  <button type="button" class="btn btn-sm btn-outline-info" 
+                          (click)="onViewExchangeOrder(order.id)" title="View Details">
+                    <i class="feather icon-eye"></i>
+                  </button>
+                  
+                  <!-- Complete Button (only for pending orders) -->
+                  @if (canComplete(order.statusId)) {
+                    <button type="button" class="btn btn-sm btn-outline-success" 
+                            (click)="onCompleteExchangeOrder(order.id)" title="Complete">
+                      <i class="feather icon-check"></i>
+                    </button>
+                  }
+                  
+                  <!-- Cancel Button (for non-completed/cancelled orders) -->
+                  @if (canCancel(order.statusId)) {
+                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                            (click)="onCancelExchangeOrder(order.id)" title="Cancel">
+                      <i class="feather icon-x"></i>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>
