@@ -104,5 +104,7 @@ namespace InventoryManagementSystem.Repository.Implementation
         {
             return await _context.UserKycs.AnyAsync(u => u.AadhaarCardNumber == aadhaarCardNumber && (excludeId == null || u.Id != excludeId));
         }
+        
+       
     }
 }

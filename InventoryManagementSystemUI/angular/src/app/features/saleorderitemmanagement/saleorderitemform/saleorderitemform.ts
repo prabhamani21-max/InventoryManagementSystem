@@ -86,7 +86,9 @@ export class Saleorderitemform implements OnInit {
     subtotal: 0,
     discountAmount: 0,
     taxableAmount: 0,
-    gstAmount: 0,
+    metalGstAmount: 0, // 3% GST on metal value (metal + wastage + stone)
+    makingChargesGstAmount: 0, // 5% GST on making charges
+    totalGstAmount: 0, // Metal GST + Making Charges GST
     totalAmount: 0
   };
 
@@ -306,8 +308,19 @@ export class Saleorderitemform implements OnInit {
     // Calculate subtotal and tax
     const subtotal = metalAmount + makingChargesPerUnit + wastageAmount + stoneAmount;
     const taxableAmount = Math.max(0, subtotal - discountAmount);
-    const gstAmount = taxableAmount * (gstPercentage / 100);
-    const totalAmount = taxableAmount + gstAmount;
+    
+    // Dual GST Calculation:
+    // Metal GST (3%) = (Metal Amount + Wastage Amount + Stone Amount) * 3%
+    const metalTaxableAmount = metalAmount + wastageAmount + stoneAmount;
+    const metalGstAmount = metalTaxableAmount * (gstPercentage / 100);
+    
+    // Making Charges GST (5%) = Making Charges * 5%
+    const makingChargesGstPercentage = 5;
+    const makingChargesGstAmount = makingChargesPerUnit * (makingChargesGstPercentage / 100);
+    
+    // Total GST = Metal GST + Making Charges GST
+    const totalGstAmount = metalGstAmount + makingChargesGstAmount;
+    const totalAmount = taxableAmount + totalGstAmount;
     
     // Apply quantity multiplier
     this.priceBreakdown = {
@@ -318,7 +331,9 @@ export class Saleorderitemform implements OnInit {
       subtotal: subtotal * quantity,
       discountAmount: discountAmount * quantity,
       taxableAmount: taxableAmount * quantity,
-      gstAmount: gstAmount * quantity,
+      metalGstAmount: metalGstAmount * quantity,
+      makingChargesGstAmount: makingChargesGstAmount * quantity,
+      totalGstAmount: totalGstAmount * quantity,
       totalAmount: totalAmount * quantity
     };
   }
@@ -335,7 +350,9 @@ export class Saleorderitemform implements OnInit {
       subtotal: 0,
       discountAmount: 0,
       taxableAmount: 0,
-      gstAmount: 0,
+      metalGstAmount: 0,
+      makingChargesGstAmount: 0,
+      totalGstAmount: 0,
       totalAmount: 0
     };
   }

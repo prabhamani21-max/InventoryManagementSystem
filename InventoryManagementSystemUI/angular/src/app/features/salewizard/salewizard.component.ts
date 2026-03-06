@@ -36,13 +36,13 @@ export class SaleWizardComponent implements OnInit, OnDestroy {
   wizardState: SaleWizardState = this.wizardService.getCurrentState();
   
   // Step configuration
-  steps: StepConfig[] = [
-    { number: 1, title: 'Customer', icon: 'person', path: 'customer' },
-    { number: 2, title: 'Sale Order', icon: 'receipt_long', path: 'order' },
-    { number: 3, title: 'Items', icon: 'shopping_bag', path: 'items' },
-    { number: 4, title: 'Payment', icon: 'payment', path: 'payment' },
-    { number: 5, title: 'Invoice', icon: 'description', path: 'invoice' },
-  ];
+ steps: StepConfig[] = [
+  { number: 1, title: 'Customer', icon: 'user', path: 'customer' },
+  { number: 2, title: 'Sale Order', icon: 'file-text', path: 'order' },
+  { number: 3, title: 'Items', icon: 'shopping-bag', path: 'items' },
+  { number: 4, title: 'Payment', icon: 'credit-card', path: 'payment' },
+  { number: 5, title: 'Invoice', icon: 'file', path: 'invoice' },
+];
 
   ngOnInit(): void {
     // Subscribe to wizard state changes

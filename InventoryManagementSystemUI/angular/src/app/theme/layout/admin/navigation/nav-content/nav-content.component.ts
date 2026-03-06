@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { NavigationItem, NavigationItems } from '../navigation';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { NavGroupComponent } from './nav-group/nav-group.component';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-nav-content',
@@ -17,6 +18,7 @@ import { NavGroupComponent } from './nav-group/nav-group.component';
 export class NavContentComponent implements OnInit {
   private location = inject(Location);
   private locationStrategy = inject(LocationStrategy);
+  private authService = inject(AuthenticationService);
 
   // version
   title = 'Demo application for version numbering';
@@ -33,10 +35,44 @@ export class NavContentComponent implements OnInit {
 
   // constructor
   constructor() {
-    this.navigation = NavigationItems;
+    this.navigation = this.getNavigationByRole();
     this.windowWidth = window.innerWidth;
     this.scrollWidth = 0;
     this.contentWidth = 0;
+  }
+
+  private getNavigationByRole(): NavigationItem[] {
+    const roleId = this.getCurrentUserRoleId();
+    return this.filterNavigationByRole(NavigationItems, roleId);
+  }
+
+  private getCurrentUserRoleId(): number | null {
+    const roleId = this.authService.getUserInformation()?.roleId;
+    const parsedRoleId = Number(roleId);
+    return Number.isNaN(parsedRoleId) ? null : parsedRoleId;
+  }
+
+  private filterNavigationByRole(items: NavigationItem[], roleId: number | null): NavigationItem[] {
+    return items.reduce((filteredItems: NavigationItem[], item: NavigationItem) => {
+      const isAllowed = !item.roleId || (roleId !== null && item.roleId.includes(roleId));
+      if (!isAllowed) {
+        return filteredItems;
+      }
+
+      const filteredItem: NavigationItem = { ...item };
+
+      if (item.children?.length) {
+        filteredItem.children = this.filterNavigationByRole(item.children, roleId);
+      }
+
+      const isContainerItem = filteredItem.type === 'group' || filteredItem.type === 'collapse';
+      if (isContainerItem && (!filteredItem.children || filteredItem.children.length === 0)) {
+        return filteredItems;
+      }
+
+      filteredItems.push(filteredItem);
+      return filteredItems;
+    }, []);
   }
 
   // life cycle event

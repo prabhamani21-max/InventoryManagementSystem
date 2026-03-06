@@ -10,9 +10,7 @@ import { UserService } from 'src/app/core/services/user.service';
 import { UserNotificationService, UserRegisteredNotification } from 'src/app/core/services/user-notification.service';
 import {
   User,
-  getStatusLabel,
   getStatusClass,
-  getRoleLabel,
   getRoleClass,
   getGenderLabel,
   formatDate,
@@ -183,25 +181,12 @@ export class Usertable implements OnInit, OnDestroy {
   }
 
   /**
-   * Get status label based on status ID
-   */
-  getStatusLabel(statusId: number): string {
-    return getStatusLabel(statusId);
-  }
-
-  /**
    * Get status CSS class based on status ID
    */
   getStatusClass(statusId: number): string {
     return getStatusClass(statusId);
   }
 
-  /**
-   * Get role label based on role ID
-   */
-  getRoleLabel(roleId: number): string {
-    return getRoleLabel(roleId);
-  }
 
   /**
    * Get role CSS class based on role ID

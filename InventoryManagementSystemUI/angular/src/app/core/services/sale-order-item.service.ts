@@ -110,8 +110,16 @@ export class SaleOrderItemService {
       }),
       catchError((error) => {
         if (error.status === 400) {
-          // Check if it's a stock validation error
-          const errorMessage = error.error?.message || error.error || 'Invalid sale order item data';
+          // Extract error message from the wrapped API response
+          // The middleware wraps the response: { Status, Message, Data: { Message: "actual error" }, HttpStatus }
+          const apiResponse = error.error;
+          const errorMessage = apiResponse?.Data?.Message 
+            || apiResponse?.data?.Message 
+            || apiResponse?.Data?.message 
+            || apiResponse?.data?.message
+            || apiResponse?.Message 
+            || apiResponse?.message
+            || 'Invalid sale order item data';
           this.toastr.error(errorMessage);
         } else {
           this.toastr.error('Failed to create sale order item');

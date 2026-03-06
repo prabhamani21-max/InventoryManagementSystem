@@ -53,8 +53,14 @@ export interface SaleOrderItem {
   itemSubtotal: number;
   discountAmount: number;
   taxableAmount: number;
-  gstPercentage: number;
-  gstAmount: number;
+  gstPercentage: number; // Metal GST percentage (3%)
+  gstAmount: number; // Metal GST amount (3% on metal value)
+  
+  // Making Charges GST (5% on making charges)
+  makingChargesGstPercentage: number; // Default 5%
+  makingChargesGstAmount: number; // 5% of totalMakingCharges
+  totalGstAmount: number; // Metal GST + Making Charges GST
+  
   totalAmount: number;
 
   /* ---------------- HALLMARK ---------------- */

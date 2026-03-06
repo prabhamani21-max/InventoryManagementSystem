@@ -77,7 +77,6 @@ try
     builder.Services.AddValidatorsFromAssemblyContaining<ItemStoneDtoValidator>();
     builder.Services.AddValidatorsFromAssemblyContaining<CategoryDtoValidator>();
     builder.Services.AddValidatorsFromAssemblyContaining<CreateSaleOrderItemDtoValidator>();
-
     // Repositories
     builder.Services.AddScoped<IStatusRepository, StatusRepository>();
     builder.Services.AddScoped<IRoleRepository, RoleRepository>();
@@ -100,6 +99,8 @@ try
     builder.Services.AddScoped<IStoneRateRepository, StoneRateRepository>();
     builder.Services.AddScoped<IExchangeRepository, ExchangeRepository>();
     builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+    builder.Services.AddScoped<IInvoiceItemRepository, InvoiceItemRepository>();
+    builder.Services.AddScoped<IInvoicePaymentRepository, InvoicePaymentRepository>();
     builder.Services.AddScoped<ITcsRepository, TcsRepository>();
     // Services
     builder.Services.AddScoped<IStatusService, StatusService>();
@@ -113,6 +114,7 @@ try
     builder.Services.AddScoped<ISaleOrderService, SaleOrderService>();
     builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
     builder.Services.AddScoped<IPaymentService, PaymentService>();
+    builder.Services.AddScoped<IPaymentValidationService, PaymentValidationService>();
     builder.Services.AddScoped<IPurityService, PurityService>();
     builder.Services.AddScoped<IMetalService, MetalService>();
     builder.Services.AddScoped<IJewelleryItemService, JewelleryItemService>();
@@ -125,6 +127,13 @@ try
     builder.Services.AddScoped<IStoneRateService, StoneRateService>();
     builder.Services.AddScoped<IExchangeService, ExchangeService>();
     builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+    builder.Services.AddScoped<IInvoiceGeneratorService, InvoiceGeneratorService>();
+    builder.Services.AddScoped<ICompanyDetailsProvider, ConfigurationCompanyDetailsProvider>();
+    builder.Services.AddScoped<INumberToWordsConverter, NumberToWordsConverter>();
+    // Existing invoice-related services that InvoiceGeneratorService depends on
+    builder.Services.AddScoped<IInvoiceBuilderService, InvoiceBuilderService>();
+    builder.Services.AddScoped<IInvoiceTaxService, InvoiceTaxService>();
+    builder.Services.AddScoped<IInvoiceNumberService, InvoiceNumberService>();
     builder.Services.AddScoped<IEInvoiceService, EInvoiceService>();
     builder.Services.AddScoped<ITcsService, TcsService>();
 
@@ -135,8 +144,6 @@ try
     builder.Services.AddScoped<IUserNotificationService, UserNotificationService>();
     builder.Services.AddScoped<ISaleOrderNotificationService, SaleOrderNotificationService>();
     builder.Services.AddSignalR();
-
-
     // Logging
     builder.Services.AddLogging(logging =>
     {

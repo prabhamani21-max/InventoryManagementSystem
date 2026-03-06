@@ -13,5 +13,12 @@ namespace InventoryManagementSystem.Service.Interface
         Task<bool> PanCardNumberExistsAsync(string panCardNumber, long? excludeId = null);
         Task<bool> AadhaarCardNumberExistsAsync(string aadhaarCardNumber, long? excludeId = null);
         Task<bool> UserKycExistsAsync(long userId, long? excludeId = null);
+        
+        /// <summary>
+        /// Checks if a user's KYC is verified
+        /// </summary>
+        /// <param name="userId">The user ID to check</param>
+        /// <returns>True if KYC exists and is verified, false otherwise</returns>
+        Task<bool> IsUserKycVerifiedAsync(long userId);
     }
 }

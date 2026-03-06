@@ -75,5 +75,18 @@ namespace InventoryManagementSystem.Repository.Implementation
             await _context.SaveChangesAsync();
             return true;
         }
+
+        /// <summary>
+        /// Gets payments by order ID and order type
+        /// </summary>
+        /// <param name="orderId">The order ID</param>
+        /// <param name="orderType">The order type (SALE, PURCHASE, etc.)</param>
+        /// <returns>List of payment DB models</returns>
+        public async Task<List<PaymentDb>> GetPaymentsByOrderIdAndTypeAsync(long orderId, TransactionType orderType)
+        {
+            return await _context.Payments
+                .Where(p => p.OrderId == orderId && p.OrderType == orderType)
+                .ToListAsync();
+        }
     }
 }

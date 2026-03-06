@@ -63,6 +63,47 @@ namespace InventoryManagementSystem.Controllers
             return Ok(userKycDto);
         }
 
+        /// <summary>
+        /// Gets the KYC status for a customer (for high-value transaction validation)
+        /// </summary>
+        /// <param name="customerId">The customer ID to check KYC status for</param>
+        /// <returns>KYC status information</returns>
+        [HttpGet("customer/{customerId}/status")]
+        public async Task<IActionResult> GetCustomerKycStatus(long customerId)
+        {
+            _logger.LogInformation("Fetching KYC status for Customer ID: {CustomerId}", customerId);
+            
+            var userKyc = await _userKycService.GetUserKycByUserIdAsync(customerId);
+            
+            if (userKyc == null)
+            {
+                return Ok(new
+                {
+                    hasKyc = false,
+                    isVerified = false,
+                    panCardNumber = (string?)null,
+                    aadhaarCardNumber = (string?)null
+                });
+            }
+
+            // Mask Aadhaar number (show only first 4 digits)
+            string? maskedAadhaar = null;
+            if (!string.IsNullOrEmpty(userKyc.AadhaarCardNumber))
+            {
+                maskedAadhaar = userKyc.AadhaarCardNumber.Length >= 4
+                    ? userKyc.AadhaarCardNumber.Substring(0, 4) + "XXXX"
+                    : "XXXX";
+            }
+
+            return Ok(new
+            {
+                hasKyc = true,
+                isVerified = userKyc.IsVerified,
+                panCardNumber = userKyc.PanCardNumber,
+                aadhaarCardNumber = maskedAadhaar
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateUserKyc([FromBody] UserKycDto dto)
         {

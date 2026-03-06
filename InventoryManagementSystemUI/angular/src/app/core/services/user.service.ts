@@ -1,16 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, of, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   User,
   UserCreate,
   UserUpdate,
-  LoginRequest,
-  LoginResponse,
+
 } from '../models/user.model';
 import { ApiResponse } from '../models/api-response.model';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from '../services/auth.service';
 
 /**
  * User Service
@@ -22,32 +22,51 @@ import { ToastrService } from 'ngx-toastr';
 export class UserService {
   private http = inject(HttpClient);
   private toastr = inject(ToastrService);
+    private authService = inject(AuthenticationService);
+    
+  private currentUserSubject = new BehaviorSubject<any>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+
   private readonly apiUrl = `${environment.apiUrl}/User`;
+  currentUser: any;
 
-  /**
-   * User login
-   * POST /api/User/login
-   */
-  login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
-      map((response) => {
-        return response;
-      }),
-      catchError((error) => {
-        if (error.status === 404) {
-          this.toastr.error('Invalid email or phone number');
-        } else if (error.status === 401) {
-          this.toastr.error('Invalid password');
-        } else if (error.status === 403) {
-          this.toastr.error('User is inactive');
-        } else {
-          this.toastr.error('Login failed');
-        }
-        return throwError(() => error);
-      })
-    );
+getCurrentUser(): Observable<
+    (User & { profileImageUrl: string }) | null
+  > {
+    const decodedToken = this.authService.getUserInformation();
+    if (!decodedToken?.userId) {
+      return of(null);
+    }
+
+    return this.http
+      .get<
+        ApiResponse<User>
+      >(`${environment.apiUrl}/User/GetUserById/${decodedToken.userId}`)
+      .pipe(
+        map((response) => {
+          if (response.Status && response.Data) {
+            const user = response.Data;
+
+            // Construct the derived profileImageUrl (not part of backend model)
+            const profileImageUrl = 
+            'assets/images/users/dummy-avatar.jpg';
+
+            const userWithImageUrl = {
+              ...user,
+              profileImageUrl,
+            };
+
+            this.currentUserSubject.next(userWithImageUrl);
+            return userWithImageUrl;
+          }
+          return null;
+        }),
+        catchError((error) => {
+          console.error('Error fetching user:', error);
+          return of(null);
+        }),
+      );
   }
-
   /**
    * Register new user
    * POST /api/User/register

@@ -2,6 +2,8 @@ using InventoryManagementSytem.Common.Dtos;
 using InventoryManagementSystem.Service.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace InventoryManagementSystem.Controllers
 {
@@ -71,8 +73,24 @@ namespace InventoryManagementSystem.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogWarning(ex, "Invoice generation failed - not found");
-                return NotFound(new { success = false, message = ex.Message });
+                if (ex.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogWarning(ex, "Invoice generation failed - resource not found");
+                    return NotFound(new { success = false, message = ex.Message });
+                }
+
+                _logger.LogWarning(ex, "Invoice generation failed - invalid operation");
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Invoice generation failed - database update error");
+                return StatusCode(500, new { success = false, message = "A database error occurred while generating the invoice" });
+            }
+            catch (PostgresException ex)
+            {
+                _logger.LogError(ex, "Invoice generation failed - postgres error");
+                return StatusCode(500, new { success = false, message = "A database error occurred while generating the invoice" });
             }
             catch (Exception ex)
             {

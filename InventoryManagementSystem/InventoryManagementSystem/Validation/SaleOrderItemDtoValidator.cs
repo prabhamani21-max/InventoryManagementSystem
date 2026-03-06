@@ -87,18 +87,18 @@ namespace InventoryManagementSystem.Validation
 
             /* ---------------- HALLMARK ---------------- */
 
-            RuleFor(x => x.HUID)
-                .MaximumLength(6).WithMessage("HUID cannot exceed 6 characters")
-                .Matches("^[A-Za-z0-9]{6}$").When(x => !string.IsNullOrEmpty(x.HUID)).WithMessage("HUID must be exactly 6 alphanumeric characters");
+            //RuleFor(x => x.HUID)
+            //    .MaximumLength(6).WithMessage("HUID cannot exceed 6 characters")
+            //    .Matches("^[A-Za-z0-9]{6}$").When(x => !string.IsNullOrEmpty(x.HUID)).WithMessage("HUID must be exactly 6 alphanumeric characters");
 
-            RuleFor(x => x.BISCertificationNumber)
-                .MaximumLength(50).WithMessage("BIS Certification Number cannot exceed 50 characters");
+            //RuleFor(x => x.BISCertificationNumber)
+            //    .MaximumLength(50).WithMessage("BIS Certification Number cannot exceed 50 characters");
 
-            RuleFor(x => x.HallmarkCenterName)
-                .MaximumLength(100).WithMessage("Hallmark Center Name cannot exceed 100 characters");
+            //RuleFor(x => x.HallmarkCenterName)
+            //    .MaximumLength(100).WithMessage("Hallmark Center Name cannot exceed 100 characters");
 
-            RuleFor(x => x.HallmarkDate)
-                .LessThanOrEqualTo(DateTime.Today).When(x => x.HallmarkDate.HasValue).WithMessage("Hallmark Date cannot be in the future");
+            //RuleFor(x => x.HallmarkDate)
+            //    .LessThanOrEqualTo(DateTime.Today).When(x => x.HallmarkDate.HasValue).WithMessage("Hallmark Date cannot be in the future");
 
             /* ---------------- AUDIT ---------------- */
 

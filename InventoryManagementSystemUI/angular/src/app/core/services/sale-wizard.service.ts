@@ -5,11 +5,13 @@ import { SaleOrder, SaleOrderCreate } from '../models/sale-order.model';
 import { SaleOrderItem, SaleOrderItemWithCalculation } from '../models/sale-order-item.model';
 import { Payment, PaymentCreate } from '../models/payment.model';
 import { Invoice } from '../models/invoice.model';
+import { KycStatus, HIGH_VALUE_TRANSACTION_THRESHOLD, isHighValueTransaction } from '../models/kyc.model';
 import { UserService } from './user.service';
 import { SaleOrderService } from './sale-order.service';
 import { SaleOrderItemService } from './sale-order-item.service';
 import { PaymentService } from './payment.service';
 import { InvoiceService } from './invoice.service';
+import { PaymentValidationService } from './paymentvalidation.service';
 import { ToastrService } from 'ngx-toastr';
 
 /**
@@ -39,6 +41,11 @@ export interface SaleWizardState {
   // Step 5: Invoice
   generatedInvoice: Invoice | null;
   
+  // KYC Status for high-value transactions
+  customerKycStatus: KycStatus | null;
+  isHighValueTransaction: boolean;
+  kycValidationRequired: boolean;
+  
   // Navigation
   currentStep: number;
   completedSteps: number[];
@@ -64,6 +71,9 @@ const initialState: SaleWizardState = {
   totalPaid: 0,
   balanceDue: 0,
   generatedInvoice: null,
+  customerKycStatus: null,
+  isHighValueTransaction: false,
+  kycValidationRequired: false,
   currentStep: 1,
   completedSteps: [],
   isLoading: false,
@@ -90,6 +100,7 @@ export class SaleWizardService {
     private saleOrderItemService: SaleOrderItemService,
     private paymentService: PaymentService,
     private invoiceService: InvoiceService,
+    private pvService: PaymentValidationService,
     private toastr: ToastrService
   ) {}
 
@@ -120,12 +131,61 @@ export class SaleWizardService {
   // ==================== STEP 1: Customer Methods ====================
 
   /**
-   * Set selected customer
+   * Set selected customer and load KYC status
    */
   setCustomer(customer: User, isNew: boolean = false): void {
     this.updateState({
       selectedCustomer: customer,
       isNewCustomer: isNew,
+      isLoading: true,
+    });
+    
+    // Load KYC status for the customer
+    this.loadCustomerKycStatus(customer.id);
+  }
+
+  /**
+   * Load KYC status for a customer
+   */
+  loadCustomerKycStatus(customerId: number): void {
+    this.pvService.getCustomerKycStatus(customerId).subscribe({
+      next: (kycStatus) => {
+        this.updateState({
+          customerKycStatus: kycStatus,
+          isLoading: false,
+        });
+        // Re-check high-value transaction status
+        this.checkHighValueTransaction();
+      },
+      error: () => {
+        this.updateState({
+          customerKycStatus: { hasKyc: false, isVerified: false },
+          isLoading: false,
+        });
+      },
+    });
+  }
+
+  /**
+   * Refresh KYC status for current customer (used after returning from KYC page)
+   */
+  refreshKycStatus(): void {
+    const customer = this.stateSubject.value.selectedCustomer;
+    if (customer && customer.id) {
+      this.loadCustomerKycStatus(customer.id);
+    }
+  }
+
+  /**
+   * Check if transaction is high-value and update state
+   */
+  checkHighValueTransaction(): void {
+    const state = this.stateSubject.value;
+    const isHighValue = isHighValueTransaction(state.orderTotal);
+    
+    this.updateState({
+      isHighValueTransaction: isHighValue,
+      kycValidationRequired: isHighValue && !state.customerKycStatus?.isVerified,
     });
   }
 
@@ -272,6 +332,9 @@ export class SaleWizardService {
       orderTotal: total,
       balanceDue: total - this.stateSubject.value.totalPaid,
     });
+    
+    // Check high-value transaction status after recalculating total
+    this.checkHighValueTransaction();
   }
 
   // ==================== STEP 4: Payment Methods ====================
@@ -329,14 +392,24 @@ export class SaleWizardService {
   /**
    * Generate invoice from sale order
    */
-  generateInvoice(saleOrderId: number, notes?: string): Observable<Invoice> {
+  generateInvoice(
+    saleOrderId: number,
+    notes?: string,
+    includeTermsAndConditions: boolean = true
+  ): Observable<Invoice> {
+    if (!saleOrderId || saleOrderId <= 0) {
+      return new Observable<Invoice>((observer) => {
+        observer.error(new Error('Invalid sale order id'));
+      });
+    }
+
     this.updateState({ isSubmitting: true });
 
     return new Observable<Invoice>((observer) => {
       this.invoiceService.generateInvoice({
         saleOrderId,
         notes,
-        includeTermsAndConditions: true,
+        includeTermsAndConditions,
       }).subscribe({
         next: (invoice) => {
           this.updateState({

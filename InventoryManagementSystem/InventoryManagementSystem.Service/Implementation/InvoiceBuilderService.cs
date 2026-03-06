@@ -21,6 +21,10 @@ namespace InventoryManagementSystem.Service.Implementation
         /// - Stone price changes don't break old invoices
         /// - Returns can be processed with original values
         /// - Metal stock valuation remains accurate
+        /// 
+        /// GST Structure:
+        /// - Metal GST (3%): Applied on MetalAmount + WastageAmount + StoneAmount
+        /// - Making Charges GST (5%): Applied on TotalMakingCharges
         /// </summary>
         public List<InvoiceItem> BuildInvoiceItems(
             List<SaleOrderItemDb> saleOrderItems,
@@ -41,9 +45,12 @@ namespace InventoryManagementSystem.Service.Implementation
                 // Get stone data for this jewellery item
                 var stoneData = itemStones.FirstOrDefault(is_ => is_.JewelleryItemId == item.JewelleryItemId);
 
-                // Calculate GST breakdown from SaleOrderItem
+                // Calculate Metal GST breakdown (3% on metal value)
                 // GST is derived from SaleOrderItem, NOT recomputed independently
                 var (cgstAmount, sgstAmount, igstAmount, gstAmount) = _taxService.CalculateItemGST(item.GstAmount);
+
+                // Calculate Making Charges GST breakdown (5% on making charges)
+                var (mcCgst, mcSgst, mcIgst, mcGst) = _taxService.CalculateItemGST(item.MakingChargesGstAmount);
 
                 var invoiceItem = new InvoiceItem
                 {
@@ -73,15 +80,21 @@ namespace InventoryManagementSystem.Service.Implementation
                     Discount = item.DiscountAmount,
                     TaxableAmount = item.TaxableAmount,
 
-                    // GST Breakdown - derived from SaleOrderItem (NOT recomputed)
+                    // Metal GST Breakdown (3% on metal value) - derived from SaleOrderItem (NOT recomputed)
                     CGSTAmount = cgstAmount,
                     SGSTAmount = sgstAmount,
                     IGSTAmount = igstAmount,
                     GSTAmount = gstAmount,
-                    TotalAmount = item.TotalAmount,
 
-                    // Hallmark snapshot
-                    IsHallmarked = item.IsHallmarked
+                    // Making Charges GST Breakdown (5% on making charges) - derived from SaleOrderItem
+                    MakingChargesCGSTAmount = mcCgst,
+                    MakingChargesSGSTAmount = mcSgst,
+                    MakingChargesIGSTAmount = mcIgst,
+                    MakingChargesGSTAmount = mcGst,
+
+                    // Total GST = Metal GST + Making Charges GST
+                    TotalGSTAmount = item.TotalGstAmount,
+                    TotalAmount = item.TotalAmount,
                 };
 
                 items.Add(invoiceItem);

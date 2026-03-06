@@ -65,13 +65,28 @@ export class InvoiceService {
           return (response.Data as any).data as Invoice;
         }
         // Fallback for direct Data access
-        return response.Data;
+        if (response.Status && response.Data) {
+          this.toastr.success('Invoice generated successfully');
+          return response.Data;
+        }
+
+        const message =
+          (response.Data as any)?.message ||
+          response.Message ||
+          'Failed to generate invoice';
+        throw new Error(message);
       }),
       catchError((error) => {
+        const backendMessage =
+          error?.error?.Data?.message ||
+          error?.error?.Data?.Message ||
+          error?.error?.message ||
+          error?.message;
+
         if (error.status === 404) {
-          this.toastr.error(error.error?.message || 'Sale order not found');
+          this.toastr.error(backendMessage || 'Sale order not found');
         } else {
-          this.toastr.error('Failed to generate invoice');
+          this.toastr.error(backendMessage || 'Failed to generate invoice');
         }
         return throwError(() => error);
       })

@@ -71,5 +71,17 @@ namespace InventoryManagementSystem.Repository.Implementation
             await _context.SaveChangesAsync();
             return true;
         }
+
+        /// <summary>
+        /// Gets purities by a list of IDs
+        /// </summary>
+        /// <param name="ids">Collection of purity IDs</param>
+        /// <returns>Dictionary of purities keyed by ID</returns>
+        public async Task<Dictionary<int, PurityDb>> GetPuritiesByIdsAsync(IEnumerable<int> ids)
+        {
+            return await _context.Purities
+                .Where(p => ids.Contains(p.Id))
+                .ToDictionaryAsync(p => p.Id, p => p);
+        }
     }
 }

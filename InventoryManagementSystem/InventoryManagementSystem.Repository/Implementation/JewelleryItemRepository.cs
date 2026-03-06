@@ -111,5 +111,17 @@ namespace InventoryManagementSystem.Repository.Implementation
             await _context.SaveChangesAsync();
             return jewelleryItem;
         }
+
+        /// <summary>
+        /// Gets jewellery items by a list of IDs
+        /// </summary>
+        /// <param name="ids">Collection of jewellery item IDs</param>
+        /// <returns>Dictionary of jewellery items keyed by ID</returns>
+        public async Task<Dictionary<int, JewelleryItemDb>> GetJewelleryItemsByIdsAsync(IEnumerable<long> ids)
+        {
+            return await _context.JewelleryItems
+                .Where(ji => ids.Contains(ji.Id))
+                .ToDictionaryAsync(ji => (int)ji.Id, ji => ji);
+        }
     }
 }

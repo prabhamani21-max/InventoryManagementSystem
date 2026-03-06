@@ -1,0 +1,97 @@
+<app-card cardTitle="User KYC Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">User KYCs</h5>
+    <button class="btn btn-primary" (click)="onAddUserKyc()">
+      <i class="feather icon-plus me-2"></i>Add User KYC
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading user KYCs...</p>
+    </div>
+  }
+
+  <!-- User KYCs Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>PAN Card</th>
+            <th>Aadhaar Card</th>
+            <th>Verified</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (userKycs.length === 0) {
+            <tr>
+              <td colspan="7" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No user KYCs found. Click "Add User KYC" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (userKyc of userKycs; track userKyc.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">#{{ userKyc.id }}</span>
+              </td>
+              <td>
+                <span class="fw-medium">{{ userKyc.userId }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ maskPanCard(userKyc.panCardNumber) }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ maskAadhaarCard(userKyc.aadhaarCardNumber) }}</span>
+              </td>
+              <td>
+                <span [ngClass]="getVerificationClass(userKyc.isVerified)">
+                  {{ getVerificationLabel(userKyc.isVerified) }}
+                </span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(userKyc.statusId)">
+                  {{ getStatusLabel(userKyc.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- View Button -->
+                  <button type="button" class="btn btn-sm btn-outline-info" 
+                          (click)="onViewUserKyc(userKyc.id)" title="View Details">
+                    <i class="feather icon-eye"></i>
+                  </button>
+                  
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditUserKyc(userKyc.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteUserKyc(userKyc.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

@@ -1,4 +1,5 @@
 using InventoryManagementSystem.Common.Models;
+using InventoryManagementSystem.Repository.Implementation;
 using InventoryManagementSystem.Repository.Interface;
 using InventoryManagementSystem.Service.Interface;
 
@@ -55,6 +56,17 @@ namespace InventoryManagementSystem.Service.Implementation
         public async Task<bool> AadhaarCardNumberExistsAsync(string aadhaarCardNumber, long? excludeId = null)
         {
             return await _userKycRepository.AadhaarCardNumberExistsAsync(aadhaarCardNumber, excludeId);
+        }
+      
+        /// <summary>
+        /// Checks if a user's KYC is verified
+        /// </summary>
+        /// <param name="userId">The user ID to check</param>
+        /// <returns>True if KYC exists and is verified, false otherwise</returns>
+        public async Task<bool> IsUserKycVerifiedAsync(long userId)
+        {
+            var userKyc = await _userKycRepository.GetUserKycByUserIdAsync(userId);
+            return userKyc != null && userKyc.IsVerified;
         }
     }
 }

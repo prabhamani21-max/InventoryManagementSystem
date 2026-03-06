@@ -14,14 +14,13 @@ import {
   UserCreate,
   UserUpdate,
   getGenderLabel,
-  getStatusLabel,
   getStatusClass,
-  getRoleLabel,
   formatDate,
   formatDateForInput,
   Gender,
 } from 'src/app/core/models/user.model';
 import { ToastrService } from 'ngx-toastr';
+import { RoleEnum } from 'src/app/core/enums/role.enum';
 
 /**
  * User Form Component
@@ -345,8 +344,8 @@ export class Userform implements OnInit {
       const customerData: UserCreate = {
         name: formValue.name,
         email: formValue.email || '',
-        password: 'Temp@123', // Temporary password - customer will set their own
-        roleId: 4, // Customer role
+        password: 'Password@123', // Temporary password - customer will set their own
+        roleId: RoleEnum.Customer, // Customer role
         statusId: 1, // Active
         gender: formValue.gender,
         dob: formValue.dob || new Date(),
@@ -469,26 +468,11 @@ export class Userform implements OnInit {
   }
 
   /**
-   * Get status label
-   */
-  getStatusLabel(statusId: number): string {
-    return getStatusLabel(statusId);
-  }
-
-  /**
    * Get status CSS class
    */
   getStatusClass(statusId: number): string {
     return getStatusClass(statusId);
   }
-
-  /**
-   * Get role label
-   */
-  getRoleLabel(roleId: number): string {
-    return getRoleLabel(roleId);
-  }
-
   /**
    * Format date for display
    */

@@ -40,7 +40,8 @@ namespace InventoryManagementSystem.Repository.Data
                         INSERT INTO generic_status (id, name, is_active, created_date, created_by) VALUES
                         (1, 'Active', true, NOW(), 1),
                         (2, 'Inactive', true, NOW(), 1),
-                        (3, 'Deleted', true, NOW(), 1)
+                        (3, 'Deleted', true, NOW(), 1),
+                        (4, 'Cancelled', true, NOW(), 1)
                     ");
                     _logger.LogInformation("Seeded 3 status records");
 

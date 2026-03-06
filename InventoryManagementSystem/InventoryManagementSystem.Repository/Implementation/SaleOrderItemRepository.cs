@@ -78,11 +78,6 @@ namespace InventoryManagementSystem.Repository.Implementation
             entity.GstPercentage = saleOrderItem.GstPercentage;
             entity.GstAmount = saleOrderItem.GstAmount;
             entity.TotalAmount = saleOrderItem.TotalAmount;
-            entity.IsHallmarked = saleOrderItem.IsHallmarked;
-            entity.HUID = saleOrderItem.HUID;
-            entity.BISCertificationNumber = saleOrderItem.BISCertificationNumber;
-            entity.HallmarkCenterName = saleOrderItem.HallmarkCenterName;
-            entity.HallmarkDate = saleOrderItem.HallmarkDate;
             entity.StatusId = saleOrderItem.StatusId;
             entity.UpdatedBy = saleOrderItem.UpdatedBy;
             entity.UpdatedDate = DateTime.UtcNow;
@@ -98,6 +93,35 @@ namespace InventoryManagementSystem.Repository.Implementation
             _context.SaleOrderItems.Remove(entity);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        /// <summary>
+        /// Gets all sale order items for a specific sale order
+        /// </summary>
+        /// <param name="saleOrderId">The sale order ID</param>
+        /// <returns>Collection of sale order items for the specified sale order</returns>
+        public async Task<IEnumerable<SaleOrderItem>> GetSaleOrderItemsBySaleOrderIdAsync(long saleOrderId)
+        {
+            var saleOrderItemsDb = await _context.SaleOrderItems
+                .Include(s => s.SaleOrder)
+                .Include(s => s.Status)
+                .Where(s => s.SaleOrderId == saleOrderId)
+                .AsNoTracking()
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<SaleOrderItem>>(saleOrderItemsDb);
+        }
+
+        /// <summary>
+        /// Gets sale order items with jewellery item details for a specific sale order
+        /// </summary>
+        /// <param name="saleOrderId">The sale order ID</param>
+        /// <returns>Collection of sale order item DB models with jewellery item included</returns>
+        public async Task<List<SaleOrderItemDb>> GetSaleOrderItemsWithJewelleryBySaleOrderIdAsync(long saleOrderId)
+        {
+            return await _context.SaleOrderItems
+                .Include(soi => soi.JewelleryItem)
+                .Where(soi => soi.SaleOrderId == saleOrderId)
+                .ToListAsync();
         }
     }
 }

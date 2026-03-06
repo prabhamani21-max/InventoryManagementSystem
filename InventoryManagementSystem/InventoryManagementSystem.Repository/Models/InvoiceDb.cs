@@ -96,6 +96,7 @@ namespace InventoryManagementSystem.Repository.Models
         [Column("taxable_amount")]
         public decimal TaxableAmount { get; set; }
 
+        // Metal GST (3% on metal value)
         [Column("cgst_amount")]
         public decimal CGSTAmount { get; set; }
 
@@ -104,6 +105,19 @@ namespace InventoryManagementSystem.Repository.Models
 
         [Column("igst_amount")]
         public decimal IGSTAmount { get; set; }
+
+        // Making Charges GST (5% on making charges)
+        [Column("making_charges_cgst_amount")]
+        public decimal MakingChargesCGSTAmount { get; set; }
+
+        [Column("making_charges_sgst_amount")]
+        public decimal MakingChargesSGSTAmount { get; set; }
+
+        [Column("making_charges_igst_amount")]
+        public decimal MakingChargesIGSTAmount { get; set; }
+
+        [Column("making_charges_gst_amount")]
+        public decimal MakingChargesGSTAmount { get; set; }
 
         [Column("total_gst_amount")]
         public decimal TotalGSTAmount { get; set; }

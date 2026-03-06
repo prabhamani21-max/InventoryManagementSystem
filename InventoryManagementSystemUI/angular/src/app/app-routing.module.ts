@@ -6,6 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdminComponent } from './theme/layout/admin/admin.component';
 import { AuthLayoutComponent } from './demo/pages/authentication/auth-layout.component';
 import { authGuard } from './core/gaurds/auth.guard';
+import { RoleGuard } from './core/gaurds/role.guard';
+import { RoleEnum } from './core/enums/role.enum';
 
 export const routes: Routes = [
    {
@@ -26,69 +28,108 @@ export const routes: Routes = [
     children: [
       {
         path: 'analytics',
-        loadComponent: () => import('./demo/dashboard/dash-analytics.component').then((c) => c.DashAnalyticsComponent)
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
+        loadComponent: () => import('./features/dashboard/dash-analytics.component').then((c) => c.DashAnalyticsComponent)
+      },
+      {
+        path: 'customer',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.Customer] },
+        loadComponent: () =>
+          import('./features/customerdashboard/customerdashboard.component').then(
+            (c) => c.CustomerDashboardComponent
+          ),
       },
       {
         path: 'category',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () =>
           import('./features/categorymanagement/categorymanagement.routes').then((m) => m.CATEGORY_ROUTES),
       },
       {
         path: 'metal',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () =>
           import('./features/metalmanagement/metalmanagement.routes').then((m) => m.METAL_ROUTES),
       },
       {
         path: 'purity',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () =>
           import('./features/puritymanagement/puritymanagement.routes').then((m) => m.PURITY_ROUTES),
       }, 
       {
         path: 'stone',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () =>
           import('./features/stonemanagement/stonemanagement.routes').then((m) => m.STONE_ROUTES),
       },
       {
         path: 'supplier',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () =>
           import('./features/suppliermanagement/suppliermanagement.routes').then((m) => m.SUPPLIER_ROUTES),
       },
       
       {
         path: 'stoneratehistory',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
        loadChildren: () => import('./features/stoneratehistorymanagement/stoneratehistorymanagement.routes').then(m => m.STONE_RATE_HISTORY_ROUTES)
       },
       
       {
         path: 'metalratehistory',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
        loadChildren: () => import('./features/metalratehistorymanagement/metalratehistorymanagement.routes').then(m => m.METAL_RATE_HISTORY_ROUTES)
       },
        {
         path: 'jewellery',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
        loadChildren: () => import('./features/jewelleryitemmanagement/jewelleryitemmanagement.routes').then(m => m.JEWELLERY_ITEM_ROUTES)
       },
       {
         path: 'itemstock',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () => import('./features/itemstockmanagement/itemstockmanagement.routes').then(m => m.ITEM_STOCK_ROUTES)
       },
       {
         path: 'saleorder',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () => import('./features/saleordermanagement/saleordermanagement.routes').then(m => m.SALE_ORDER_ROUTES)
       },
       {
         path: 'saleorderitem',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () => import('./features/saleorderitemmanagement/saleorderitemmanagement.routes').then(m => m.SALE_ORDER_ITEM_ROUTES)
       },
       {
         path: 'invoice',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () => import('./features/invoicemanagement/invoicemanagement.routes').then(m => m.INVOICE_ROUTES)
       },
       {
         path: 'invoiceitem',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () => import('./features/invoiceitemmanagement/invoiceitemmanagement.routes').then(m => m.INVOICE_ITEM_ROUTES)
       },
       {
         path: 'payment',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () => import('./features/paymentmanagement/paymentmanagement.routes').then(m => m.PAYMENT_ROUTES)
       },
       {
@@ -97,18 +138,26 @@ export const routes: Routes = [
       },
       {
         path: 'exchange',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager, RoleEnum.Sales] },
         loadChildren: () => import('./features/exchangemanagement/exchangemanagement.routes').then(m => m.EXCHANGE_ROUTES)
       },
       {
         path: 'user',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager, RoleEnum.Sales] },
         loadChildren: () => import('./features/usermanagement/usermanagement.routes').then(m => m.USER_ROUTES)
       },
       {
         path: 'role',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin] },
         loadChildren: () => import('./features/rolemanagement/rolemanagement.routes').then(m => m.ROLE_ROUTES)
       },
       {
         path: 'warehouse',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
         loadChildren: () => import('./features/warehousemanagement/warehousemanagement.routes').then(m => m.WAREHOUSE_ROUTES)
       },
       {
@@ -116,11 +165,22 @@ export const routes: Routes = [
         loadChildren: () => import('./features/salewizard/salewizard.routes').then(m => m.SALE_WIZARD_ROUTES)
       },
       {
+  path: 'userkyc',
+  canActivate: [RoleGuard],
+  data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager, RoleEnum.Sales, RoleEnum.Customer] },
+  loadChildren: () => import('./features/userkycmanagement/userkycmanagement.routes').then(m => m.USER_KYC_ROUTES)
+},
+      {
         path: '',
         redirectTo: 'analytics',
         pathMatch: 'full'
       },
     ]
+  },
+  {
+    path: 'jewelleryManagement/unauthorized',
+    loadComponent: () =>
+      import('./common/unauthorized/unauthorized.component').then((c) => c.Unauthorized),
   },
 ];
 

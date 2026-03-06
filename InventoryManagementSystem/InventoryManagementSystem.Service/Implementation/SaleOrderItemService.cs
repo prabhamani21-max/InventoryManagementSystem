@@ -84,23 +84,54 @@ namespace InventoryManagementSystem.Service.Implementation
                 jewelleryItem.NetMetalWeight
             );
 
-            var metalRate = await _metalRateService.GetLatestRatePerGramAsync(jewelleryItem.PurityId);
+            // Get the full rate object to validate the effective date
+            var metalRateInfo = await _metalRateService.GetCurrentRateByPurityIdAsync(jewelleryItem.PurityId);
+            
+            if (metalRateInfo == null)
+            {
+                _logger.LogWarning(
+                    "No metal rate found for MetalId={MetalId}, PurityId={PurityId}. Please add a rate for this purity.",
+                    jewelleryItem.MetalId,
+                    jewelleryItem.PurityId
+                );
+                throw new InvalidOperationException($"No metal rate found for purity ID {jewelleryItem.PurityId}. Please add a rate before creating the sale order.");
+            }
+
+            // Validate that the rate is current (today's rate)
+            var today = DateTime.UtcNow.Date;
+            var rateDate = metalRateInfo.EffectiveDate.Date;
+            
+            if (rateDate < today)
+            {
+                _logger.LogWarning(
+                    "Stale metal rate detected for PurityId={PurityId}. Rate date: {RateDate}, Current date: {CurrentDate}",
+                    jewelleryItem.PurityId,
+                    rateDate.ToString("yyyy-MM-dd"),
+                    today.ToString("yyyy-MM-dd")
+                );
+                throw new InvalidOperationException(
+                    $"Metal rate is outdated (last updated: {rateDate:yyyy-MM-dd}). " +
+                    "Please update today's metal rate before creating the sale order.");
+            }
+
+            var metalRate = metalRateInfo.RatePerGram;
             
             _logger.LogInformation(
-                "Metal Rate Result: PurityId={PurityId}, RatePerGram={RatePerGram}, MetalAmount={MetalAmount}",
+                "Metal Rate Result: PurityId={PurityId}, RatePerGram={RatePerGram}, EffectiveDate={EffectiveDate}, MetalAmount={MetalAmount}",
                 jewelleryItem.PurityId,
                 metalRate,
+                metalRateInfo.EffectiveDate.ToString("yyyy-MM-dd"),
                 jewelleryItem.NetMetalWeight * metalRate
             );
 
             if (metalRate <= 0)
             {
                 _logger.LogWarning(
-                    "No valid metal rate found for MetalId={MetalId}, PurityId={PurityId}. This may indicate missing rate configuration for non-gold metals.",
+                    "Invalid metal rate for MetalId={MetalId}, PurityId={PurityId}. Rate must be greater than zero.",
                     jewelleryItem.MetalId,
                     jewelleryItem.PurityId
                 );
-                throw new InvalidOperationException($"No valid metal rate found for purity ID {jewelleryItem.PurityId}");
+                throw new InvalidOperationException($"Invalid metal rate for purity ID {jewelleryItem.PurityId}. Rate must be greater than zero.");
             }
 
             // 4. Fetch stone amount if applicable
@@ -157,10 +188,10 @@ namespace InventoryManagementSystem.Service.Implementation
                 TaxableAmount = calculation.TaxableAmount,
                 GstPercentage = gstPercentage,
                 GstAmount = calculation.GstAmount,
+                MakingChargesGstPercentage = 5m, // 5% GST on making charges
+                MakingChargesGstAmount = calculation.MakingChargesGstAmount,
+                TotalGstAmount = calculation.TotalGstAmount,
                 TotalAmount = calculation.TotalAmount,
-
-                // Hallmark
-                IsHallmarked = jewelleryItem.IsHallmarked,
 
                 // Audit
                 CreatedDate = DateTime.UtcNow,
@@ -235,7 +266,10 @@ namespace InventoryManagementSystem.Service.Implementation
         /// Calculates pricing for a sale order item based on the industry-standard formula:
         /// MetalAmount + MakingCharges + WastageAmount + StoneAmount = ItemSubtotal
         /// ItemSubtotal - Discount = TaxableAmount
-        /// TaxableAmount + GST = TotalAmount
+        /// GST Calculation:
+        /// - 3% GST on (MetalAmount + WastageAmount + StoneAmount) - Metal GST
+        /// - 5% GST on MakingCharges - Making Charges GST
+        /// TotalAmount = TaxableAmount + Metal GST + Making Charges GST
         /// </summary>
         private PricingCalculation CalculatePricing(
             JewelleryItemDb jewelleryItem,
@@ -275,11 +309,20 @@ namespace InventoryManagementSystem.Service.Implementation
             var taxableAmount = itemSubtotal - discountAmount;
             if (taxableAmount < 0) taxableAmount = 0;
 
-            // GST Amount = TaxableAmount * GSTPercentage / 100
-            var gstAmount = (taxableAmount * gstPercentage) / 100;
+            // GST Calculation - Separate GST for metal and making charges
+            // Metal GST (3%) = (MetalAmount + WastageAmount + StoneAmount) * 3%
+            var metalTaxableAmount = metalAmount + wastageAmount + stoneAmount;
+            var metalGstAmount = (metalTaxableAmount * gstPercentage) / 100;
 
-            // Total Amount = TaxableAmount + GSTAmount
-            var totalAmount = taxableAmount + gstAmount;
+            // Making Charges GST (5%) = MakingCharges * 5%
+            const decimal MakingChargesGstPercentage = 5m;
+            var makingChargesGstAmount = (totalMakingCharges * MakingChargesGstPercentage) / 100;
+
+            // Total GST = Metal GST + Making Charges GST
+            var totalGstAmount = metalGstAmount + makingChargesGstAmount;
+
+            // Total Amount = TaxableAmount + Total GST
+            var totalAmount = taxableAmount + totalGstAmount;
 
             // Apply quantity multiplier
             return new PricingCalculation
@@ -290,7 +333,9 @@ namespace InventoryManagementSystem.Service.Implementation
                 WastageAmount = wastageAmount * quantity,
                 ItemSubtotal = itemSubtotal * quantity,
                 TaxableAmount = taxableAmount * quantity,
-                GstAmount = gstAmount * quantity,
+                GstAmount = metalGstAmount * quantity,
+                MakingChargesGstAmount = makingChargesGstAmount * quantity,
+                TotalGstAmount = totalGstAmount * quantity,
                 TotalAmount = totalAmount * quantity
             };
         }
@@ -306,7 +351,9 @@ namespace InventoryManagementSystem.Service.Implementation
             public decimal WastageAmount { get; set; }
             public decimal ItemSubtotal { get; set; }
             public decimal TaxableAmount { get; set; }
-            public decimal GstAmount { get; set; }
+            public decimal GstAmount { get; set; } // Metal GST (3%)
+            public decimal MakingChargesGstAmount { get; set; } // Making Charges GST (5%)
+            public decimal TotalGstAmount { get; set; } // Total GST (Metal + Making Charges)
             public decimal TotalAmount { get; set; }
         }
     }

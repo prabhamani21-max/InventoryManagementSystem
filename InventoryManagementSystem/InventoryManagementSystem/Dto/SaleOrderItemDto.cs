@@ -76,15 +76,15 @@ namespace InventoryManagementSystem.DTO
 
         /* ---------------- HALLMARK ---------------- */
 
-        public bool IsHallmarked { get; set; }
+        //public bool IsHallmarked { get; set; }
 
-        public string? HUID { get; set; } // 6-digit alphanumeric Hallmark Unique ID
+        //public string? HUID { get; set; } // 6-digit alphanumeric Hallmark Unique ID
 
-        public string? BISCertificationNumber { get; set; }
+        //public string? BISCertificationNumber { get; set; }
 
-        public string? HallmarkCenterName { get; set; }
+        //public string? HallmarkCenterName { get; set; }
 
-        public DateTime? HallmarkDate { get; set; }
+        //public DateTime? HallmarkDate { get; set; }
 
         /* ---------------- AUDIT ---------------- */
 

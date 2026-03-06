@@ -2,8 +2,7 @@
   <!-- Step Title -->
   <div class="step-header mb-4">
     <h5 class="mb-1">
-      <i class="material-icons-outlined me-2">description</i>
-      Generate Invoice
+    <i class="feather icon-file-text me-2"></i>      Generate Invoice
     </h5>
     <p class="text-muted mb-0">Generate and print the final invoice</p>
   </div>
@@ -13,8 +12,7 @@
     <div class="invoice-generated">
       <!-- Success Message -->
       <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
-        <i class="material-icons-outlined me-2">check_circle</i>
-        <div>
+      <i class="feather icon-check-circle me-2"></i>        <div>
           <strong>Invoice Generated Successfully!</strong>
           <br>
           Invoice Number: {{ wizardState.generatedInvoice.invoiceNumber }}
@@ -28,125 +26,249 @@
             <div class="col">
               <h5 class="mb-0">Invoice Preview</h5>
             </div>
-            <div class="col-auto">
+            <div class="col-auto d-flex align-items-center gap-2">
               <span class="badge bg-success">Generated</span>
+              <span class="badge" [class.bg-success]="wizardState.generatedInvoice.balanceDue <= 0" [class.bg-warning]="wizardState.generatedInvoice.balanceDue > 0">
+                {{ wizardState.generatedInvoice.balanceDue <= 0 ? 'Paid' : 'Partially Paid' }}
+              </span>
             </div>
           </div>
         </div>
+
         <div class="card-body">
           <!-- Invoice Header -->
-          <div class="invoice-header mb-4 pb-3 border-bottom">
-            <div class="row">
-              <div class="col-md-6">
+          <div class="invoice-header mb-3 pb-3 border-bottom">
+            <div class="row g-3">
+              <div class="col-lg-6">
                 <h4 class="text-primary mb-1">{{ wizardState.generatedInvoice.companyName }}</h4>
                 @if (wizardState.generatedInvoice.companyAddress) {
                   <p class="text-muted mb-0">{{ wizardState.generatedInvoice.companyAddress }}</p>
                 }
                 @if (wizardState.generatedInvoice.companyPhone) {
-                  <p class="text-muted mb-0">
-                    <i class="material-icons-outlined me-1" style="font-size: 14px;">phone</i>
-                    {{ wizardState.generatedInvoice.companyPhone }}
-                  </p>
+                  <p class="text-muted mb-0">Phone: {{ wizardState.generatedInvoice.companyPhone }}</p>
                 }
                 @if (wizardState.generatedInvoice.companyEmail) {
-                  <p class="text-muted mb-0">
-                    <i class="material-icons-outlined me-1" style="font-size: 14px;">email</i>
-                    {{ wizardState.generatedInvoice.companyEmail }}
-                  </p>
+                  <p class="text-muted mb-0">Email: {{ wizardState.generatedInvoice.companyEmail }}</p>
                 }
                 @if (wizardState.generatedInvoice.companyGSTIN) {
-                  <p class="text-muted mb-0">
-                    <strong>GSTIN:</strong> {{ wizardState.generatedInvoice.companyGSTIN }}
-                  </p>
+                  <p class="text-muted mb-0"><strong>GSTIN:</strong> {{ wizardState.generatedInvoice.companyGSTIN }}</p>
+                }
+                @if (wizardState.generatedInvoice.companyPAN) {
+                  <p class="text-muted mb-0"><strong>PAN:</strong> {{ wizardState.generatedInvoice.companyPAN }}</p>
+                }
+                @if (wizardState.generatedInvoice.companyHallmarkLicense) {
+                  <p class="text-muted mb-0"><strong>Hallmark License:</strong> {{ wizardState.generatedInvoice.companyHallmarkLicense }}</p>
                 }
               </div>
-              <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                <h3 class="text-primary">TAX INVOICE</h3>
+
+              <div class="col-lg-6 text-lg-end">
+                <h3 class="text-primary mb-2">TAX INVOICE</h3>
                 <p class="mb-0"><strong>Invoice No:</strong> {{ wizardState.generatedInvoice.invoiceNumber }}</p>
-                <p class="mb-0">
-                  <strong>Date:</strong> {{ wizardState.generatedInvoice.invoiceDate | date:'mediumDate' }}
-                </p>
+                <p class="mb-0"><strong>Invoice Date:</strong> {{ wizardState.generatedInvoice.invoiceDate | date:'mediumDate' }}</p>
                 @if (wizardState.generatedInvoice.saleOrderId) {
-                  <p class="mb-0">
-                    <strong>Order Ref:</strong> #{{ wizardState.generatedInvoice.saleOrderId }}
-                  </p>
+                  <p class="mb-0"><strong>Order Ref:</strong> #{{ wizardState.generatedInvoice.saleOrderId }}</p>
+                }
+                @if (wizardState.saleOrder?.orderNumber) {
+                  <p class="mb-0"><strong>Order No:</strong> {{ wizardState.saleOrder?.orderNumber }}</p>
+                }
+                @if (wizardState.saleOrder?.orderDate) {
+                  <p class="mb-0"><strong>Order Date:</strong> {{ wizardState.saleOrder?.orderDate | date:'mediumDate' }}</p>
                 }
               </div>
+            </div>
+          </div>
+
+          <!-- Invoice Meta Strip -->
+          <div class="invoice-meta-strip mb-3">
+            <div class="meta-pill">
+              <span class="meta-label">Transaction</span>
+              <span class="meta-value">Jewellery Sale</span>
+            </div>
+            <div class="meta-pill">
+              <span class="meta-label">Pieces</span>
+              <span class="meta-value">{{ getTotalPieces() }}</span>
+            </div>
+            <div class="meta-pill">
+              <span class="meta-label">Net Weight</span>
+              <span class="meta-value">{{ formatWeight(getTotalNetWeight()) }}</span>
+            </div>
+            <div class="meta-pill">
+              <span class="meta-label">Invoice Total</span>
+              <span class="meta-value">{{ formatCurrency(wizardState.generatedInvoice.grandTotal) }}</span>
             </div>
           </div>
 
           <!-- Customer Details -->
           <div class="customer-details mb-4">
-            <h6 class="text-muted mb-2">Bill To:</h6>
-            <div class="p-3 bg-light rounded">
-              <h6 class="mb-1">{{ wizardState.generatedInvoice.partyName }}</h6>
-              @if (wizardState.generatedInvoice.partyAddress) {
-                <p class="text-muted mb-0">{{ wizardState.generatedInvoice.partyAddress }}</p>
-              }
-              @if (wizardState.generatedInvoice.partyPhone) {
-                <p class="text-muted mb-0">
-                  <i class="material-icons-outlined me-1" style="font-size: 14px;">phone</i>
-                  {{ wizardState.generatedInvoice.partyPhone }}
-                </p>
-              }
-              @if (wizardState.generatedInvoice.partyGSTIN) {
-                <p class="text-muted mb-0">
-                  <strong>GSTIN:</strong> {{ wizardState.generatedInvoice.partyGSTIN }}
-                </p>
-              }
+            <div class="row g-3">
+              <div class="col-lg-7">
+                <h6 class="text-muted mb-2">Bill To:</h6>
+                <div class="p-3 bg-light rounded h-100">
+                  <h6 class="mb-1">{{ wizardState.generatedInvoice.partyName }}</h6>
+                  @if (wizardState.generatedInvoice.partyAddress) {
+                    <p class="text-muted mb-0">{{ wizardState.generatedInvoice.partyAddress }}</p>
+                  }
+                  @if (wizardState.generatedInvoice.partyPhone) {
+                    <p class="text-muted mb-0">Phone: {{ wizardState.generatedInvoice.partyPhone }}</p>
+                  }
+                  @if (wizardState.generatedInvoice.partyEmail) {
+                    <p class="text-muted mb-0">Email: {{ wizardState.generatedInvoice.partyEmail }}</p>
+                  }
+                  @if (wizardState.generatedInvoice.partyGSTIN) {
+                    <p class="text-muted mb-0"><strong>GSTIN:</strong> {{ wizardState.generatedInvoice.partyGSTIN }}</p>
+                  }
+                </div>
+              </div>
+
+              <div class="col-lg-5">
+                <h6 class="text-muted mb-2">Payment Status:</h6>
+                <div class="p-3 bg-light rounded h-100">
+                  <p class="mb-1"><strong>Total Paid:</strong> <span class="text-success">{{ formatCurrency(wizardState.generatedInvoice.totalPaid) }}</span></p>
+                  <p class="mb-0"><strong>Balance Due:</strong>
+                    <span [class.text-danger]="wizardState.generatedInvoice.balanceDue > 0" [class.text-success]="wizardState.generatedInvoice.balanceDue <= 0">
+                      {{ formatCurrency(wizardState.generatedInvoice.balanceDue) }}
+                    </span>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- Invoice Items -->
           <div class="invoice-items mb-4">
+            @if (isUsingSaleOrderItemsFallback()) {
+              <div class="alert alert-info py-2 px-3 mb-3" role="alert">
+                Showing line-item details from sale order snapshot because invoice line items were not returned by API.
+              </div>
+            }
+
             <div class="table-responsive">
-              <table class="table table-bordered">
+              <table class="table table-bordered align-middle">
                 <thead class="table-light">
                   <tr>
-                    <th>#</th>
-                    <th>Item</th>
+                    <th class="text-center">#</th>
+                    <th>Item Details</th>
                     <th class="text-center">Qty</th>
-                    <th class="text-end">Subtotal</th>
+                    <th class="text-end">Gross Wt</th>
+                    <th class="text-end">Net Wt</th>
+                    <th class="text-end">Rate / g</th>
+                    <th class="text-end">Metal</th>
+                    <th class="text-end">Stone</th>
+                    <th class="text-end">Wastage</th>
+                    <th class="text-end">Making</th>
                     <th class="text-end">Discount</th>
                     <th class="text-end">GST</th>
-                    <th class="text-end">Total</th>
+                    <th class="text-end">Line Total</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  @for (item of wizardState.generatedInvoice.invoiceItems; track item.id; let i = $index) {
+                  @for (item of displayInvoiceItems; track item.id; let i = $index) {
                     <tr>
-                      <td>{{ i + 1 }}</td>
+                      <td class="text-center">{{ i + 1 }}</td>
                       <td>
-                        <strong>{{ item.itemName }}</strong>
-                        @if (item.isHallmarked) {
-                          <br><small class="text-muted">Hallmarked</small>
-                        }
+                        <div class="item-name fw-semibold">{{ item.itemName }}</div>
+                        <div class="small text-muted mt-1">
+                          @if (item.itemCode) {
+                            <span>Code: {{ item.itemCode }}</span>
+                          }
+                          @if (item.purityLabel) {
+                            <span class="ms-2">{{ item.purityLabel }}</span>
+                          }
+                          @if (item.isHallmarked) {
+                            <span class="badge bg-success ms-2">Hallmarked</span>
+                          }
+                        </div>
+                        <div class="small text-muted">
+                          @if (item.huid) {
+                            <span>HUID: {{ item.huid }}</span>
+                          }
+                          @if (item.hallmarkCenterName) {
+                            <span class="ms-2">Center: {{ item.hallmarkCenterName }}</span>
+                          }
+                          @if (item.description) {
+                            <span class="d-block mt-1">{{ item.description }}</span>
+                          }
+                        </div>
                       </td>
                       <td class="text-center">{{ item.quantity }}</td>
-                      <td class="text-end">{{ formatCurrency(item.itemSubtotal) }}</td>
+                      <td class="text-end">{{ formatWeight(item.grossWeight) }}</td>
+                      <td class="text-end">{{ formatWeight(item.netMetalWeight) }}</td>
+                      <td class="text-end">
+                        @if (item.metalRatePerGram !== undefined && item.metalRatePerGram !== null) {
+                          {{ formatCurrency(item.metalRatePerGram) }}
+                        } @else {
+                          -
+                        }
+                      </td>
+                      <td class="text-end">{{ formatCurrency(item.metalAmount) }}</td>
+                      <td class="text-end">{{ formatCurrency(item.stoneAmount) }}</td>
+                      <td class="text-end">{{ formatCurrency(item.wastageAmount) }}</td>
+                      <td class="text-end">{{ formatCurrency(item.makingCharges) }}</td>
                       <td class="text-end text-danger">-{{ formatCurrency(item.discount) }}</td>
                       <td class="text-end">{{ formatCurrency(item.gstAmount) }}</td>
                       <td class="text-end fw-bold">{{ formatCurrency(item.totalAmount) }}</td>
                     </tr>
                   }
+
+                  @if (displayInvoiceItems.length === 0) {
+                    <tr>
+                      <td colspan="13" class="text-center text-muted py-4">
+                        No line items available for this invoice.
+                      </td>
+                    </tr>
+                  }
                 </tbody>
+
+                @if (displayInvoiceItems.length > 0) {
+                  <tfoot class="table-light">
+                    <tr>
+                      <td colspan="2" class="text-end"><strong>Total</strong></td>
+                      <td class="text-center"><strong>{{ getTotalPieces() }}</strong></td>
+                      <td class="text-end"><strong>{{ formatWeight(getTotalGrossWeight()) }}</strong></td>
+                      <td class="text-end"><strong>{{ formatWeight(getTotalNetWeight()) }}</strong></td>
+                      <td class="text-end">-</td>
+                      <td class="text-end"><strong>{{ formatCurrency(getTotalMetalAmount()) }}</strong></td>
+                      <td class="text-end"><strong>{{ formatCurrency(getTotalStoneAmount()) }}</strong></td>
+                      <td class="text-end"><strong>{{ formatCurrency(getTotalWastageAmount()) }}</strong></td>
+                      <td class="text-end"><strong>{{ formatCurrency(getTotalMakingCharges()) }}</strong></td>
+                      <td class="text-end text-danger"><strong>-{{ formatCurrency(getTotalDiscountFromItems()) }}</strong></td>
+                      <td class="text-end"><strong>{{ formatCurrency(getTotalGstFromItems()) }}</strong></td>
+                      <td class="text-end"><strong>{{ formatCurrency(getInvoiceItemsTotal()) }}</strong></td>
+                    </tr>
+                  </tfoot>
+                }
               </table>
             </div>
           </div>
 
           <!-- Invoice Summary -->
           <div class="invoice-summary">
-            <div class="row">
-              <div class="col-md-6">
-                @if (wizardState.generatedInvoice.notes) {
-                  <div class="notes-section">
-                    <h6 class="text-muted mb-2">Notes:</h6>
-                    <p class="small">{{ wizardState.generatedInvoice.notes }}</p>
+            <div class="row g-3">
+              <div class="col-lg-6">
+                <div class="summary-card p-3 border rounded h-100">
+                  <h6 class="text-muted mb-3">Jewellery Summary</h6>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Total Pieces</span>
+                    <strong>{{ getTotalPieces() }}</strong>
                   </div>
-                }
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Total Gold Weight</span>
+                    <strong>{{ formatWeight(wizardState.generatedInvoice.totalGoldWeight ?? getTotalNetWeight()) }}</strong>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span>Total Stone Weight</span>
+                    <strong>{{ formatWeight(wizardState.generatedInvoice.totalStoneWeight) }}</strong>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span>Total Stone Value</span>
+                    <strong>{{ formatCurrency(getTotalStoneAmount()) }}</strong>
+                  </div>
+                </div>
               </div>
-              <div class="col-md-6">
-                <table class="table table-sm">
+
+              <div class="col-lg-6">
+                <table class="table table-sm totals-table mb-0">
                   <tbody>
                     <tr>
                       <td>Subtotal:</td>
@@ -158,6 +280,10 @@
                         <td class="text-end text-danger">-{{ formatCurrency(wizardState.generatedInvoice.discountAmount) }}</td>
                       </tr>
                     }
+                    <tr>
+                      <td>Taxable Amount:</td>
+                      <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.taxableAmount) }}</td>
+                    </tr>
                     <tr>
                       <td>CGST:</td>
                       <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.cgstAmount) }}</td>
@@ -172,72 +298,140 @@
                         <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.igstAmount) }}</td>
                       </tr>
                     }
+                    @if ((wizardState.generatedInvoice.makingChargesGSTAmount ?? 0) > 0) {
+                      <tr>
+                        <td>Making Charges GST:</td>
+                        <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.makingChargesGSTAmount ?? 0) }}</td>
+                      </tr>
+                    }
+                    <tr>
+                      <td>Total GST:</td>
+                      <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.totalGSTAmount) }}</td>
+                    </tr>
+                    @if (wizardState.generatedInvoice.roundOff !== 0) {
+                      <tr>
+                        <td>Round Off:</td>
+                        <td class="text-end">{{ formatCurrency(wizardState.generatedInvoice.roundOff) }}</td>
+                      </tr>
+                    }
                   </tbody>
                   <tfoot>
                     <tr class="table-light">
                       <td><strong>Grand Total:</strong></td>
-                      <td class="text-end">
-                        <strong class="fs-5 text-primary">{{ formatCurrency(wizardState.generatedInvoice.grandTotal) }}</strong>
-                      </td>
+                      <td class="text-end"><strong class="fs-5 text-primary">{{ formatCurrency(wizardState.generatedInvoice.grandTotal) }}</strong></td>
                     </tr>
                   </tfoot>
                 </table>
-                
-                <!-- Amount in Words -->
+
                 <div class="amount-words p-2 bg-light rounded mt-2">
-                  <small class="text-muted">
-                    <strong>Amount in Words:</strong> {{ wizardState.generatedInvoice.grandTotalInWords }}
-                  </small>
+                  <small class="text-muted"><strong>Amount in Words:</strong> {{ wizardState.generatedInvoice.grandTotalInWords || '-' }}</small>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Payment Summary -->
+          <!-- Payment Breakdown -->
           <div class="payment-summary mt-4 pt-3 border-top">
+            <h6 class="text-muted mb-2">Payment Summary</h6>
             <div class="row">
-              <div class="col-md-6">
-                <h6 class="text-muted mb-2">Payment Summary:</h6>
-                <p class="mb-0">
-                  <strong>Total Paid:</strong> 
-                  <span class="text-success">{{ formatCurrency(wizardState.generatedInvoice.totalPaid) }}</span>
-                </p>
-                <p class="mb-0">
-                  <strong>Balance Due:</strong> 
-                  <span [class.text-danger]="wizardState.generatedInvoice.balanceDue > 0" 
-                        [class.text-success]="wizardState.generatedInvoice.balanceDue <= 0">
+              <div class="col-lg-6">
+                <p class="mb-0"><strong>Total Paid:</strong> <span class="text-success">{{ formatCurrency(wizardState.generatedInvoice.totalPaid) }}</span></p>
+                <p class="mb-0"><strong>Balance Due:</strong>
+                  <span [class.text-danger]="wizardState.generatedInvoice.balanceDue > 0" [class.text-success]="wizardState.generatedInvoice.balanceDue <= 0">
                     {{ formatCurrency(wizardState.generatedInvoice.balanceDue) }}
                   </span>
                 </p>
               </div>
             </div>
+
+            @if (wizardState.payments.length > 0) {
+              <div class="table-responsive mt-3">
+                <table class="table table-sm table-bordered mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Date</th>
+                      <th>Method</th>
+                      <th>Reference</th>
+                      <th class="text-end">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (payment of wizardState.payments; track payment.id; let i = $index) {
+                      <tr>
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ payment.paymentDate | date:'dd-MM-yyyy' }}</td>
+                        <td>{{ getPaymentMethodLabel(payment.paymentMethod) }}</td>
+                        <td>{{ payment.referenceNumber || '-' }}</td>
+                        <td class="text-end">{{ formatCurrency(payment.amount) }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
           </div>
 
-          <!-- Terms and Conditions -->
-          @if (wizardState.generatedInvoice.termsAndConditions) {
-            <div class="terms-section mt-4 pt-3 border-top">
-              <h6 class="text-muted mb-2">Terms & Conditions:</h6>
-              <p class="small text-muted">{{ wizardState.generatedInvoice.termsAndConditions }}</p>
+          <!-- Notes -->
+          @if (wizardState.generatedInvoice.notes) {
+            <div class="notes-section mt-4 pt-3 border-top">
+              <h6 class="text-muted mb-2">Notes:</h6>
+              <p class="small mb-0">{{ wizardState.generatedInvoice.notes }}</p>
             </div>
           }
+
+          <!-- Terms and Conditions -->
+          @if (shouldShowTermsAndConditions()) {
+            <div class="terms-section mt-4 pt-3 border-top">
+              <h6 class="text-muted mb-2">Terms & Conditions:</h6>
+              @if (wizardState.generatedInvoice.termsAndConditions) {
+                <p class="small text-muted">{{ wizardState.generatedInvoice.termsAndConditions }}</p>
+              } @else {
+                <ul class="terms-list small text-muted mb-2">
+                  @for (term of standardTermsAndConditions; track term) {
+                    <li>{{ term }}</li>
+                  }
+                </ul>
+              }
+
+              @if (wizardState.generatedInvoice.returnPolicy) {
+                <p class="small text-muted mb-1"><strong>Return Policy:</strong> {{ wizardState.generatedInvoice.returnPolicy }}</p>
+              }
+              @if (wizardState.generatedInvoice.declaration) {
+                <p class="small text-muted mb-0"><strong>Declaration:</strong> {{ wizardState.generatedInvoice.declaration }}</p>
+              }
+            </div>
+          }
+
+          <!-- Signature Block -->
+          <div class="invoice-signoff mt-4 pt-4 border-top">
+            <div class="row">
+              <div class="col-6">
+                <div class="signature-label">Customer Signature</div>
+              </div>
+              <div class="col-6 text-end">
+                <div class="signature-label">For {{ wizardState.generatedInvoice.companyName }}</div>
+                <div class="signature-line"></div>
+                <small class="text-muted">Authorized Signatory</small>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="invoice-actions d-flex justify-content-end gap-2 mt-4">
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="btn btn-outline-primary"
           (click)="downloadInvoice()">
-          <i class="material-icons-outlined me-1">download</i>
-          Download PDF
+          <i class="feather icon-download me-1"></i> Download PDF
         </button>
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="btn btn-primary"
           (click)="printInvoice()">
-          <i class="material-icons-outlined me-1">print</i>
-          Print Invoice
+          <i class="feather icon-printer me-1"></i> Print Invoice
         </button>
       </div>
     </div>
@@ -248,11 +442,10 @@
     <!-- Pre-requisites Check -->
     @if (!isPaymentComplete()) {
       <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
-        <i class="material-icons-outlined me-2">warning</i>
-        <div>
+        <i class="feather icon-alert-triangle me-2"></i>        <div>
           <strong>Payment Incomplete!</strong>
           <br>
-          Please complete the payment before generating the invoice. 
+          Please complete the payment before generating the invoice.
           Balance due: {{ formatCurrency(wizardState.balanceDue) }}
         </div>
       </div>
@@ -262,8 +455,7 @@
     <div class="sale-summary card mb-4">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="material-icons-outlined me-2">summarize</i>
-          Sale Summary
+        <i class="feather icon-clipboard me-2"></i>          Sale Summary
         </h6>
       </div>
       <div class="card-body">
@@ -280,7 +472,7 @@
               }
             </div>
           </div>
-          
+
           <!-- Order Info -->
           <div class="col-md-4 mb-3">
             <div class="summary-item p-3 bg-light rounded h-100">
@@ -293,7 +485,7 @@
               }
             </div>
           </div>
-          
+
           <!-- Items Info -->
           <div class="col-md-4 mb-3">
             <div class="summary-item p-3 bg-light rounded h-100">
@@ -323,9 +515,9 @@
             </div>
             <div class="col-md-3">
               <div class="progress" style="height: 8px;">
-                <div 
-                  class="progress-bar bg-success" 
-                  role="progressbar" 
+                <div
+                  class="progress-bar bg-success"
+                  role="progressbar"
                   [style.width.%]="(wizardState.totalPaid / wizardState.orderTotal) * 100">
                 </div>
               </div>
@@ -340,8 +532,7 @@
     <div class="invoice-options card mb-4">
       <div class="card-header">
         <h6 class="mb-0">
-          <i class="material-icons-outlined me-2">settings</i>
-          Invoice Options
+        <i class="feather icon-settings me-2"></i> Invoice Options
         </h6>
       </div>
       <div class="card-body">
@@ -349,20 +540,20 @@
           <div class="row">
             <div class="col-12 mb-3">
               <label for="notes" class="form-label">Notes</label>
-              <textarea 
-                class="form-control" 
+              <textarea
+                class="form-control"
                 id="notes"
                 formControlName="notes"
                 rows="3"
                 placeholder="Add any notes to appear on the invoice...">
               </textarea>
             </div>
-            
+
             <div class="col-12">
               <div class="form-check">
-                <input 
-                  class="form-check-input" 
-                  type="checkbox" 
+                <input
+                  class="form-check-input"
+                  type="checkbox"
                   id="includeTermsAndConditions"
                   formControlName="includeTermsAndConditions">
                 <label class="form-check-label" for="includeTermsAndConditions">
@@ -377,16 +568,15 @@
 
     <!-- Generate Button -->
     <div class="generate-section">
-      <button 
-        type="button" 
+      <button
+        type="button"
         class="btn btn-primary btn-lg w-100"
         (click)="generateInvoice()"
         [disabled]="!isPaymentComplete() || isGenerating">
         @if (isGenerating) {
           <span class="spinner-border spinner-border-sm me-2"></span>
         }
-        <i class="material-icons-outlined me-2">description</i>
-        Generate Invoice
+        <i class="feather icon-file-text me-2"></i>  Generate Invoice
       </button>
       @if (!isPaymentComplete()) {
         <p class="text-center text-danger mt-2 mb-0">

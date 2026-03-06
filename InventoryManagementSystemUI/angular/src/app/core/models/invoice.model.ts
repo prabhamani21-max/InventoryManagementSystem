@@ -115,10 +115,19 @@ export interface Invoice {
   subTotal: number;
   discountAmount: number;
   taxableAmount: number;
-  cgstAmount: number;
-  sgstAmount: number;
-  igstAmount: number;
-  totalGSTAmount: number;
+  
+  // Metal GST (3% on metal value)
+  cgstAmount: number; // Metal CGST
+  sgstAmount: number; // Metal SGST
+  igstAmount: number; // Metal IGST
+  
+  // Making Charges GST (5% on making charges)
+  makingChargesCGSTAmount?: number; // Making Charges CGST
+  makingChargesSGSTAmount?: number; // Making Charges SGST
+  makingChargesIGSTAmount?: number; // Making Charges IGST
+  makingChargesGSTAmount?: number; // Total Making Charges GST
+  
+  totalGSTAmount: number; // Metal GST + Making Charges GST
   roundOff: number;
   grandTotal: number;
   grandTotalInWords?: string;

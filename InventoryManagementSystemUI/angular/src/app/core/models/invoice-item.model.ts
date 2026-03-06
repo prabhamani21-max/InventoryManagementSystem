@@ -51,9 +51,17 @@ export interface InvoiceItem {
   gstAmount: number;
 
   /* ---------------- GST BREAKDOWN ---------------- */
-  cgstAmount: number;
-  sgstAmount: number;
-  igstAmount: number;
+  cgstAmount: number; // Metal CGST (50% of metal GST)
+  sgstAmount: number; // Metal SGST (50% of metal GST)
+  igstAmount: number; // Metal IGST (for inter-state)
+  
+  // Making Charges GST Breakdown (5% on making charges)
+  makingChargesCGSTAmount?: number; // Making Charges CGST
+  makingChargesSGSTAmount?: number; // Making Charges SGST
+  makingChargesIGSTAmount?: number; // Making Charges IGST
+  makingChargesGSTAmount?: number; // Total Making Charges GST (5%)
+  
+  totalGSTAmount?: number; // Metal GST + Making Charges GST
   totalAmount: number;
 
   /* ---------------- HALLMARK ---------------- */

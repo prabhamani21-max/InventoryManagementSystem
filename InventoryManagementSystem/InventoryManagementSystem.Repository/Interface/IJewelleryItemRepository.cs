@@ -15,5 +15,12 @@ namespace InventoryManagementSystem.Repository.Interface
         Task<JewelleryItemDb?> GetJewelleryItemDbByIdAsync(long id);
         Task<IEnumerable<JewelleryItemDb>> GetAllJewelleryItemsDbAsync();
         Task<JewelleryItemDb> UpdateJewelleryItemDbAsync(JewelleryItemDb jewelleryItem);
+
+        /// <summary>
+        /// Gets jewellery items by a list of IDs
+        /// </summary>
+        /// <param name="ids">Collection of jewellery item IDs</param>
+        /// <returns>Dictionary of jewellery items keyed by ID</returns>
+        Task<Dictionary<int, JewelleryItemDb>> GetJewelleryItemsByIdsAsync(IEnumerable<long> ids);
     }
 }

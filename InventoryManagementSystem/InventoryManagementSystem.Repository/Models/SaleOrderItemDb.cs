@@ -125,30 +125,21 @@ namespace InventoryManagementSystem.Repository.Models
         [Column("gst_amount")]
         public decimal GstAmount { get; set; }
 
+        // Making Charges GST - 5% GST on making charges (separate from 3% on metal)
+        [Required]
+        [Column("making_charges_gst_percentage")]
+        public decimal MakingChargesGstPercentage { get; set; }
+        [Required]
+        [Column("making_charges_gst_amount")]
+        public decimal MakingChargesGstAmount { get; set; }
+
+        [Required]
+        [Column("total_gst_amount")]
+        public decimal TotalGstAmount { get; set; }
+
         [Required]
         [Column("total_amount")]
         public decimal TotalAmount { get; set; }
-
-        /* ---------------- HALLMARK ---------------- */
-
-        [Required]
-        [Column("is_hallmarked")]
-        public bool IsHallmarked { get; set; }
-
-        [Column("huid")]
-        [StringLength(6)]
-        public string? HUID { get; set; } // 6-digit alphanumeric Hallmark Unique ID
-
-        [Column("bis_certification_number")]
-        [StringLength(50)]
-        public string? BISCertificationNumber { get; set; }
-
-        [Column("hallmark_center_name")]
-        [StringLength(100)]
-        public string? HallmarkCenterName { get; set; }
-
-        [Column("hallmark_date")]
-        public DateTime? HallmarkDate { get; set; }
 
         [Required]
         [Column("created_date")]

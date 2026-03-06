@@ -12,9 +12,12 @@ namespace InventoryManagementSystem.Service.Interface
 
         /// <summary>
         /// Calculate totals from invoice items (sum-based, not recomputed)
+        /// Includes separate tracking for Metal GST (3%) and Making Charges GST (5%)
         /// </summary>
-        (decimal SubTotal, decimal DiscountAmount, decimal TaxableAmount, decimal CGSTAmount, 
-         decimal SGSTAmount, decimal IGSTAmount, decimal TotalGSTAmount, decimal GrandTotal) CalculateInvoiceTotals(
+        (decimal SubTotal, decimal DiscountAmount, decimal TaxableAmount, 
+         decimal CGSTAmount, decimal SGSTAmount, decimal IGSTAmount,
+         decimal MakingChargesCGSTAmount, decimal MakingChargesSGSTAmount, decimal MakingChargesIGSTAmount, decimal MakingChargesGSTAmount,
+         decimal TotalGSTAmount, decimal GrandTotal) CalculateInvoiceTotals(
             IEnumerable<InvoiceItem> items);
     }
 }

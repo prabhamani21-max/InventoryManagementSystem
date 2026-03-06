@@ -45,9 +45,18 @@ namespace InventoryManagementSystem.Common.Models
         public decimal SubTotal { get; set; }
         public decimal DiscountAmount { get; set; }
         public decimal TaxableAmount { get; set; }
+
+        // Metal GST (3% on metal value)
         public decimal CGSTAmount { get; set; }
         public decimal SGSTAmount { get; set; }
         public decimal IGSTAmount { get; set; }
+
+        // Making Charges GST (5% on making charges)
+        public decimal MakingChargesCGSTAmount { get; set; }
+        public decimal MakingChargesSGSTAmount { get; set; }
+        public decimal MakingChargesIGSTAmount { get; set; }
+        public decimal MakingChargesGSTAmount { get; set; }
+
         public decimal TotalGSTAmount { get; set; }
         public decimal RoundOff { get; set; }
         public decimal GrandTotal { get; set; }
@@ -129,10 +138,19 @@ namespace InventoryManagementSystem.Common.Models
         public decimal TaxableAmount { get; set; }
 
         // GST Breakdown (required for proper GST calculation - derived from SaleOrderItem)
+        // Metal GST - 3% on metal value
         public decimal CGSTAmount { get; set; }
         public decimal SGSTAmount { get; set; }
         public decimal IGSTAmount { get; set; }
         public decimal GSTAmount { get; set; }
+
+        // Making Charges GST - 5% on making charges
+        public decimal MakingChargesCGSTAmount { get; set; }
+        public decimal MakingChargesSGSTAmount { get; set; }
+        public decimal MakingChargesIGSTAmount { get; set; }
+        public decimal MakingChargesGSTAmount { get; set; }
+
+        public decimal TotalGSTAmount { get; set; }
         public decimal TotalAmount { get; set; }
 
         // Hallmark snapshot

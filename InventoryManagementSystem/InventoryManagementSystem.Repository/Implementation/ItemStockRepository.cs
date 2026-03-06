@@ -165,7 +165,8 @@ namespace InventoryManagementSystem.Repository.Implementation
         /// </summary>
         public async Task<bool> ReserveStockAsync(long jewelleryItemId, int quantity, int? warehouseId = null)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            var hasOuterTransaction = _context.Database.CurrentTransaction != null;
+            var transaction = hasOuterTransaction ? null : await _context.Database.BeginTransactionAsync();
             try
             {
                 var query = _context.ItemStocks.Where(s => s.JewelleryItemId == jewelleryItemId);
@@ -192,16 +193,29 @@ namespace InventoryManagementSystem.Repository.Implementation
                 stock.ReservedQuantity += quantity;
                 stock.UpdatedDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                if (transaction != null)
+                {
+                    await transaction.CommitAsync();
+                }
 
                 _logger.LogInformation("Reserved {Quantity} units of JewelleryItemId: {JewelleryItemId}", quantity, jewelleryItemId);
                 return true;
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                {
+                    await transaction.RollbackAsync();
+                }
                 _logger.LogError(ex, "Error reserving stock for JewelleryItemId: {JewelleryItemId}", jewelleryItemId);
                 throw;
+            }
+            finally
+            {
+                if (transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                }
             }
         }
 
@@ -211,7 +225,8 @@ namespace InventoryManagementSystem.Repository.Implementation
         /// </summary>
         public async Task<bool> ReleaseReservedStockAsync(long jewelleryItemId, int quantity, int? warehouseId = null)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            var hasOuterTransaction = _context.Database.CurrentTransaction != null;
+            var transaction = hasOuterTransaction ? null : await _context.Database.BeginTransactionAsync();
             try
             {
                 var query = _context.ItemStocks.Where(s => s.JewelleryItemId == jewelleryItemId);
@@ -238,16 +253,29 @@ namespace InventoryManagementSystem.Repository.Implementation
                 stock.ReservedQuantity -= quantity;
                 stock.UpdatedDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                if (transaction != null)
+                {
+                    await transaction.CommitAsync();
+                }
 
                 _logger.LogInformation("Released {Quantity} units of reserved stock for JewelleryItemId: {JewelleryItemId}", quantity, jewelleryItemId);
                 return true;
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                {
+                    await transaction.RollbackAsync();
+                }
                 _logger.LogError(ex, "Error releasing reserved stock for JewelleryItemId: {JewelleryItemId}", jewelleryItemId);
                 throw;
+            }
+            finally
+            {
+                if (transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                }
             }
         }
 
@@ -257,7 +285,8 @@ namespace InventoryManagementSystem.Repository.Implementation
         /// </summary>
         public async Task<bool> DeductStockAsync(long jewelleryItemId, int quantity, int? warehouseId = null)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            var hasOuterTransaction = _context.Database.CurrentTransaction != null;
+            var transaction = hasOuterTransaction ? null : await _context.Database.BeginTransactionAsync();
             try
             {
                 var query = _context.ItemStocks.Where(s => s.JewelleryItemId == jewelleryItemId);
@@ -291,16 +320,29 @@ namespace InventoryManagementSystem.Repository.Implementation
                 stock.ReservedQuantity = Math.Max(0, stock.ReservedQuantity - quantity);
                 stock.UpdatedDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                if (transaction != null)
+                {
+                    await transaction.CommitAsync();
+                }
 
                 _logger.LogInformation("Deducted {Quantity} units from stock for JewelleryItemId: {JewelleryItemId}", quantity, jewelleryItemId);
                 return true;
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                {
+                    await transaction.RollbackAsync();
+                }
                 _logger.LogError(ex, "Error deducting stock for JewelleryItemId: {JewelleryItemId}", jewelleryItemId);
                 throw;
+            }
+            finally
+            {
+                if (transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                }
             }
         }
 
@@ -310,7 +352,8 @@ namespace InventoryManagementSystem.Repository.Implementation
         /// </summary>
         public async Task<bool> RestoreStockAsync(long jewelleryItemId, int quantity, int? warehouseId = null)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            var hasOuterTransaction = _context.Database.CurrentTransaction != null;
+            var transaction = hasOuterTransaction ? null : await _context.Database.BeginTransactionAsync();
             try
             {
                 var query = _context.ItemStocks.Where(s => s.JewelleryItemId == jewelleryItemId);
@@ -329,16 +372,29 @@ namespace InventoryManagementSystem.Repository.Implementation
                 stock.Quantity += quantity;
                 stock.UpdatedDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                if (transaction != null)
+                {
+                    await transaction.CommitAsync();
+                }
 
                 _logger.LogInformation("Restored {Quantity} units to stock for JewelleryItemId: {JewelleryItemId}", quantity, jewelleryItemId);
                 return true;
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                if (transaction != null)
+                {
+                    await transaction.RollbackAsync();
+                }
                 _logger.LogError(ex, "Error restoring stock for JewelleryItemId: {JewelleryItemId}", jewelleryItemId);
                 throw;
+            }
+            finally
+            {
+                if (transaction != null)
+                {
+                    await transaction.DisposeAsync();
+                }
             }
         }
     }

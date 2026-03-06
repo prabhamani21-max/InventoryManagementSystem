@@ -91,7 +91,7 @@ namespace InventoryManagementSystem.Controllers
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning("Failed to create sale order item: {Message}", ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 

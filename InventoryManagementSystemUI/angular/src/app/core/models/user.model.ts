@@ -43,8 +43,8 @@ export interface User {
   address: string | null;
   contactNumber: string;
   profileImage: string | null;
-  createdDate?: Date | string;
-  createdBy?: number;
+roleName?:string|null;
+statusName?:string|null;
 }
 
 /**
@@ -87,34 +87,6 @@ export interface LoginRequest {
   password: string;
 }
 
-/**
- * Interface for login response
- */
-export interface LoginResponse {
-  token: string;
-}
-
-/**
- * Helper function to get status label based on status ID
- */
-export function getStatusLabel(statusId: number): string {
-  switch (statusId) {
-    case 1:
-      return 'Active';
-    case 2:
-      return 'Inactive';
-    case 3:
-      return 'Pending';
-    case 4:
-      return 'Completed';
-    case 5:
-      return 'Cancelled';
-    case 6:
-      return 'Deleted';
-    default:
-      return 'Unknown';
-  }
-}
 
 /**
  * Helper function to get status CSS class based on status ID
@@ -138,25 +110,6 @@ export function getStatusClass(statusId: number): string {
   }
 }
 
-/**
- * Helper function to get role label based on role ID
- */
-export function getRoleLabel(roleId: number): string {
-  switch (roleId) {
-    case 1:
-      return 'Super Admin';
-    case 2:
-      return 'Admin';
-    case 3:
-      return 'Manager';
-    case 4:
-      return 'Staff';
-    case 5:
-      return 'Customer';
-    default:
-      return 'Unknown';
-  }
-}
 
 /**
  * Helper function to get role CSS class based on role ID

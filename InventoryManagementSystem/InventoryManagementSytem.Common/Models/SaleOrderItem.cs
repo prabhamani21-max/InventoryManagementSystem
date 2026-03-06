@@ -96,21 +96,19 @@ namespace InventoryManagementSystem.Common.Models
         [Required]
         public decimal GstAmount { get; set; }
 
+        // Making Charges GST - 5% GST on making charges (separate from 3% on metal)
+        [Required]
+        public decimal MakingChargesGstPercentage { get; set; } = 5m;
+
+        [Required]
+        public decimal MakingChargesGstAmount { get; set; }
+
+        [Required]
+        public decimal TotalGstAmount { get; set; }
+
         [Required]
         public decimal TotalAmount { get; set; }
 
-        /* ---------------- HALLMARK ---------------- */
-
-        [Required]
-        public bool IsHallmarked { get; set; }
-
-        public string? HUID { get; set; } // 6-digit alphanumeric Hallmark Unique ID
-
-        public string? BISCertificationNumber { get; set; }
-
-        public string? HallmarkCenterName { get; set; }
-
-        public DateTime? HallmarkDate { get; set; }
 
         /* ---------------- AUDIT ---------------- */
 

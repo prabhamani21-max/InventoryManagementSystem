@@ -1,4 +1,47 @@
 <app-card cardTitle="Step 4: Payment">
+  <!-- High-Value Transaction Warning -->
+  @if (isHighValueTransaction()) {
+    <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+<i class="feather icon-alert-triangle me-2"></i>      <div>
+        <strong>High-Value Transaction (Above ₹2,00,000)</strong>
+        <p class="mb-0 mt-1">
+          Cash payment is not allowed. KYC verification is required.
+          @if (isKycVerified()) {
+          
+  <span class="text-success ms-2">
+    <i class="feather icon-check-circle fs-6 align-middle me-1"></i>
+    Customer KYC Verified
+  </span>
+} @else {
+  <span class="text-danger ms-2">
+    <i class="feather icon-alert-circle fs-6 align-middle me-1"></i>
+    KYC Required
+  </span>
+}
+          
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- KYC Required Warning - Only show when KYC is required but NOT verified -->
+  @if (isKycPending()) {
+    <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+       <i class="feather icon-alert-circle me-2"></i>
+
+      <div>
+        <strong>KYC Verification Required</strong>
+        <p class="mb-0 mt-1">
+          For transactions above ₹2,00,000, KYC verification is mandatory as per regulatory requirements.
+          Please complete the customer's KYC verification to proceed with payment.
+        </p>
+        <button class="btn btn-sm btn-outline-danger mt-2" (click)="goToKycPage()">
+<i class="feather icon-external-link fs-6 align-middle me-1"></i>          Complete KYC Now
+        </button>
+      </div>
+    </div>
+  }
+
   <!-- Order Summary Section -->
   <div class="order-summary mb-4">
     <div class="row">
@@ -67,8 +110,7 @@
   <!-- Payment Complete Message -->
   @if (isPaymentComplete()) {
     <div class="alert alert-success d-flex align-items-center" role="alert">
-      <i class="material-icons me-2">check_circle</i>
-      <div>
+<i class="feather icon-check-circle me-2"></i>      <div>
         <strong>Payment Complete!</strong> All payments have been received. Proceeding to invoice generation...
       </div>
     </div>
@@ -163,9 +205,12 @@
               formControlName="paymentMethod"
               [class.is-invalid]="hasError('paymentMethod')"
             >
-              @for (method of paymentMethodOptions; track method.value) {
-                <option [ngValue]="method.value">
+              @for (method of getAvailablePaymentMethods(); track method.value) {
+                <option [ngValue]="method.value" [disabled]="method.value === 'Cash' && isCashPaymentDisabled()">
                   {{ method.label }}
+                  @if (method.value === 'Cash' && isCashPaymentDisabled()) {
+                    (Not allowed for high-value transactions)
+                  }
                 </option>
               }
             </select>
@@ -173,6 +218,11 @@
               <div class="invalid-feedback">
                 Please select a payment method
               </div>
+            }
+            @if (isCashPaymentDisabled()) {
+              <small class="text-muted text-warning">
+<i class="feather icon-info fs-6 align-middle"></i>                Cash payment is disabled for transactions above ₹2,00,000
+              </small>
             }
           </div>
 
@@ -216,7 +266,7 @@
           <div class="col-12">
             <div class="balance-preview p-3 bg-warning bg-opacity-10 border border-warning rounded">
               <div class="d-flex justify-content-between align-items-center">
-                <span><i class="material-icons me-2">info</i>Balance After This Payment:</span>
+                <span><i class="feather icon-info me-2"></i>Balance After This Payment:</span>
                 <strong [class.text-danger]="getBalanceAfterPayment() > 0" [class.text-success]="getBalanceAfterPayment() <= 0" class="fs-5">
                   {{ formatCurrency(getBalanceAfterPayment()) }}
                 </strong>
@@ -228,17 +278,9 @@
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-4">
           <button
-            type="button"
-            class="btn btn-outline-secondary"
-            (click)="skipPayment()"
-            [disabled]="wizardState.totalPaid < wizardState.orderTotal * 0.5"
-          >
-            Skip (Min 50% Required)
-          </button>
-          <button
             type="submit"
             class="btn btn-primary"
-            [disabled]="paymentForm.invalid || isSubmitting"
+            [disabled]="paymentForm.invalid || isSubmitting || isKycPending()"
           >
             @if (isSubmitting) {
               <span class="spinner-border spinner-border-sm me-2" role="status"></span>

@@ -55,6 +55,8 @@ export interface PaymentCreate {
   paymentDate: Date | string;
   referenceNumber?: string | null;
   statusId: number;
+  /** The total order amount for validation purposes (used for high-value transaction validation) */
+  orderTotal?: number;
 }
 
 /**

@@ -14,13 +14,20 @@ namespace InventoryManagementSystem.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
+        private readonly IPaymentValidationService _paymentValidationService;
         private readonly ILogger<PaymentController> _logger;
         private readonly IMapper _mapper;
         private readonly ICurrentUser _currentUser;
 
-        public PaymentController(IPaymentService paymentService, IMapper mapper, ILogger<PaymentController> logger, ICurrentUser currentUser)
+        public PaymentController(
+            IPaymentService paymentService,
+            IPaymentValidationService paymentValidationService,
+            IMapper mapper,
+            ILogger<PaymentController> logger,
+            ICurrentUser currentUser)
         {
             _paymentService = paymentService;
+            _paymentValidationService = paymentValidationService;
             _mapper = mapper;
             _logger = logger;
             _currentUser = currentUser;
@@ -55,6 +62,38 @@ namespace InventoryManagementSystem.Controllers
            // if (!ModelState.IsValid) return BadRequest(ModelState);
 
             _logger.LogInformation("Creating payment for OrderId: {OrderId}", dto.OrderId);
+
+            // Validate high-value transaction rules
+            var customerId = dto.CustomerId ?? 0;
+            var orderTotal = dto.OrderTotal ?? dto.Amount;
+            
+            if (customerId > 0)
+            {
+                var validation = await _paymentValidationService.ValidatePaymentAsync(
+                    customerId,
+                    dto.Amount,
+                    dto.PaymentMethod,
+                    orderTotal
+                );
+
+                if (!validation.IsValid)
+                {
+                    _logger.LogWarning(
+                        "Payment validation failed for CustomerId: {CustomerId}, ErrorCode: {ErrorCode}",
+                        customerId,
+                        validation.ErrorCode
+                    );
+                    
+                    return BadRequest(new
+                    {
+                        error = validation.ErrorCode,
+                        message = validation.ErrorMessage,
+                        requiresKyc = validation.RequiresKyc,
+                        isHighValueTransaction = validation.IsHighValueTransaction,
+                        cashPaymentDisabled = validation.CashPaymentDisabled
+                    });
+                }
+            }
 
             var payment = _mapper.Map<Payment>(dto);
             payment.CreatedDate = DateTime.UtcNow;
@@ -109,5 +148,54 @@ namespace InventoryManagementSystem.Controllers
             _logger.LogInformation("Payment deleted successfully ID: {Id}", id);
             return NoContent();
         }
+
+        /// <summary>
+        /// Validates if a payment can be made for a high-value transaction
+        /// </summary>
+        /// <param name="request">Validation request with customer ID and order total</param>
+        /// <returns>Validation result</returns>
+        [HttpPost("validate")]
+        public async Task<IActionResult> ValidatePayment([FromBody] PaymentValidationRequest request)
+        {
+            _logger.LogInformation(
+                "Validating payment for CustomerId: {CustomerId}, OrderTotal: {OrderTotal}",
+                request.CustomerId,
+                request.OrderTotal
+            );
+
+            var isHighValue = _paymentValidationService.IsHighValueTransaction(request.OrderTotal);
+            
+            if (!isHighValue)
+            {
+                return Ok(new
+                {
+                    isValid = true,
+                    isHighValueTransaction = false,
+                    cashPaymentDisabled = false,
+                    requiresKyc = false
+                });
+            }
+
+            var (hasKyc, isVerified) = await _paymentValidationService.GetCustomerKycStatusAsync(request.CustomerId);
+
+            return Ok(new
+            {
+                isValid = isVerified,
+                isHighValueTransaction = true,
+                cashPaymentDisabled = isVerified,
+                requiresKyc = !isVerified,
+                hasKyc = hasKyc,
+                isKycVerified = isVerified
+            });
+        }
+    }
+
+    /// <summary>
+    /// Request model for payment validation
+    /// </summary>
+    public class PaymentValidationRequest
+    {
+        public long CustomerId { get; set; }
+        public decimal OrderTotal { get; set; }
     }
 }

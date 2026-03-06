@@ -60,26 +60,26 @@
                   <th>Name</th>
                   <th>Contact</th>
                   <th>Email</th>
-                  <th>Actions</th>
-                </tr>
+                  <th class="text-center" style="width: 240px;">Select Customer</th>                </tr>
               </thead>
               <tbody>
                 @for (customer of filteredCustomers; track customer.id) {
                   <tr>
                     <td>
                       <div class="d-flex align-items-center">
-                        <div class="avatar-circle me-2">
-                          {{ customer.name.charAt(0).toUpperCase() }}
-                        </div>
-                        <span>{{ customer.name }}</span>
+                        {{ customer.name }}
                       </div>
                     </td>
                     <td>{{ customer.contactNumber }}</td>
                     <td>{{ customer.email || '-' }}</td>
-                    <td>
-                      <button class="btn btn-sm btn-primary" (click)="selectCustomer(customer)">
-                        <i class="feather icon-check me-1"></i>Select
-                      </button>
+                    <td class="text-center align-middle">
+                      <input
+                        class="form-check-input m-0"
+                        type="radio"
+                        name="selectedCustomer"
+                        [value]="customer.id"
+                        (change)="selectCustomer(customer)"
+                        style="transform: scale(1.5); cursor: pointer;">
                     </td>
                   </tr>
                 }
@@ -289,11 +289,11 @@
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Role</label>
-            <p><span class="badge" [ngClass]="user.roleId === 1 ? 'bg-danger' : user.roleId === 2 ? 'bg-primary' : 'bg-info'">{{ getRoleLabel(user.roleId) }}</span></p>
+            <p><span class="badge" [ngClass]="user.roleId === 1 ? 'bg-danger' : user.roleId === 2 ? 'bg-primary' : 'bg-info'">{{ user.roleName }}</span></p>
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Status</label>
-            <p><span [ngClass]="getStatusClass(user.statusId)">{{ getStatusLabel(user.statusId) }}</span></p>
+            <p><span [ngClass]="getStatusClass(user.statusId)">{{ user.statusName }}</span></p>
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label text-muted">Gender</label>

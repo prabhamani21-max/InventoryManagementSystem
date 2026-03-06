@@ -80,5 +80,17 @@ namespace InventoryManagementSystem.Repository.Implementation
             await _context.SaveChangesAsync();
             return true;
         }
+
+        /// <summary>
+        /// Gets item stones by a list of jewellery item IDs
+        /// </summary>
+        /// <param name="jewelleryItemIds">Collection of jewellery item IDs</param>
+        /// <returns>List of item stone DB models</returns>
+        public async Task<List<ItemStoneDb>> GetItemStonesByJewelleryItemIdsAsync(IEnumerable<long> jewelleryItemIds)
+        {
+            return await _context.ItemStones
+                .Where(is_ => jewelleryItemIds.Contains((long)is_.JewelleryItemId))
+                .ToListAsync();
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InventoryManagementSytem.Common.Enums
+  namespace InventoryManagementSytem.Common.Enums
 {
     public enum TransactionType
     {

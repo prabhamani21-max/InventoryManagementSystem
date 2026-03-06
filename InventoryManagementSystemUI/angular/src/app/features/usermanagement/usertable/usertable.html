@@ -78,7 +78,7 @@
               </td>
               <td>
                 <span [ngClass]="getRoleClass(user.roleId)">
-                  {{ getRoleLabel(user.roleId) }}
+                  {{ user.roleName }}
                 </span>
               </td>
               <td>
@@ -86,7 +86,7 @@
               </td>
               <td>
                 <span [ngClass]="getStatusClass(user.statusId)">
-                  {{ getStatusLabel(user.statusId) }}
+                  {{ user.statusName}}
                 </span>
               </td>
               <td>

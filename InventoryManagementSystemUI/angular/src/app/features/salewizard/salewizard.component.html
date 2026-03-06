@@ -4,15 +4,13 @@
     <div class="d-flex justify-content-between align-items-center">
       <div>
         <h4 class="mb-1">
-          <i class="material-icons-outlined me-2">point_of_sale</i>
-          Enter Sale
+<i class="feather icon-shopping-cart me-1"> </i>          Enter Sale
         </h4>
         <p class="text-muted mb-0">Complete the sale process step by step</p>
       </div>
-      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
-        <i class="material-icons-outlined me-1">close</i>
-        Cancel
-      </button>
+     <button type="button" class="btn btn-danger" (click)="onCancel()">
+  <i class="feather icon-x-circle me-1"></i> Close
+</button>
     </div>
   </div>
 
@@ -41,17 +39,18 @@
             [class.clickable]="canNavigateToStep(step.number)">
             
             <!-- Step Icon/Number -->
-            <div class="step-indicator me-2">
-              @if (isStepCompleted(step.number)) {
-                <span class="step-check">
-                  <i class="material-icons-outlined">check_circle</i>
-                </span>
-              } @else {
-                <span class="step-number" [class.active]="isStepActive(step.number)">
-                  {{ step.number }}
-                </span>
-              }
-            </div>
+    <div class="step-indicator me-2">
+  @if (isStepCompleted(step.number)) {
+    <div class="step-circle completed">
+      <i class="feather icon-check"></i>
+    </div>
+  } @else {
+    <div class="step-circle" 
+         [class.active]="isStepActive(step.number)">
+      <i class="feather icon-{{ step.icon }}"></i>
+    </div>
+  }
+</div>
             
             <!-- Step Title -->
             <div class="step-info">
@@ -85,11 +84,10 @@
       <!-- Previous Button -->
       <button 
         type="button" 
-        class="btn btn-outline-secondary"
+        class="btn btn-secondary"
         (click)="onPrevious()"
         [disabled]="wizardState.currentStep === 1">
-        <i class="material-icons-outlined me-1">arrow_back</i>
-        Previous
+<i class="feather icon-arrow-left ms-1"></i>      Previous
       </button>
 
       <!-- Next/Complete Button -->
@@ -104,15 +102,14 @@
               <span class="spinner-border spinner-border-sm me-2"></span>
             }
             Next
-            <i class="material-icons-outlined ms-1">arrow_forward</i>
-          </button>
+<i class="feather icon-arrow-right ms-1"></i>          </button>
         } @else {
           <button 
             type="button" 
             class="btn btn-success"
             (click)="onComplete()"
             [disabled]="!wizardState.generatedInvoice">
-            <i class="material-icons-outlined me-1">check_circle</i>
+            <i class="feather-icon-outlined me-1"></i>
             Complete Sale
           </button>
         }

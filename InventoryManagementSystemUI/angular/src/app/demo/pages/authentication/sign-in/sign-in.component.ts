@@ -58,7 +58,16 @@ export class SignInComponent {
             const roleId = decodedToken.roleId;
             switch (roleId) {
               case RoleEnum.SuperAdmin.toString():
-                this.router.navigate(['jewelleryManagement/admin/analytics']);
+                this.router.navigate(['/jewelleryManagement/admin/analytics']);
+                break;
+                  case RoleEnum.Manager.toString():
+                this.router.navigate(['/jewelleryManagement/admin/analytics']);
+                break;
+                 case RoleEnum.Sales.toString():
+                this.router.navigate(['/jewelleryManagement/admin/exchange']);
+                break;
+                 case RoleEnum.Customer.toString():
+                this.router.navigate(['/jewelleryManagement/admin/customer']);
                 break;
             }
           } else {

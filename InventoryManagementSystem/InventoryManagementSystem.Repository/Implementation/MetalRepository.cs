@@ -67,5 +67,17 @@ namespace InventoryManagementSystem.Repository.Implementation
             await _context.SaveChangesAsync();
             return true;
         }
+
+        /// <summary>
+        /// Gets metals by a list of IDs
+        /// </summary>
+        /// <param name="ids">Collection of metal IDs</param>
+        /// <returns>Dictionary of metals keyed by ID</returns>
+        public async Task<Dictionary<int, MetalDb>> GetMetalsByIdsAsync(IEnumerable<int> ids)
+        {
+            return await _context.Metals
+                .Where(m => ids.Contains(m.Id))
+                .ToDictionaryAsync(m => m.Id, m => m);
+        }
     }
 }
