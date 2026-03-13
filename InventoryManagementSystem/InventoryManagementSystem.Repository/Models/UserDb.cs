@@ -45,8 +45,6 @@ namespace InventoryManagementSystem.Repository.Models
         public DateTime CreatedDate { get; set; }
         [Column("updated_date")]
         public DateTime? UpdatedDate { get; set; }
-        [Column("profile_image")]
-        public string? ProfileImage { get; set; }
         [ForeignKey(nameof(RoleId))]
 
         public virtual RoleDb Role {get; set;}

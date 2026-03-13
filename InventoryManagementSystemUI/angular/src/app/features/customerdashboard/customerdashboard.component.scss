@@ -48,3 +48,60 @@
 .feather-icon-outlined {
   vertical-align: middle;
 }
+
+// KYC Details Styles
+.kyc-details {
+  .kyc-info-card {
+    background-color: rgba(13, 202, 240, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    border-left: 3px solid #0dcaf0;
+    
+    .form-label {
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .kyc-value {
+      font-size: 1.1rem;
+      color: #333;
+      
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+// No KYC Container Styles
+.no-kyc-container {
+  max-width: 500px;
+  margin: 0 auto;
+  
+  .no-kyc-icon {
+    i {
+      font-size: 4rem;
+      color: #ffc107;
+    }
+  }
+  
+  h5 {
+    font-weight: 600;
+  }
+  
+  .alert {
+    border-radius: 8px;
+    
+    small {
+      display: block;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+// Badge styling
+.badge {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}

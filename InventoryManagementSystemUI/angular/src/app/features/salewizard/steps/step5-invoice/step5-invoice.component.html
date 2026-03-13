@@ -98,6 +98,16 @@
             </div>
           </div>
 
+          @if (hasExchangeAdjustment()) {
+            <div class="alert alert-info d-flex justify-content-between align-items-center mb-4" role="alert">
+              <span><strong>Exchange Credit Applied</strong></span>
+              <span>
+                {{ formatCurrency(getExchangeCreditApplied()) }} credit applied.
+                Net payable: <strong>{{ formatCurrency(getNetAmountPayable()) }}</strong>
+              </span>
+            </div>
+          }
+
           <!-- Customer Details -->
           <div class="customer-details mb-4">
             <div class="row g-3">
@@ -123,6 +133,10 @@
               <div class="col-lg-5">
                 <h6 class="text-muted mb-2">Payment Status:</h6>
                 <div class="p-3 bg-light rounded h-100">
+                  @if (hasExchangeAdjustment()) {
+                    <p class="mb-1"><strong>Exchange Credit:</strong> <span class="text-info">{{ formatCurrency(getExchangeCreditApplied()) }}</span></p>
+                    <p class="mb-1"><strong>Net Amount Payable:</strong> <span class="fw-semibold">{{ formatCurrency(getNetAmountPayable()) }}</span></p>
+                  }
                   <p class="mb-1"><strong>Total Paid:</strong> <span class="text-success">{{ formatCurrency(wizardState.generatedInvoice.totalPaid) }}</span></p>
                   <p class="mb-0"><strong>Balance Due:</strong>
                     <span [class.text-danger]="wizardState.generatedInvoice.balanceDue > 0" [class.text-success]="wizardState.generatedInvoice.balanceDue <= 0">
@@ -171,6 +185,9 @@
                         <div class="small text-muted mt-1">
                           @if (item.itemCode) {
                             <span>Code: {{ item.itemCode }}</span>
+                          }
+                          @if (item.metalLabel) {
+                            <span class="ms-2">{{ item.metalLabel }}</span>
                           }
                           @if (item.purityLabel) {
                             <span class="ms-2">{{ item.purityLabel }}</span>
@@ -320,6 +337,16 @@
                       <td><strong>Grand Total:</strong></td>
                       <td class="text-end"><strong class="fs-5 text-primary">{{ formatCurrency(wizardState.generatedInvoice.grandTotal) }}</strong></td>
                     </tr>
+                    @if (hasExchangeAdjustment()) {
+                      <tr>
+                        <td><strong>Exchange Credit Applied:</strong></td>
+                        <td class="text-end text-info"><strong>-{{ formatCurrency(getExchangeCreditApplied()) }}</strong></td>
+                      </tr>
+                      <tr class="table-light">
+                        <td><strong>Net Amount Payable:</strong></td>
+                        <td class="text-end"><strong class="fs-5 text-success">{{ formatCurrency(getNetAmountPayable()) }}</strong></td>
+                      </tr>
+                    }
                   </tfoot>
                 </table>
 
@@ -335,6 +362,10 @@
             <h6 class="text-muted mb-2">Payment Summary</h6>
             <div class="row">
               <div class="col-lg-6">
+                @if (hasExchangeAdjustment()) {
+                  <p class="mb-0"><strong>Exchange Credit Applied:</strong> <span class="text-info">{{ formatCurrency(getExchangeCreditApplied()) }}</span></p>
+                  <p class="mb-0"><strong>Net Amount Payable:</strong> <span class="fw-semibold">{{ formatCurrency(getNetAmountPayable()) }}</span></p>
+                }
                 <p class="mb-0"><strong>Total Paid:</strong> <span class="text-success">{{ formatCurrency(wizardState.generatedInvoice.totalPaid) }}</span></p>
                 <p class="mb-0"><strong>Balance Due:</strong>
                   <span [class.text-danger]="wizardState.generatedInvoice.balanceDue > 0" [class.text-success]="wizardState.generatedInvoice.balanceDue <= 0">
@@ -424,8 +455,14 @@
         <button
           type="button"
           class="btn btn-outline-primary"
-          (click)="downloadInvoice()">
-          <i class="feather icon-download me-1"></i> Download PDF
+          (click)="downloadInvoice()"
+          [disabled]="isDownloading">
+          @if (isDownloading) {
+            <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+          } @else {
+            <i class="feather icon-download me-1"></i>
+          }
+          Download PDF
         </button>
         <button
           type="button"

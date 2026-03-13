@@ -61,6 +61,8 @@ namespace InventoryManagementSystem.Service.Implementation
                     // Metal Details - snapshot from SaleOrderItem
                     MetalId = item.MetalId,
                     PurityId = item.PurityId,
+                    MetalType = metals.TryGetValue(item.MetalId, out var metal) ? metal.Name : null,
+                    Purity = purities.TryGetValue(item.PurityId, out var purity) ? purity.Name : null,
                     NetMetalWeight = item.NetMetalWeight,
                     MetalAmount = item.MetalAmount, // FIXED: Use item.MetalAmount from SaleOrderItem, NOT item.TotalAmount
 
@@ -91,10 +93,24 @@ namespace InventoryManagementSystem.Service.Implementation
                     MakingChargesSGSTAmount = mcSgst,
                     MakingChargesIGSTAmount = mcIgst,
                     MakingChargesGSTAmount = mcGst,
+                    TotalMakingCharges = item.TotalMakingCharges,
 
                     // Total GST = Metal GST + Making Charges GST
                     TotalGSTAmount = item.TotalGstAmount,
                     TotalAmount = item.TotalAmount,
+                    IsHallmarked = jewelleryItem.IsHallmarked,
+                    HUID = jewelleryItem.IsHallmarked ? jewelleryItem.HUID : null,
+                    BISCertificationNumber = jewelleryItem.IsHallmarked ? jewelleryItem.BISCertificationNumber : null,
+                    HallmarkCenterName = jewelleryItem.IsHallmarked ? jewelleryItem.HallmarkCenterName : null,
+                    HallmarkDate = jewelleryItem.IsHallmarked ? jewelleryItem.HallmarkDate : null,
+                    HallmarkDetails = jewelleryItem.IsHallmarked
+                        ? string.Join(", ", new[]
+                        {
+                            jewelleryItem.BISCertificationNumber,
+                            jewelleryItem.HallmarkCenterName,
+                            jewelleryItem.HallmarkDate?.ToString("dd MMM yyyy")
+                        }.Where(value => !string.IsNullOrWhiteSpace(value)))
+                        : null
                 };
 
                 items.Add(invoiceItem);

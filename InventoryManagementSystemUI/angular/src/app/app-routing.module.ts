@@ -36,10 +36,36 @@ export const routes: Routes = [
         path: 'customer',
         canActivate: [RoleGuard],
         data: { roleId: [RoleEnum.Customer] },
-        loadComponent: () =>
-          import('./features/customerdashboard/customerdashboard.component').then(
-            (c) => c.CustomerDashboardComponent
-          ),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/customerdashboard/customerdashboard.component').then(
+                (c) => c.CustomerDashboardComponent
+              )
+          },
+          {
+            path: 'orders',
+            loadComponent: () =>
+              import('./features/customerdashboard/customer-orders/customer-orders.component').then(
+                (c) => c.CustomerOrdersComponent
+              )
+          },
+          {
+            path: 'invoices',
+            loadComponent: () =>
+              import('./features/customerdashboard/customer-invoices/customer-invoices.component').then(
+                (c) => c.CustomerInvoicesComponent
+              )
+          },
+          {
+            path: 'invoice/:invoiceNumber',
+            loadComponent: () =>
+              import('./features/invoicemanagement/invoiceform/invoiceform').then(
+                (c) => c.Invoiceform
+              )
+          }
+        ]
       },
       {
         path: 'category',
@@ -48,20 +74,27 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/categorymanagement/categorymanagement.routes').then((m) => m.CATEGORY_ROUTES),
       },
-      {
-        path: 'metal',
-        canActivate: [RoleGuard],
-        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
-        loadChildren: () =>
-          import('./features/metalmanagement/metalmanagement.routes').then((m) => m.METAL_ROUTES),
-      },
-      {
-        path: 'purity',
-        canActivate: [RoleGuard],
-        data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
-        loadChildren: () =>
-          import('./features/puritymanagement/puritymanagement.routes').then((m) => m.PURITY_ROUTES),
-      }, 
+       {
+         path: 'metal',
+         canActivate: [RoleGuard],
+         data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
+         loadChildren: () =>
+           import('./features/metalmanagement/metalmanagement.routes').then((m) => m.METAL_ROUTES),
+       },
+       {
+         path: 'generalstatus',
+         canActivate: [RoleGuard],
+         data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
+         loadChildren: () =>
+           import('./features/generalstatusmanagement/generalstatusmanagement.routes').then((m) => m.GENERAL_STATUS_ROUTES),
+       },
+       {
+         path: 'purity',
+         canActivate: [RoleGuard],
+         data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },
+         loadChildren: () =>
+           import('./features/puritymanagement/puritymanagement.routes').then((m) => m.PURITY_ROUTES),
+       }, 
       {
         path: 'stone',
         canActivate: [RoleGuard],
@@ -167,7 +200,7 @@ export const routes: Routes = [
       {
   path: 'userkyc',
   canActivate: [RoleGuard],
-  data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager, RoleEnum.Sales, RoleEnum.Customer] },
+  data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager, RoleEnum.Sales] },
   loadChildren: () => import('./features/userkycmanagement/userkycmanagement.routes').then(m => m.USER_KYC_ROUTES)
 },
       {

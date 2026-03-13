@@ -14,7 +14,6 @@ namespace InventoryManagementSystem.Common.Models
         public long CustomerId { get; set; }
         public int ExchangeType { get; set; } // 1 = Exchange, 2 = Buyback
         public List<ExchangeItemInput> Items { get; set; } = new List<ExchangeItemInput>();
-        public decimal? NewPurchaseAmount { get; set; }
         public string? Notes { get; set; }
     }
 

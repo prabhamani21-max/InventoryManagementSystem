@@ -125,4 +125,26 @@ export class SaleOrderService {
       })
     );
   }
+
+  /**
+   * Get sale orders for the currently logged-in customer
+   * GET /api/SaleOrder/my-orders
+   */
+  getMyOrders(): Observable<SaleOrder[]> {
+    return this.http.get<ApiResponse<SaleOrder[]>>(`${this.apiUrl}/my-orders`).pipe(
+      map((response) => {
+        if (response.Status && response.Data) {
+          if ((response.Data as any).data) {
+            return (response.Data as any).data as SaleOrder[];
+          }
+          return response.Data as SaleOrder[];
+        }
+        return [];
+      }),
+      catchError((error) => {
+        this.toastr.error('Failed to load your orders');
+        return throwError(() => error);
+      })
+    );
+  }
 }

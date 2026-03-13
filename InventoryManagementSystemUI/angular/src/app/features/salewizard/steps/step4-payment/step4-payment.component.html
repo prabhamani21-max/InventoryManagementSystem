@@ -278,6 +278,14 @@
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-4">
           <button
+            type="button"
+            class="btn btn-outline-secondary"
+            [disabled]="isSubmitting"
+            (click)="proceedToInvoice()"
+          >
+            Proceed to Invoice
+          </button>
+          <button
             type="submit"
             class="btn btn-primary"
             [disabled]="paymentForm.invalid || isSubmitting || isKycPending()"

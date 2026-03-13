@@ -173,10 +173,10 @@ export class Exchangetable implements OnInit {
   }
 
   /**
-   * Check if order can be completed (Pending status)
+   * Check if order can be completed (Active status)
    */
   canComplete(statusId: number): boolean {
-    return statusId === 3; // Pending status
+    return statusId === 1; // Active status
   }
 
   /**

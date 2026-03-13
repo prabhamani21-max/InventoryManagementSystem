@@ -1,0 +1,83 @@
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="feather icon-file-text me-2"></i>My Invoices
+    </h5>
+  </div>
+  <div class="card-body">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading your invoices...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && invoices.length === 0" class="text-center py-5">
+      <div class="no-data-container">
+        <div class="no-data-icon mb-3">
+          <i class="feather icon-file-minus"></i>
+        </div>
+        <h5 class="text-muted mb-3">No invoices found</h5>
+        <p class="text-muted">You haven't made any purchases yet.</p>
+      </div>
+    </div>
+
+    <!-- Invoice List -->
+    <div *ngIf="!isLoading && invoices.length > 0" class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Invoice Number</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Payment Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (invoice of invoices; track invoice.id) {
+            <tr>
+              <td>
+                <span class="fw-semibold text-primary">{{ invoice.invoiceNumber }}</span>
+              </td>
+              <td>{{ formatDate(invoice.invoiceDate) }}</td>
+              <td>
+                <span class="fw-semibold">{{ formatAmount(invoice.grandTotal) }}</span>
+              </td>
+              <td>
+                <span [class]="getPaymentStatusClass(invoice)">
+                  {{ getPaymentStatusLabel(invoice) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button 
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="viewInvoice(invoice)"
+                    title="View Invoice">
+                    <i class="feather icon-eye"></i>
+                  </button>
+                  <button 
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="downloadInvoicePdf(invoice)"
+                    [disabled]="downloadingInvoiceNumber === invoice.invoiceNumber"
+                    title="Download PDF">
+                    @if (downloadingInvoiceNumber === invoice.invoiceNumber) {
+                      <span class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Downloading...</span>
+                      </span>
+                    } @else {
+                      <i class="feather icon-download"></i>
+                    }
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

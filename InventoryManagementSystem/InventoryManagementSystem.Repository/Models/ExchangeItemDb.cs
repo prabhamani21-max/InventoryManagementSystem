@@ -43,9 +43,6 @@ namespace InventoryManagementSystem.Repository.Models
         [Column("wastage_deduction_percent")]
         public decimal WastageDeductionPercent { get; set; }
 
-        [Column("total_deduction_percent")]
-        public decimal TotalDeductionPercent { get; set; }
-
         [Column("deduction_amount")]
         public decimal DeductionAmount { get; set; }
 
@@ -55,16 +52,11 @@ namespace InventoryManagementSystem.Repository.Models
         [Column("item_description")]
         public string? ItemDescription { get; set; }
 
-        [Column("status_id")]
-        public int StatusId { get; set; }
-
         [Column("created_date")]
         public DateTime CreatedDate { get; set; }
 
         [Column("created_by")]
         public long CreatedBy { get; set; }
-        [Column ("updated_by")]
-        public long? UpdatedBy { get; set; }
 
 
         // Navigation properties
@@ -74,13 +66,7 @@ namespace InventoryManagementSystem.Repository.Models
         public virtual MetalDb Metal { get; set; }
         [ForeignKey(nameof(PurityId))]
         public virtual PurityDb Purity { get; set; }
-        [ForeignKey(nameof(StatusId))]
-
-        public virtual GenericStatusDb Status { get; set; }
         [ForeignKey(nameof(CreatedBy))]
         public virtual UserDb CreatedByUser { get; set; }
-
-        [ForeignKey(nameof(UpdatedBy))]
-        public virtual UserDb? UpdatedByUser { get; set; }
     }
 }

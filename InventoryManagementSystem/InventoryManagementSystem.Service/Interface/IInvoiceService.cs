@@ -23,6 +23,13 @@ namespace InventoryManagementSystem.Service.Interface
         Task<InvoiceResponseDto?> GetInvoiceByNumberAsync(string invoiceNumber);
 
         /// <summary>
+        /// Get invoice by invoice ID.
+        /// </summary>
+        /// <param name="invoiceId">Invoice ID</param>
+        /// <returns>Invoice if found, null otherwise</returns>
+        Task<InvoiceResponseDto?> GetInvoiceByIdAsync(long invoiceId);
+
+        /// <summary>
         /// Get invoice by sale order ID
         /// </summary>
         /// <param name="saleOrderId">Sale order ID</param>
@@ -37,25 +44,18 @@ namespace InventoryManagementSystem.Service.Interface
         Task<BulkInvoiceResponseDto> GenerateBulkInvoicesAsync(BulkInvoiceRequestDto request);
 
         /// <summary>
-        /// Regenerate invoice with updated details
-        /// </summary>
-        /// <param name="invoiceNumber">Invoice number to regenerate</param>
-        /// <param name="notes">Optional notes to add</param>
-        /// <returns>Updated invoice</returns>
-        Task<InvoiceResponseDto?> RegenerateInvoiceAsync(string invoiceNumber, string? notes = null);
-
-        /// <summary>
-        /// Cancel an invoice
-        /// </summary>
-        /// <param name="invoiceNumber">Invoice number to cancel</param>
-        /// <returns>True if cancelled successfully</returns>
-        Task<bool> CancelInvoiceAsync(string invoiceNumber);
-
         /// <summary>
         /// Get all invoices
         /// </summary>
         /// <returns>List of all invoices</returns>
         Task<List<InvoiceResponseDto>> GetAllInvoicesAsync();
+
+        /// <summary>
+        /// Get all invoices for a specific customer (party)
+        /// </summary>
+        /// <param name="partyId">The customer's user ID (party ID)</param>
+        /// <returns>List of invoices for the customer</returns>
+        Task<List<InvoiceResponseDto>> GetInvoicesByPartyIdAsync(long partyId);
 
         /// <summary>
         /// Convert number to words (for grand total in words)

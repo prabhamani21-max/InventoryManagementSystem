@@ -13,7 +13,6 @@ namespace InventoryManagementSystem.DTO
         public long CustomerId { get; set; }
         public ExchangeType ExchangeType { get; set; }
         public List<ExchangeItemInputDto> Items { get; set; }
-        public decimal? NewPurchaseAmount { get; set; } // For EXCHANGE type
         public string? Notes { get; set; }
     }
 
@@ -41,9 +40,6 @@ namespace InventoryManagementSystem.DTO
         public decimal TotalMarketValue { get; set; }
         public decimal TotalDeductionAmount { get; set; }
         public decimal TotalCreditAmount { get; set; }
-        public decimal? NewPurchaseAmount { get; set; }
-        public decimal? BalanceRefund { get; set; }
-        public decimal? CashPayment { get; set; }
         public List<ExchangeItemResponseDto> ItemDetails { get; set; }
     }
 
@@ -62,7 +58,6 @@ namespace InventoryManagementSystem.DTO
         public decimal MarketValue { get; set; }
         public decimal MakingChargeDeductionPercent { get; set; }
         public decimal WastageDeductionPercent { get; set; }
-        public decimal TotalDeductionPercent { get; set; }
         public decimal DeductionAmount { get; set; }
         public decimal CreditAmount { get; set; }
     }
@@ -81,14 +76,10 @@ namespace InventoryManagementSystem.DTO
         public decimal TotalMarketValue { get; set; }
         public decimal TotalDeductionAmount { get; set; }
         public decimal TotalCreditAmount { get; set; }
-        public decimal? NewPurchaseAmount { get; set; }
-        public decimal? BalanceRefund { get; set; }
-        public decimal? CashPayment { get; set; }
         public int StatusId { get; set; }
         public string? StatusName { get; set; }
         public string? Notes { get; set; }
         public DateTime ExchangeDate { get; set; }
-        public DateTime CreatedDate { get; set; }
         public List<ExchangeItemDto> Items { get; set; }
     }
 
@@ -109,11 +100,9 @@ namespace InventoryManagementSystem.DTO
         public decimal MarketValue { get; set; }
         public decimal MakingChargeDeductionPercent { get; set; }
         public decimal WastageDeductionPercent { get; set; }
-        public decimal TotalDeductionPercent { get; set; }
         public decimal DeductionAmount { get; set; }
         public decimal CreditAmount { get; set; }
         public string? ItemDescription { get; set; }
-        public int StatusId { get; set; }
     }
 
     // Create Exchange Order Request
@@ -122,7 +111,6 @@ namespace InventoryManagementSystem.DTO
         public long CustomerId { get; set; }
         public ExchangeType ExchangeType { get; set; }
         public List<ExchangeItemInputDto> Items { get; set; }
-        public decimal? NewPurchaseAmount { get; set; }
         public string? Notes { get; set; }
     }
 
@@ -131,5 +119,10 @@ namespace InventoryManagementSystem.DTO
     {
         public long ExchangeOrderId { get; set; }
         public string? Notes { get; set; }
+    }
+
+    public class ExchangeLinkSaleDto
+    {
+        public long SaleOrderId { get; set; }
     }
 }

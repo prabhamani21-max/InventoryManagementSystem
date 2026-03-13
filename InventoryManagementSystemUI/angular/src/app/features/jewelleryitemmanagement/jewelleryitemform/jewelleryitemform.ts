@@ -18,6 +18,10 @@ import { Purity } from 'src/app/core/models/purity.model';
 import { Stone } from 'src/app/core/models/stone.model';
 import { ToastrService } from 'ngx-toastr';
 
+interface CategoryOption extends Category {
+  displayName: string;
+}
+
 /**
  * JewelleryItem Form Component
  * Handles both create and edit operations for jewellery items
@@ -48,7 +52,7 @@ export class Jewelleryitemform implements OnInit {
   isSubmitting: boolean = false;
 
   // Dropdown data
-  categories: Category[] = [];
+  categories: CategoryOption[] = [];
   metals: Metal[] = [];
   purities: Purity[] = [];
   filteredPurities: Purity[] = [];
@@ -156,7 +160,7 @@ export class Jewelleryitemform implements OnInit {
     // Load categories
     this.categoryService.getAllCategories().subscribe({
       next: (categories) => {
-        this.categories = categories;
+        this.categories = this.buildCategoryOptions(categories);
       },
     });
 
@@ -259,6 +263,22 @@ export class Jewelleryitemform implements OnInit {
     if (!hasStone) {
       this.jewelleryItemForm.get('stoneId')?.setValue(null);
     }
+  }
+
+  private buildCategoryOptions(categories: Category[], parentPath?: string): CategoryOption[] {
+    return categories.flatMap((category) => {
+      const displayName = parentPath ? `${parentPath} / ${category.name}` : category.name;
+      const option: CategoryOption = {
+        ...category,
+        displayName,
+      };
+
+      const subCategoryOptions = category.subCategories?.length
+        ? this.buildCategoryOptions(category.subCategories, displayName)
+        : [];
+
+      return [option, ...subCategoryOptions];
+    });
   }
 
   /**

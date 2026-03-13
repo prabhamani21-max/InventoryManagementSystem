@@ -4,9 +4,10 @@ import { FormBuilder, UntypedFormGroup, ReactiveFormsModule } from '@angular/for
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { SaleWizardService, SaleWizardState } from 'src/app/core/services/sale-wizard.service';
-import { InvoiceItem } from 'src/app/core/models/invoice.model';
+import { Invoice, InvoiceItem } from 'src/app/core/models/invoice.model';
 import { Payment, getPaymentMethodLabel } from 'src/app/core/models/payment.model';
 import { SaleOrderItem, formatCurrency } from 'src/app/core/models/sale-order-item.model';
+import { InvoiceService } from 'src/app/core/services/invoice.service';
 import { ToastrService } from 'ngx-toastr';
 
 interface DisplayInvoiceItem {
@@ -15,6 +16,7 @@ interface DisplayInvoiceItem {
   itemCode?: string;
   description?: string;
   quantity: number;
+  metalLabel?: string;
   purityLabel?: string;
   grossWeight?: number;
   netMetalWeight?: number;
@@ -45,6 +47,7 @@ interface DisplayInvoiceItem {
 })
 export class Step5InvoiceComponent implements OnInit, OnDestroy {
   private wizardService = inject(SaleWizardService);
+  private invoiceService = inject(InvoiceService);
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
   
@@ -56,6 +59,8 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
   // Invoice form
   invoiceForm!: UntypedFormGroup;
   isGenerating: boolean = false;
+  isDownloading: boolean = false;
+  isLoadingExistingInvoice: boolean = false;
   autoGenerateAttempted: boolean = false;
   
   // Print options
@@ -80,12 +85,14 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
       .subscribe((state) => {
         this.wizardState = state;
         this.refreshInvoicePreviewData();
+        this.tryLoadExistingInvoice();
         // Auto-generate invoice when arriving at this step with complete payment
         this.autoGenerateInvoice();
       });
     
     // Try auto-generate on init
     this.refreshInvoicePreviewData();
+    this.tryLoadExistingInvoice();
     this.autoGenerateInvoice();
   }
 
@@ -120,6 +127,31 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
     }
   }
 
+  private tryLoadExistingInvoice(): void {
+    const saleOrderId = Number(this.wizardState.saleOrder?.id);
+    if (!saleOrderId || this.wizardState.generatedInvoice || this.isLoadingExistingInvoice) {
+      return;
+    }
+
+    this.isLoadingExistingInvoice = true;
+    this.invoiceService.getInvoiceBySaleOrderId(saleOrderId, true)
+      .pipe(
+        finalize(() => {
+          this.isLoadingExistingInvoice = false;
+        })
+      )
+      .subscribe({
+        next: (invoice) => {
+          if (invoice) {
+            this.wizardService.setGeneratedInvoice(invoice);
+          }
+        },
+        error: () => {
+          // Not-found is expected before the first invoice is issued.
+        },
+      });
+  }
+
   /**
    * Generate invoice
    */
@@ -128,11 +160,6 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
 
     if (!saleOrderId || saleOrderId <= 0) {
       this.toastr.error('No sale order found');
-      return;
-    }
-    
-    if (!this.isPaymentComplete()) {
-      this.toastr.warning('Please complete payment before generating invoice');
       return;
     }
     
@@ -180,6 +207,18 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
    */
   formatCurrency(amount: number): string {
     return formatCurrency(amount);
+  }
+
+  hasExchangeAdjustment(invoice: Invoice | null | undefined = this.wizardState.generatedInvoice): boolean {
+    return (invoice?.exchangeCreditApplied ?? 0) > 0;
+  }
+
+  getExchangeCreditApplied(invoice: Invoice | null | undefined = this.wizardState.generatedInvoice): number {
+    return invoice?.exchangeCreditApplied ?? 0;
+  }
+
+  getNetAmountPayable(invoice: Invoice | null | undefined = this.wizardState.generatedInvoice): number {
+    return invoice?.netAmountPayable ?? invoice?.grandTotal ?? 0;
   }
 
   /**
@@ -450,10 +489,38 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
    * Download invoice as PDF
    */
   downloadInvoice(): void {
-    if (!this.wizardState.generatedInvoice) return;
-    
-    // TODO: Implement PDF generation
-    this.toastr.info('PDF download feature coming soon');
+    const invoice = this.wizardState.generatedInvoice;
+    if (!invoice || this.isDownloading) return;
+
+    this.isDownloading = true;
+
+    const downloadRequest = invoice.invoiceNumber
+      ? this.invoiceService.downloadInvoicePdfByNumber(invoice.invoiceNumber)
+      : this.invoiceService.downloadInvoicePdf(invoice.id);
+
+    downloadRequest
+      .pipe(finalize(() => {
+        this.isDownloading = false;
+      }))
+      .subscribe({
+        next: (blob: Blob) => {
+          const fileSuffix = invoice.invoiceNumber || String(invoice.id);
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `Invoice_${fileSuffix}.pdf`;
+
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+
+          this.toastr.success('Invoice PDF downloaded successfully');
+        },
+        error: () => {
+          // InvoiceService already surfaces the error toast.
+        },
+      });
   }
 
   /**
@@ -600,7 +667,8 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
       itemCode: matchedSaleOrderItem?.itemCode,
       description: matchedSaleOrderItem?.description,
       quantity: item.quantity,
-      purityLabel: this.getPurityLabel(item.purityId, matchedSaleOrderItem?.purityId),
+      metalLabel: item.metalType,
+      purityLabel: this.getPurityLabel(item.purity, item.purityId, matchedSaleOrderItem?.purityId),
       grossWeight: matchedSaleOrderItem?.grossWeight,
       netMetalWeight: item.netMetalWeight ?? matchedSaleOrderItem?.netMetalWeight,
       metalRatePerGram: matchedSaleOrderItem?.metalRatePerGram,
@@ -628,7 +696,7 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
       itemCode: item.itemCode,
       description: item.description,
       quantity: item.quantity,
-      purityLabel: this.getPurityLabel(item.purityId),
+      purityLabel: this.getPurityLabel(undefined, item.purityId),
       grossWeight: item.grossWeight,
       netMetalWeight: item.netMetalWeight,
       metalRatePerGram: item.metalRatePerGram,
@@ -678,7 +746,15 @@ export class Step5InvoiceComponent implements OnInit, OnDestroy {
   /**
    * Create readable purity label
    */
-  private getPurityLabel(invoicePurityId?: number, saleOrderPurityId?: number): string | undefined {
+  private getPurityLabel(
+    purityName?: string,
+    invoicePurityId?: number,
+    saleOrderPurityId?: number
+  ): string | undefined {
+    if (purityName) {
+      return purityName;
+    }
+
     const purityId = invoicePurityId ?? saleOrderPurityId;
     if (!purityId) {
       return undefined;

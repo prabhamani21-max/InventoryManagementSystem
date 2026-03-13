@@ -16,6 +16,7 @@ namespace InventoryManagementSystem.Repository.Implementation
     /// </summary>
     public class InvoiceRepository : IInvoiceRepository
     {
+        private const int CancelledStatusId = 4;
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<InvoiceRepository> _logger;
@@ -64,9 +65,7 @@ namespace InventoryManagementSystem.Repository.Implementation
 
         public async Task<Invoice?> GetInvoiceBySaleOrderIdAsync(long saleOrderId)
         {
-            var invoiceDb = await _context.Invoices
-                .AsNoTracking()
-                .FirstOrDefaultAsync(i => i.SaleOrderId == saleOrderId);
+            var invoiceDb = await FindPreferredInvoiceBySaleOrderIdAsync(saleOrderId);
 
             if (invoiceDb == null)
             {
@@ -77,12 +76,58 @@ namespace InventoryManagementSystem.Repository.Implementation
             return _mapper.Map<Invoice>(invoiceDb);
         }
 
+        public async Task<Invoice?> GetActiveInvoiceBySaleOrderIdAsync(long saleOrderId)
+        {
+            var activeInvoices = await _context.Invoices
+                .AsNoTracking()
+                .Where(i => i.SaleOrderId == saleOrderId && i.StatusId != CancelledStatusId)
+                .OrderByDescending(i => i.CreatedDate)
+                .ToListAsync();
+
+            if (activeInvoices.Count == 0)
+            {
+                return null;
+            }
+
+            if (activeInvoices.Count > 1)
+            {
+                _logger.LogError(
+                    "Found {Count} active invoices for Sale Order {SaleOrderId}. Returning the most recent invoice {InvoiceNumber}",
+                    activeInvoices.Count,
+                    saleOrderId,
+                    activeInvoices[0].InvoiceNumber);
+            }
+
+            return _mapper.Map<Invoice>(activeInvoices[0]);
+        }
+
         public async Task<IEnumerable<Invoice>> GetAllInvoicesAsync()
         {
             var invoicesDb = await _context.Invoices
                 .AsNoTracking()
                 .ToListAsync();
 
+            return _mapper.Map<IEnumerable<Invoice>>(invoicesDb);
+        }
+
+        /// <summary>
+        /// Get all invoices for a specific customer (party)
+        /// </summary>
+        /// <param name="partyId">The customer's user ID (party ID)</param>
+        /// <returns>List of invoices for the customer</returns>
+        public async Task<IEnumerable<Invoice>> GetInvoicesByPartyIdAsync(long partyId)
+        {
+            _logger.LogInformation("Fetching invoices for party ID {PartyId}", partyId);
+
+            var invoicesDb = await _context.Invoices
+                .Include(i => i.InvoiceItems)
+                .Include(i => i.InvoicePayments)
+                .Where(i => i.PartyId == partyId)
+                .OrderByDescending(i => i.InvoiceDate)
+                .AsNoTracking()
+                .ToListAsync();
+
+            _logger.LogInformation("Found {Count} invoices for party ID {PartyId}", invoicesDb.Count, partyId);
             return _mapper.Map<IEnumerable<Invoice>>(invoicesDb);
         }
 
@@ -142,6 +187,8 @@ namespace InventoryManagementSystem.Repository.Implementation
             invoiceDb.RoundOff = invoice.RoundOff;
             invoiceDb.GrandTotal = invoice.GrandTotal;
             invoiceDb.GrandTotalInWords = invoice.GrandTotalInWords;
+            invoiceDb.ExchangeCreditApplied = invoice.ExchangeCreditApplied;
+            invoiceDb.NetAmountPayable = invoice.NetAmountPayable;
             invoiceDb.TotalPaid = invoice.TotalPaid;
             invoiceDb.BalanceDue = invoice.BalanceDue;
             invoiceDb.TotalGoldWeight = invoice.TotalGoldWeight;
@@ -152,14 +199,14 @@ namespace InventoryManagementSystem.Repository.Implementation
             invoiceDb.Notes = invoice.Notes;
             invoiceDb.Declaration = invoice.Declaration;
             invoiceDb.StatusId = invoice.StatusId;
-            invoiceDb.IRN = invoice.IRN;
-            invoiceDb.IRNGeneratedDate = invoice.IRNGeneratedDate;
-            invoiceDb.QRCode = invoice.QRCode;
-            invoiceDb.EInvoiceStatus = invoice.EInvoiceStatus;
-            invoiceDb.EInvoiceCancelledDate = invoice.EInvoiceCancelledDate;
-            invoiceDb.EInvoiceCancelReason = invoice.EInvoiceCancelReason;
-            invoiceDb.AcknowledgementNumber = invoice.AcknowledgementNumber;
-            invoiceDb.AcknowledgementDate = invoice.AcknowledgementDate;
+            // invoiceDb.IRN = invoice.IRN;
+            // invoiceDb.IRNGeneratedDate = invoice.IRNGeneratedDate;
+            // invoiceDb.QRCode = invoice.QRCode;
+            // invoiceDb.EInvoiceStatus = invoice.EInvoiceStatus;
+            // invoiceDb.EInvoiceCancelledDate = invoice.EInvoiceCancelledDate;
+            // invoiceDb.EInvoiceCancelReason = invoice.EInvoiceCancelReason;
+            // invoiceDb.AcknowledgementNumber = invoice.AcknowledgementNumber;
+            // invoiceDb.AcknowledgementDate = invoice.AcknowledgementDate;
             invoiceDb.UpdatedBy = invoice.UpdatedBy;
             invoiceDb.UpdatedDate = DateTime.UtcNow;
 
@@ -205,6 +252,27 @@ namespace InventoryManagementSystem.Repository.Implementation
 
             _logger.LogInformation("Invoice {InvoiceNumber} cancelled successfully", invoiceNumber);
             return true;
+        }
+
+        private async Task<InvoiceDb?> FindPreferredInvoiceBySaleOrderIdAsync(long saleOrderId)
+        {
+            var invoices = await _context.Invoices
+                .AsNoTracking()
+                .Where(i => i.SaleOrderId == saleOrderId)
+                .OrderBy(i => i.StatusId == CancelledStatusId)
+                .ThenByDescending(i => i.CreatedDate)
+                .ToListAsync();
+
+            if (invoices.Count > 1)
+            {
+                _logger.LogWarning(
+                    "Found {Count} invoices for Sale Order {SaleOrderId}. Returning preferred invoice {InvoiceNumber}",
+                    invoices.Count,
+                    saleOrderId,
+                    invoices[0].InvoiceNumber);
+            }
+
+            return invoices.FirstOrDefault();
         }
     }
 }

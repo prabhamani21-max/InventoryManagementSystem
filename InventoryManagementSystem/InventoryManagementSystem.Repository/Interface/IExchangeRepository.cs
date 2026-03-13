@@ -12,8 +12,6 @@ namespace InventoryManagementSystem.Repository.Interface
         Task<ExchangeOrder> UpdateExchangeOrderAsync(ExchangeOrder exchangeOrder);
         Task<bool> CancelExchangeOrderAsync(long orderId);
         
-        // Exchange calculation methods
-        Task<ExchangeCalculationResult> CalculateExchangeValueAsync(ExchangeCalculationRequest request);
-        Task<int> GetStatusIdByNameAsync(string statusName);
+        Task<(decimal RatePerGram, decimal PurityPercentage)> GetCurrentRateWithPurityAsync(int purityId);
     }
 }

@@ -208,4 +208,22 @@ getCurrentUser(): Observable<
       })
     );
   }
+
+  /**
+   * Get all customers (users with roleId = 4)
+   * GET /api/User/GetAllUsers - then filter by roleId
+   */
+  getCustomers(): Observable<User[]> {
+    return this.http.get<ApiResponse<User[]>>(`${this.apiUrl}/GetAllUsers`).pipe(
+      map((response) => {
+        // Filter users with roleId = 4 (Customer)
+        const customers = (response.Data || []).filter(user => user.roleId === 4);
+        return customers;
+      }),
+      catchError((error) => {
+        this.toastr.error('Failed to load customers');
+        return throwError(() => error);
+      })
+    );
+  }
 }

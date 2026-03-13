@@ -63,11 +63,9 @@ export interface ExchangeItem {
   marketValue: number;
   makingChargeDeductionPercent: number;
   wastageDeductionPercent: number;
-  totalDeductionPercent: number;
   deductionAmount: number;
   creditAmount: number;
   itemDescription: string | null;
-  statusId: number;
 }
 
 /**
@@ -85,19 +83,16 @@ export interface ExchangeOrder {
   totalMarketValue: number;
   totalDeductionAmount: number;
   totalCreditAmount: number;
-  newPurchaseAmount: number | null;
-  balanceRefund: number | null;
-  cashPayment: number | null;
   statusId: number;
   statusName: string | null;
   notes: string | null;
   exchangeDate: Date | string;
-  createdDate: Date | string;
   items: ExchangeItem[];
 }
 
 /**
  * Interface for exchange item input (for create/calculate)
+ * Matches ExchangeItemInputDto from backend
  */
 export interface ExchangeItemInput {
   metalId: number;
@@ -111,17 +106,18 @@ export interface ExchangeItemInput {
 
 /**
  * Interface for calculating exchange value request
+ * Matches ExchangeCalculateRequestDto from backend
  */
 export interface ExchangeCalculateRequest {
   customerId: number;
   exchangeType: ExchangeType;
   items: ExchangeItemInput[];
-  newPurchaseAmount?: number | null;
   notes?: string | null;
 }
 
 /**
  * Interface for exchange item response (calculated)
+ * Matches ExchangeItemResponseDto from backend
  */
 export interface ExchangeItemResponse {
   metalId: number;
@@ -136,13 +132,13 @@ export interface ExchangeItemResponse {
   marketValue: number;
   makingChargeDeductionPercent: number;
   wastageDeductionPercent: number;
-  totalDeductionPercent: number;
   deductionAmount: number;
   creditAmount: number;
 }
 
 /**
  * Interface for exchange calculation response
+ * Matches ExchangeCalculateResponseDto from backend
  */
 export interface ExchangeCalculateResponse {
   customerId: number;
@@ -154,29 +150,35 @@ export interface ExchangeCalculateResponse {
   totalMarketValue: number;
   totalDeductionAmount: number;
   totalCreditAmount: number;
-  newPurchaseAmount: number | null;
-  balanceRefund: number | null;
-  cashPayment: number | null;
   itemDetails: ExchangeItemResponse[];
 }
 
 /**
  * Interface for creating a new exchange order
+ * Matches ExchangeOrderCreateDto from backend
  */
 export interface ExchangeOrderCreate {
   customerId: number;
   exchangeType: ExchangeType;
   items: ExchangeItemInput[];
-  newPurchaseAmount?: number | null;
   notes?: string | null;
 }
 
 /**
  * Interface for completing an exchange order
+ * Matches ExchangeCompleteDto from backend
  */
 export interface ExchangeCompleteRequest {
   exchangeOrderId: number;
   notes?: string | null;
+}
+
+/**
+ * Interface for linking a sale order to exchange
+ * Matches ExchangeLinkSaleDto from backend
+ */
+export interface ExchangeLinkSaleRequest {
+  saleOrderId: number;
 }
 
 /**

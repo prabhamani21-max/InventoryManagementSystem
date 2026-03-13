@@ -1,0 +1,23 @@
+/* Customer Orders Component Styles */
+.no-data-container {
+  padding: 2rem;
+  
+  .no-data-icon {
+    i {
+      font-size: 48px;
+      color: #ccc;
+    }
+  }
+}
+
+.table {
+  th {
+    font-weight: 600;
+    color: #6c757d;
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  td {
+    vertical-align: middle;
+  }
+}

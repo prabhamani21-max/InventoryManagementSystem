@@ -1,4 +1,4 @@
-
+using InventoryManagementSystem.Common.Enum;
 using InventoryManagementSystem.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
@@ -16,15 +16,18 @@ namespace InventoryManagementSystem.Controllers
         private readonly IExchangeService _exchangeService;
         private readonly ILogger<ExchangeController> _logger;
         private readonly IMapper _mapper;
+        private readonly ICurrentUser _currentUser;
 
         public ExchangeController(
             IExchangeService exchangeService,
             ILogger<ExchangeController> logger,
-            IMapper mapper)
+            IMapper mapper,
+            ICurrentUser currentUser)
         {
             _exchangeService = exchangeService;
             _logger = logger;
             _mapper = mapper;
+            _currentUser = currentUser;
         }
 
         /// <summary>
@@ -43,7 +46,6 @@ namespace InventoryManagementSystem.Controllers
                     CustomerId = request.CustomerId,
                     ExchangeType = (int)request.ExchangeType,
                     Items = _mapper.Map<List<ExchangeItemInput>>(request.Items),
-                    NewPurchaseAmount = request.NewPurchaseAmount,
                     Notes = request.Notes
                 };
                 
@@ -72,6 +74,9 @@ namespace InventoryManagementSystem.Controllers
                 
                 // Map DTO to Model
                 var exchangeOrder = _mapper.Map<ExchangeOrder>(request);
+                exchangeOrder.CreatedDate = DateTime.UtcNow;
+                exchangeOrder.CreatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin;
+                exchangeOrder.StatusId = (int)StatusEnum.Active;
                 
                 var result = await _exchangeService.CreateExchangeOrderAsync(exchangeOrder);
                 
@@ -82,6 +87,35 @@ namespace InventoryManagementSystem.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating exchange order");
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Link a sale order to an exchange order for Phase 1 settlement.
+        /// </summary>
+        [HttpPost("{orderId}/link-sale")]
+        public async Task<IActionResult> LinkSaleOrder(long orderId, [FromBody] ExchangeLinkSaleDto request)
+        {
+            try
+            {
+                _logger.LogInformation("Linking sale order {SaleOrderId} to exchange order {OrderId}", request.SaleOrderId, orderId);
+
+                var result = await _exchangeService.LinkSaleOrderAsync(orderId, request.SaleOrderId);
+                var response = _mapper.Map<ExchangeOrderDto>(result);
+                return Ok(response);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error linking sale order {SaleOrderId} to exchange order {OrderId}", request.SaleOrderId, orderId);
                 return BadRequest(new { Message = ex.Message });
             }
         }
@@ -179,7 +213,7 @@ namespace InventoryManagementSystem.Controllers
         }
 
         /// <summary>
-        /// Complete exchange order (add to inventory, apply credit)
+        /// Complete exchange order after linked sale and invoice validation.
         /// </summary>
         [HttpPost("{orderId}/complete")]
         public async Task<IActionResult> CompleteExchangeOrder(long orderId, [FromBody] ExchangeCompleteDto request)

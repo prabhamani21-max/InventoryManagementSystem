@@ -46,24 +46,33 @@ export const NavigationItems: NavigationItem[] = [
         roleId: [RoleEnum.SuperAdmin,RoleEnum.Manager], // SuperAdmin (1), Admin (2)
 
       },
-      {
-        id: 'metal',
-        title: 'Metal',
-        type: 'item',
-        url: 'metal',
-        icon: 'feather icon-layers',
-        roleId: [RoleEnum.SuperAdmin,RoleEnum.Manager], // SuperAdmin (1), Admin (2)
+       {
+         id: 'metal',
+         title: 'Metal',
+         type: 'item',
+         url: 'metal',
+         icon: 'feather icon-layers',
+         roleId: [RoleEnum.SuperAdmin,RoleEnum.Manager], // SuperAdmin (1), Admin (2)
 
-      },
-      {
-        id: 'purity',
-        title: 'Purity',
-        type: 'item',
-        url: 'purity',
-        icon: 'feather icon-award',
-                roleId: [RoleEnum.SuperAdmin,RoleEnum.Manager], // SuperAdmin (1), Admin (2)
+       },
+       {
+         id: 'generalstatus',
+         title: 'General Status',
+         type: 'item',
+         url: 'generalstatus',
+         icon: 'feather icon-alert-circle',
+                 roleId: [RoleEnum.SuperAdmin,RoleEnum.Manager], // SuperAdmin (1), Admin (2)
 
-      },
+       },
+       {
+         id: 'purity',
+         title: 'Purity',
+         type: 'item',
+         url: 'purity',
+         icon: 'feather icon-award',
+                 roleId: [RoleEnum.SuperAdmin,RoleEnum.Manager], // SuperAdmin (1), Admin (2)
+
+       },
       {
         id: 'stone',
         title: 'Stones',
@@ -179,7 +188,7 @@ export const NavigationItems: NavigationItem[] = [
         type: 'item',
         url: 'userkyc',
         icon: 'feather icon-users',
-                roleId: [RoleEnum.SuperAdmin,RoleEnum.Manager, RoleEnum.Sales,RoleEnum.Customer], // SuperAdmin (1), Admin (2)
+                roleId: [RoleEnum.SuperAdmin,RoleEnum.Manager, RoleEnum.Sales], // SuperAdmin (1), Admin (2)
 
       },
 

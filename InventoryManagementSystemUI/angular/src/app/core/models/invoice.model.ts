@@ -32,6 +32,8 @@ export interface InvoiceItem {
   // Metal Details
   metalId: number;
   purityId: number;
+  metalType?: string;
+  purity?: string;
   netMetalWeight?: number;
   metalAmount?: number;
 
@@ -59,6 +61,7 @@ export interface InvoiceItem {
 
   // Hallmark snapshot
   isHallmarked: boolean;
+  hallmarkDetails?: string;
   // Hallmark Details
   huid?: string; // 6-digit alphanumeric Hallmark Unique ID
   bisCertificationNumber?: string;
@@ -131,6 +134,8 @@ export interface Invoice {
   roundOff: number;
   grandTotal: number;
   grandTotalInWords?: string;
+  exchangeCreditApplied?: number;
+  netAmountPayable?: number;
 
   // Payment Summary
   totalPaid: number;
@@ -155,17 +160,19 @@ export interface Invoice {
   updatedDate?: Date | string;
   statusId: number;
 
-  // E-Invoice Fields (GST Compliance)
-  irn?: string; // Invoice Reference Number
-  irnGeneratedDate?: Date | string;
-  qrCode?: string; // Base64 QR code
-  eInvoiceStatus?: string; // Generated, Cancelled, Error
-  eInvoiceCancelledDate?: Date | string;
-  eInvoiceCancelReason?: string;
-  acknowledgementNumber?: string;
-  acknowledgementDate?: Date | string;
+  // E-Invoice Fields (GST Compliance) - Currently Not Required
+  // irn?: string; // Invoice Reference Number
+  // irnGeneratedDate?: Date | string;
+  // qrCode?: string; // Base64 QR code
+  // eInvoiceStatus?: string; // Generated, Cancelled, Error
+  // eInvoiceCancelledDate?: Date | string;
+  // eInvoiceCancelReason?: string;
+  // acknowledgementNumber?: string;
+  // acknowledgementDate?: Date | string;
 
   // Navigation properties
+  items?: InvoiceItem[];
+  payments?: InvoicePayment[];
   invoiceItems?: InvoiceItem[];
   invoicePayments?: InvoicePayment[];
 }
@@ -333,82 +340,4 @@ export function formatCurrency(amount: number): string {
 export function formatWeight(weight: number | null | undefined): string {
   if (weight === null || weight === undefined) return '-';
   return `${weight.toFixed(3)} g`;
-}
-
-/**
- * E-Invoice Response interface for GST Compliance
- */
-export interface EInvoiceResponse {
-  irn?: string;
-  acknowledgementNumber?: string;
-  acknowledgementDate?: Date | string;
-  qrCode?: string;
-  signedInvoice?: string;
-  status: string;
-  errorMessage?: string;
-  errorCode?: string;
-  irnGeneratedDate?: Date | string;
-  cancelledDate?: Date | string;
-  cancelReason?: string;
-}
-
-/**
- * E-Invoice Cancel Request interface
- */
-export interface EInvoiceCancelRequest {
-  cancelReason: string;
-}
-
-/**
- * E-Invoice Eligibility Response interface
- */
-export interface EInvoiceEligibilityResponse {
-  invoiceId: number;
-  isEligible: boolean;
-  message: string;
-}
-
-/**
- * QR Code Response interface
- */
-export interface QRCodeResponse {
-  invoiceId: number;
-  qrCode: string;
-  qrCodeUrl: string;
-}
-
-/**
- * Helper function to get e-invoice status label
- */
-export function getEInvoiceStatusLabel(status: string | undefined): string {
-  switch (status) {
-    case 'Generated':
-      return 'IRN Generated';
-    case 'Cancelled':
-      return 'E-Invoice Cancelled';
-    case 'Error':
-      return 'Error';
-    case 'Pending':
-      return 'Pending';
-    default:
-      return 'Not Generated';
-  }
-}
-
-/**
- * Helper function to get e-invoice status CSS class
- */
-export function getEInvoiceStatusClass(status: string | undefined): string {
-  switch (status) {
-    case 'Generated':
-      return 'badge bg-success';
-    case 'Cancelled':
-      return 'badge bg-danger';
-    case 'Error':
-      return 'badge bg-warning';
-    case 'Pending':
-      return 'badge bg-info';
-    default:
-      return 'badge bg-secondary';
-  }
 }

@@ -21,11 +21,9 @@ namespace InventoryManagementSystem.Common.Models
         public decimal MarketValue { get; set; }
         public decimal MakingChargeDeductionPercent { get; set; }
         public decimal WastageDeductionPercent { get; set; }
-        public decimal TotalDeductionPercent { get; set; }
         public decimal DeductionAmount { get; set; }
         public decimal CreditAmount { get; set; }
         public string? ItemDescription { get; set; }
-        public int StatusId { get; set; }
         public DateTime CreatedDate { get; set; }
         public long CreatedBy { get; set; }
 

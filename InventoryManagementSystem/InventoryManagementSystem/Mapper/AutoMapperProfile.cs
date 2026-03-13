@@ -109,19 +109,37 @@ namespace InventoryManagementSystem.Mapper
             CreateMap<MetalRateHistory, MetalRateResponseDto>();
             CreateMap<MetalRateHistory, MetalRateHistoryDto>();
             // Exchange Order mappings
-            CreateMap<ExchangeOrderDb, ExchangeOrder>().ReverseMap();
+            CreateMap<ExchangeOrderDb, ExchangeOrder>()
+                .ForMember(dest => dest.ExchangeType, opt => opt.MapFrom(src => src.ExchangeType == "BUYBACK" ? 2 : 1))
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.ExchangeItems));
+            CreateMap<ExchangeOrder, ExchangeOrderDb>()
+                .ForMember(dest => dest.ExchangeType, opt => opt.MapFrom(src => src.ExchangeType == 2 ? "BUYBACK" : "EXCHANGE"))
+                .ForMember(dest => dest.ExchangeItems, opt => opt.MapFrom(src => src.Items));
             CreateMap<ExchangeItemDb, ExchangeItem>().ReverseMap();
 
             // Exchange calculation mappings
             CreateMap<ExchangeItemInputDto, ExchangeItemInput>().ReverseMap();
+            CreateMap<ExchangeItemInputDto, ExchangeItem>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ExchangeOrderId, opt => opt.Ignore())
+                .ForMember(dest => dest.PurityPercentage, opt => opt.Ignore())
+                .ForMember(dest => dest.PureWeight, opt => opt.Ignore())
+                .ForMember(dest => dest.CurrentRatePerGram, opt => opt.Ignore())
+                .ForMember(dest => dest.MarketValue, opt => opt.Ignore())
+                .ForMember(dest => dest.DeductionAmount, opt => opt.Ignore())
+                .ForMember(dest => dest.CreditAmount, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.ExchangeOrder, opt => opt.Ignore());
             CreateMap<ExchangeItemCalculation, ExchangeItemResponseDto>().ReverseMap();
             CreateMap<ExchangeItemCalculation, ExchangeItemDto>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.ExchangeOrderId, opt => opt.Ignore())
-                .ForMember(dest => dest.ItemDescription, opt => opt.Ignore())
-                .ForMember(dest => dest.StatusId, opt => opt.Ignore());
+                .ForMember(dest => dest.ItemDescription, opt => opt.Ignore());
+            CreateMap<ExchangeItem, ExchangeItemDto>();
             CreateMap<ExchangeCalculationResult, ExchangeCalculateResponseDto>().ReverseMap();
-            CreateMap<ExchangeOrder, ExchangeOrderDto>().ReverseMap();
+            CreateMap<ExchangeOrder, ExchangeOrderDto>()
+                .ForMember(dest => dest.ExchangeType, opt => opt.MapFrom(src => src.ExchangeType == 2 ? "BUYBACK" : "EXCHANGE"));
 
             // ExchangeOrderCreateDto to ExchangeOrder mapping
             CreateMap<ExchangeOrderCreateDto, ExchangeOrder>()
@@ -139,27 +157,26 @@ namespace InventoryManagementSystem.Mapper
                 .ForMember(dest => dest.TotalMarketValue, opt => opt.Ignore())
                 .ForMember(dest => dest.TotalDeductionAmount, opt => opt.Ignore())
                 .ForMember(dest => dest.TotalCreditAmount, opt => opt.Ignore())
-                .ForMember(dest => dest.BalanceRefund, opt => opt.Ignore())
-                .ForMember(dest => dest.CashPayment, opt => opt.Ignore())
-                .AfterMap((src, dest) =>
-                {
-                    if (src.Items != null)
-                    {
-                        dest.Items = src.Items.Select(item => new ExchangeItem
-                        {
-                            MetalId = item.MetalId,
-                            PurityId = item.PurityId,
-                            GrossWeight = item.GrossWeight,
-                            NetWeight = item.NetWeight,
-                            MakingChargeDeductionPercent = item.MakingChargeDeductionPercent,
-                            WastageDeductionPercent = item.WastageDeductionPercent,
-                            ItemDescription = item.ItemDescription
-                        }).ToList();
-                    }
-                });
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
             // Invoice mappings
             CreateMap<InvoiceDb, Invoice>().ReverseMap();
-            CreateMap<InvoiceItemDb, InvoiceItem>().ReverseMap();
+            CreateMap<InvoiceItemDb, InvoiceItem>()
+                .ForMember(dest => dest.MetalType, opt => opt.MapFrom(src => src.Metal != null ? src.Metal.Name : null))
+                .ForMember(dest => dest.Purity, opt => opt.MapFrom(src => src.Purity != null ? src.Purity.Name : null))
+                .ForMember(dest => dest.HallmarkDetails, opt => opt.MapFrom(src =>
+                    src.IsHallmarked
+                        ? string.Join(", ", new[]
+                        {
+                            src.BISCertificationNumber,
+                            src.HallmarkCenterName,
+                            src.HallmarkDate.HasValue ? src.HallmarkDate.Value.ToString("dd MMM yyyy") : null
+                        }.Where(value => !string.IsNullOrWhiteSpace(value)))
+                        : null))
+                .ForMember(dest => dest.TotalMakingCharges, opt => opt.MapFrom(src => src.MakingCharges));
+            CreateMap<InvoiceItem, InvoiceItemDb>()
+                .ForMember(dest => dest.Invoice, opt => opt.Ignore())
+                .ForMember(dest => dest.Metal, opt => opt.Ignore())
+                .ForMember(dest => dest.Purity, opt => opt.Ignore());
             CreateMap<InvoicePaymentDb, InvoicePayment>().ReverseMap();
 
             // Category mappings

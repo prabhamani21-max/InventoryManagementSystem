@@ -26,11 +26,23 @@ namespace InventoryManagementSystem.Repository.Interface
         /// Get invoice by sale order ID
         /// </summary>
         Task<Invoice?> GetInvoiceBySaleOrderIdAsync(long saleOrderId);
+
+        /// <summary>
+        /// Get the active invoice by sale order ID
+        /// </summary>
+        Task<Invoice?> GetActiveInvoiceBySaleOrderIdAsync(long saleOrderId);
         
         /// <summary>
         /// Get all invoices
         /// </summary>
         Task<IEnumerable<Invoice>> GetAllInvoicesAsync();
+
+        /// <summary>
+        /// Get all invoices for a specific customer (party)
+        /// </summary>
+        /// <param name="partyId">The customer's user ID (party ID)</param>
+        /// <returns>List of invoices for the customer</returns>
+        Task<IEnumerable<Invoice>> GetInvoicesByPartyIdAsync(long partyId);
 
         // ==================== WRITE OPERATIONS ====================
         

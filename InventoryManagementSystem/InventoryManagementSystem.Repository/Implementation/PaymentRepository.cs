@@ -53,8 +53,8 @@ namespace InventoryManagementSystem.Repository.Implementation
             // Manual mapping to preserve CreatedBy and CreatedDate
             entity.OrderId = (int?)payment.OrderId;
             entity.OrderType = Enum.Parse<TransactionType>(payment.OrderType);
-            entity.CustomerId = null; // Payment model doesn't have CustomerId
-            entity.SalesPersonId = null; // Payment model doesn't have SalesPersonId
+            entity.CustomerId = (int?)payment.CustomerId;
+            entity.SalesPersonId = (int?)payment.SalesPersonId;
             entity.Amount = payment.Amount;
             entity.PaymentMethod = Enum.Parse<PaymentMethod>(payment.PaymentMethod);
             entity.PaymentDate = payment.PaymentDate;

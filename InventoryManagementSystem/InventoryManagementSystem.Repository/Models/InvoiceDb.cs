@@ -131,6 +131,14 @@ namespace InventoryManagementSystem.Repository.Models
         [Column("grand_total_in_words")]
         public string? GrandTotalInWords { get; set; }
 
+        /* ---------- EXCHANGE SUMMARY ---------- */
+
+        [Column("exchange_credit_applied")]
+        public decimal? ExchangeCreditApplied { get; set; }
+
+        [Column("net_amount_payable")]
+        public decimal NetAmountPayable { get; set; }
+
         /* ---------- PAYMENT SUMMARY ---------- */
 
         [Column("total_paid")]
@@ -184,31 +192,31 @@ namespace InventoryManagementSystem.Repository.Models
         [Column("status_id")]
         public int StatusId { get; set; }
 
-        /* ---------- E-INVOICE FIELDS (GST COMPLIANCE) ---------- */
+        /* ---------- E-INVOICE FIELDS (GST COMPLIANCE) - CURRENTLY NOT REQUIRED ---------- */
 
-        [Column("irn")]
-        public string? IRN { get; set; } // Invoice Reference Number
+        // [Column("irn")]
+        // public string? IRN { get; set; } // Invoice Reference Number
 
-        [Column("irn_generated_date")]
-        public DateTime? IRNGeneratedDate { get; set; }
+        // [Column("irn_generated_date")]
+        // public DateTime? IRNGeneratedDate { get; set; }
 
-        [Column("qr_code")]
-        public string? QRCode { get; set; } // Base64 QR code
+        // [Column("qr_code")]
+        // public string? QRCode { get; set; } // Base64 QR code
 
-        [Column("einvoice_status")]
-        public string? EInvoiceStatus { get; set; } // Generated, Cancelled, Error
+        // [Column("einvoice_status")]
+        // public string? EInvoiceStatus { get; set; } // Generated, Cancelled, Error
 
-        [Column("einvoice_cancelled_date")]
-        public DateTime? EInvoiceCancelledDate { get; set; }
+        // [Column("einvoice_cancelled_date")]
+        // public DateTime? EInvoiceCancelledDate { get; set; }
 
-        [Column("einvoice_cancel_reason")]
-        public string? EInvoiceCancelReason { get; set; }
+        // [Column("einvoice_cancel_reason")]
+        // public string? EInvoiceCancelReason { get; set; }
 
-        [Column("acknowledgement_number")]
-        public string? AcknowledgementNumber { get; set; }
+        // [Column("acknowledgement_number")]
+        // public string? AcknowledgementNumber { get; set; }
 
-        [Column("acknowledgement_date")]
-        public DateTime? AcknowledgementDate { get; set; }
+        // [Column("acknowledgement_date")]
+        // public DateTime? AcknowledgementDate { get; set; }
 
         /* ---------- NAVIGATION ---------- */
 

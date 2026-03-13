@@ -37,15 +37,6 @@ namespace InventoryManagementSystem.Repository.Models
         [Column("total_credit_amount")]
         public decimal TotalCreditAmount { get; set; }
 
-        [Column("new_purchase_amount")]
-        public decimal? NewPurchaseAmount { get; set; }
-
-        [Column("balance_refund")]
-        public decimal? BalanceRefund { get; set; }
-
-        [Column("cash_payment")]
-        public decimal? CashPayment { get; set; }
-
         [Column("status_id")]
         public int StatusId { get; set; }
 

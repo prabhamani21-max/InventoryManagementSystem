@@ -1,20 +1,30 @@
 using InventoryManagementSystem.Common.Models;
+using InventoryManagementSystem.Repository.Data;
 using InventoryManagementSystem.Repository.Interface;
 using InventoryManagementSystem.Service.Interface;
 using InventoryManagementSytem.Common.Constants;
+using InventoryManagementSytem.Common.Enums;
 using InventoryManagementSytem.Common.Exceptions;
 
 namespace InventoryManagementSystem.Service.Implementation
 {
     public class PaymentService : IPaymentService
     {
+        private readonly AppDbContext _dbContext;
         private readonly IPaymentRepository _paymentRepository;
         private readonly IUserKycRepository _userKycRepository;
+        private readonly IInvoiceSettlementService _invoiceSettlementService;
 
-        public PaymentService(IPaymentRepository paymentRepository, IUserKycRepository userKycRepository)
+        public PaymentService(
+            AppDbContext dbContext,
+            IPaymentRepository paymentRepository,
+            IUserKycRepository userKycRepository,
+            IInvoiceSettlementService invoiceSettlementService)
         {
+            _dbContext = dbContext;
             _paymentRepository = paymentRepository;
             _userKycRepository = userKycRepository;
+            _invoiceSettlementService = invoiceSettlementService;
         }
 
         public async Task<Payment> GetPaymentByIdAsync(int id)
@@ -29,23 +39,79 @@ namespace InventoryManagementSystem.Service.Implementation
 
         public async Task<Payment> CreatePaymentAsync(Payment payment)
         {
-            // Validate high-value transaction business rules
             await ValidateHighValueTransactionAsync(payment);
-            
-            return await _paymentRepository.CreatePaymentAsync(payment);
+
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var createdPayment = await _paymentRepository.CreatePaymentAsync(payment);
+                await ReconcileSaleInvoiceAsync(createdPayment);
+                await transaction.CommitAsync();
+                return createdPayment;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<Payment> UpdatePaymentAsync(Payment payment)
         {
-            // Validate high-value transaction business rules
             await ValidateHighValueTransactionAsync(payment);
-            
-            return await _paymentRepository.UpdatePaymentAsync(payment);
+
+            var existingPayment = await _paymentRepository.GetPaymentByIdAsync(payment.Id);
+
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var updatedPayment = await _paymentRepository.UpdatePaymentAsync(payment);
+                if (updatedPayment == null)
+                {
+                    await transaction.RollbackAsync();
+                    return null;
+                }
+
+                await ReconcileSaleInvoiceAsync(existingPayment);
+
+                if (!AreSameSaleOrder(existingPayment, updatedPayment))
+                {
+                    await ReconcileSaleInvoiceAsync(updatedPayment);
+                }
+
+                await transaction.CommitAsync();
+                return updatedPayment;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<bool> DeletePaymentAsync(int id)
         {
-            return await _paymentRepository.DeletePaymentAsync(id);
+            var existingPayment = await _paymentRepository.GetPaymentByIdAsync(id);
+
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var deleted = await _paymentRepository.DeletePaymentAsync(id);
+                if (!deleted)
+                {
+                    await transaction.RollbackAsync();
+                    return false;
+                }
+
+                await ReconcileSaleInvoiceAsync(existingPayment);
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         /// <summary>
@@ -86,6 +152,37 @@ namespace InventoryManagementSystem.Service.Implementation
                     BusinessRules.CASH_PAYMENT_NOT_ALLOWED_CODE, 
                     BusinessRules.CASH_PAYMENT_NOT_ALLOWED_MESSAGE);
             }
+        }
+
+        private async Task ReconcileSaleInvoiceAsync(Payment? payment)
+        {
+            var saleOrderId = GetSaleOrderId(payment);
+            if (!saleOrderId.HasValue)
+            {
+                return;
+            }
+
+            await _invoiceSettlementService.RefreshSaleInvoicePaymentsAsync(saleOrderId.Value);
+        }
+
+        private static long? GetSaleOrderId(Payment? payment)
+        {
+            if (payment?.OrderId == null || string.IsNullOrWhiteSpace(payment.OrderType))
+            {
+                return null;
+            }
+
+            if (!Enum.TryParse<TransactionType>(payment.OrderType, true, out var orderType))
+            {
+                return null;
+            }
+
+            return orderType == TransactionType.SALE ? payment.OrderId : null;
+        }
+
+        private static bool AreSameSaleOrder(Payment? left, Payment? right)
+        {
+            return GetSaleOrderId(left) == GetSaleOrderId(right);
         }
     }
 }

@@ -19,9 +19,6 @@ namespace InventoryManagementSystem.Common.Models
         public decimal TotalMarketValue { get; set; }
         public decimal TotalDeductionAmount { get; set; }
         public decimal TotalCreditAmount { get; set; }
-        public decimal? NewPurchaseAmount { get; set; }
-        public decimal? BalanceRefund { get; set; }
-        public decimal? CashPayment { get; set; }
         public string? Notes { get; set; }
         public DateTime ExchangeDate { get; set; }
         [Required]
@@ -31,6 +28,12 @@ namespace InventoryManagementSystem.Common.Models
         public long? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public int StatusId { get; set; }
+        public long? LinkedSaleOrderId { get; set; }
+        public string? LinkedSaleOrderNumber { get; set; }
+        public long? LinkedInvoiceId { get; set; }
+        public string? LinkedInvoiceNumber { get; set; }
+        public decimal? LinkedSaleGrandTotal { get; set; }
+        public decimal? RemainingCustomerPayment { get; set; }
 
         // Navigation property
         public virtual ICollection<ExchangeItem> Items { get; set; }

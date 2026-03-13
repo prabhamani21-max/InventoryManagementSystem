@@ -125,20 +125,19 @@ try
     // Price Calculation Services
     builder.Services.AddScoped<IMetalRateService, MetalRateService>();
     builder.Services.AddScoped<IStoneRateService, StoneRateService>();
+    builder.Services.AddScoped<IExchangeValuationService, ExchangeValuationService>();
     builder.Services.AddScoped<IExchangeService, ExchangeService>();
     builder.Services.AddScoped<IInvoiceService, InvoiceService>();
     builder.Services.AddScoped<IInvoiceGeneratorService, InvoiceGeneratorService>();
+    builder.Services.AddScoped<IInvoiceSettlementService, InvoiceSettlementService>();
+    builder.Services.AddScoped<IInvoicePdfService, InvoicePdfService>();
     builder.Services.AddScoped<ICompanyDetailsProvider, ConfigurationCompanyDetailsProvider>();
     builder.Services.AddScoped<INumberToWordsConverter, NumberToWordsConverter>();
     // Existing invoice-related services that InvoiceGeneratorService depends on
     builder.Services.AddScoped<IInvoiceBuilderService, InvoiceBuilderService>();
     builder.Services.AddScoped<IInvoiceTaxService, InvoiceTaxService>();
     builder.Services.AddScoped<IInvoiceNumberService, InvoiceNumberService>();
-    builder.Services.AddScoped<IEInvoiceService, EInvoiceService>();
     builder.Services.AddScoped<ITcsService, TcsService>();
-
-    // Register HttpClient for EInvoiceService
-    builder.Services.AddHttpClient<EInvoiceService>();
 
     // SignalR Services
     builder.Services.AddScoped<IUserNotificationService, UserNotificationService>();
@@ -227,18 +226,7 @@ builder.Services.AddScoped<InventoryManagementSystem.Service.Interface.IJwtServi
 
     var app = builder.Build();
 
-    // Apply migrations and seed data
-    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<InventoryManagementSystem.Repository.Data.AppDbContext>();
-        var seeder = scope.ServiceProvider.GetRequiredService<InventoryManagementSystem.Repository.Data.DatabaseSeeder>();
-        
-        // Apply any pending migrations
-        dbContext.Database.Migrate();
-        
-        // Seed initial data
-        seeder.SeedAsync().GetAwaiter().GetResult();
-    }
+
 
     // Middleware - Request & Response Logging
 

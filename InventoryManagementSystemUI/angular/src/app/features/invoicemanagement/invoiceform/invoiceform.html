@@ -162,6 +162,16 @@
                 <strong>Grand Total:</strong>
                 <strong class="text-primary fs-5">{{ formatCurrency(generatedInvoice.grandTotal) }}</strong>
               </div>
+              @if (hasExchangeAdjustment(generatedInvoice)) {
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Exchange Credit Applied:</span>
+                  <span class="text-info">-{{ formatCurrency(getExchangeCreditApplied(generatedInvoice)) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <strong>Net Amount Payable:</strong>
+                  <strong class="text-success">{{ formatCurrency(getNetAmountPayable(generatedInvoice)) }}</strong>
+                </div>
+              }
               <p class="text-muted small mb-2">{{ generatedInvoice.grandTotalInWords }}</p>
               <hr>
               <div class="d-flex justify-content-between mb-2">
@@ -173,114 +183,6 @@
                 <span [class.text-danger]="generatedInvoice.balanceDue > 0" [class.text-success]="generatedInvoice.balanceDue === 0">
                   {{ formatCurrency(generatedInvoice.balanceDue) }}
                 </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- E-Invoice Section -->
-      <div class="row mt-4">
-        <div class="col-12">
-          <div class="card border-primary">
-            <div class="card-header bg-primary text-white">
-              <h6 class="mb-0"><i class="feather icon-file-text me-2"></i>E-Invoice (GST Compliance)</h6>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <!-- E-Invoice Status -->
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <h6 class="text-muted mb-2">E-Invoice Status</h6>
-                    <span [ngClass]="getEInvoiceStatusClass(generatedInvoice.eInvoiceStatus)" class="fs-6">
-                      {{ getEInvoiceStatusLabel(generatedInvoice.eInvoiceStatus) }}
-                    </span>
-                  </div>
-
-                  @if (generatedInvoice.irn) {
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-1">IRN (Invoice Reference Number)</h6>
-                      <p class="mb-0 font-monospace small">{{ generatedInvoice.irn }}</p>
-                    </div>
-                  }
-
-                  @if (generatedInvoice.acknowledgementNumber) {
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-1">Acknowledgement Number</h6>
-                      <p class="mb-0">{{ generatedInvoice.acknowledgementNumber }}</p>
-                    </div>
-                  }
-
-                  @if (generatedInvoice.irnGeneratedDate) {
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-1">IRN Generated Date</h6>
-                      <p class="mb-0">{{ formatDate(generatedInvoice.irnGeneratedDate) }}</p>
-                    </div>
-                  }
-
-                  @if (generatedInvoice.eInvoiceStatus === 'Cancelled' && generatedInvoice.eInvoiceCancelReason) {
-                    <div class="alert alert-warning small">
-                      <strong>Cancelled:</strong> {{ generatedInvoice.eInvoiceCancelReason }}
-                      @if (generatedInvoice.eInvoiceCancelledDate) {
-                        <br><small>{{ formatDate(generatedInvoice.eInvoiceCancelledDate) }}</small>
-                      }
-                    </div>
-                  }
-                </div>
-
-                <!-- QR Code Display -->
-                <div class="col-md-6 text-center">
-                  @if (generatedInvoice.qrCode) {
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-2">QR Code</h6>
-                      <img [src]="getQRCodeUrl()" alt="E-Invoice QR Code" class="img-fluid border rounded p-2" style="max-width: 200px;">
-                      <p class="small text-muted mt-2">Scan to verify e-invoice</p>
-                    </div>
-                  } @else {
-                    <div class="text-muted py-4">
-                      <i class="feather icon-grid fs-1"></i>
-                      <p class="mt-2">QR Code will be generated with IRN</p>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <!-- E-Invoice Actions -->
-              <div class="row mt-3">
-                <div class="col-12">
-                  <div class="d-flex gap-2 flex-wrap">
-                    @if (canGenerateIRN()) {
-                      <button
-                        type="button"
-                        class="btn btn-success"
-                        (click)="onGenerateIRN()"
-                        [disabled]="isGeneratingIRN"
-                      >
-                        @if (isGeneratingIRN) {
-                          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                        }
-                        <i class="feather icon-hash me-1"></i>Generate IRN
-                      </button>
-                    }
-
-                    @if (canCancelEInvoice()) {
-                      <button
-                        type="button"
-                        class="btn btn-danger"
-                        (click)="openCancelEInvoiceModal()"
-                      >
-                        <i class="feather icon-x-circle me-1"></i>Cancel E-Invoice
-                      </button>
-                    }
-
-                    @if (!generatedInvoice.irn && !canGenerateIRN()) {
-                      <div class="alert alert-info small mb-0">
-                        <i class="feather icon-info me-1"></i>
-                        E-invoicing is mandatory for B2B invoices with GSTIN and value above ₹5,00,000
-                      </div>
-                    }
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -475,6 +377,16 @@
         </div>
       </div>
 
+      @if (hasExchangeAdjustment(generatedInvoice)) {
+        <div class="alert alert-info d-flex justify-content-between align-items-center mb-4" role="alert">
+          <span><strong>Exchange Credit Applied</strong></span>
+          <span>
+            {{ formatCurrency(getExchangeCreditApplied(generatedInvoice)) }} credit applied.
+            Net payable: <strong>{{ formatCurrency(getNetAmountPayable(generatedInvoice)) }}</strong>
+          </span>
+        </div>
+      }
+
       <!-- Invoice Items Summary -->
       <div class="table-responsive mb-4">
         <table class="table table-sm table-bordered">
@@ -512,6 +424,16 @@
               <td colspan="3"><strong>Grand Total</strong></td>
               <td><strong>{{ formatCurrency(generatedInvoice.grandTotal) }}</strong></td>
             </tr>
+            @if (hasExchangeAdjustment(generatedInvoice)) {
+              <tr>
+                <td colspan="3"><strong>Exchange Credit Applied</strong></td>
+                <td class="text-info"><strong>-{{ formatCurrency(getExchangeCreditApplied(generatedInvoice)) }}</strong></td>
+              </tr>
+              <tr class="table-light">
+                <td colspan="3"><strong>Net Amount Payable</strong></td>
+                <td class="text-success"><strong>{{ formatCurrency(getNetAmountPayable(generatedInvoice)) }}</strong></td>
+              </tr>
+            }
           </tfoot>
         </table>
       </div>
@@ -531,52 +453,3 @@
     </div>
   }
 </app-card>
-
-<!-- Cancel E-Invoice Modal -->
-@if (showCancelModal) {
-  <div class="modal-backdrop fade show" style="z-index: 1050;"></div>
-  <div class="modal fade show d-block" tabindex="-1" style="z-index: 1055;">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title"><i class="feather icon-alert-triangle me-2"></i>Cancel E-Invoice</h5>
-          <button type="button" class="btn-close btn-close-white" (click)="closeCancelModal()"></button>
-        </div>
-        <div class="modal-body">
-          <div class="alert alert-warning">
-            <i class="feather icon-alert-circle me-2"></i>
-            <strong>Warning:</strong> This action cannot be undone. The IRN will be cancelled on the NIC portal.
-          </div>
-          <div class="mb-3">
-            <label for="cancelReason" class="form-label">Reason for Cancellation <span class="text-danger">*</span></label>
-            <textarea
-              class="form-control"
-              id="cancelReason"
-              [(ngModel)]="cancelReason"
-              rows="3"
-              placeholder="Enter the reason for cancelling this e-invoice"
-              [required]="true"
-            ></textarea>
-            <small class="text-muted">Please provide a clear reason for the cancellation.</small>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="closeCancelModal()" [disabled]="isCancellingEInvoice">
-            Cancel
-          </button>
-          <button
-            type="button"
-            class="btn btn-danger"
-            (click)="onCancelEInvoice()"
-            [disabled]="isCancellingEInvoice || !cancelReason.trim()"
-          >
-            @if (isCancellingEInvoice) {
-              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-            }
-            <i class="feather icon-x-circle me-1"></i>Confirm Cancellation
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-}

@@ -20,9 +20,6 @@ namespace InventoryManagementSystem.Common.Models
         public decimal TotalMarketValue { get; set; }
         public decimal TotalDeductionAmount { get; set; }
         public decimal TotalCreditAmount { get; set; }
-        public decimal? NewPurchaseAmount { get; set; }
-        public decimal? BalanceRefund { get; set; }
-        public decimal? CashPayment { get; set; }
         public List<ExchangeItemCalculation> ItemDetails { get; set; } = new List<ExchangeItemCalculation>();
     }
 
@@ -41,7 +38,6 @@ namespace InventoryManagementSystem.Common.Models
         public decimal MarketValue { get; set; }
         public decimal MakingChargeDeductionPercent { get; set; }
         public decimal WastageDeductionPercent { get; set; }
-        public decimal TotalDeductionPercent { get; set; }
         public decimal DeductionAmount { get; set; }
         public decimal CreditAmount { get; set; }
     }

@@ -87,7 +87,7 @@
                     <i class="feather icon-eye"></i>
                   </button>
                   
-                  <!-- Complete Button (only for pending orders) -->
+                  <!-- Complete Button (only for active orders) -->
                   @if (canComplete(order.statusId)) {
                     <button type="button" class="btn btn-sm btn-outline-success" 
                             (click)="onCompleteExchangeOrder(order.id)" title="Complete">

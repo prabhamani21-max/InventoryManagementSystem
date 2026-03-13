@@ -29,6 +29,7 @@ namespace InventoryManagementSystem.Service.Implementation
         private readonly IMetalRepository _metalRepo;
         private readonly IPurityRepository _purityRepo;
         private readonly IPaymentRepository _paymentRepo;
+        private readonly IExchangeRepository _exchangeRepo;
         private readonly IItemStockService _itemStockService;
         private readonly IUserRepository _userRepo;
         
@@ -41,6 +42,7 @@ namespace InventoryManagementSystem.Service.Implementation
         private readonly ICompanyDetailsProvider _companyProvider;
         private readonly INumberToWordsConverter _numberConverter;
         private readonly ICurrentUser _currentUser;
+        private readonly IInvoiceSettlementService _invoiceSettlementService;
         
         private readonly IMapper _mapper;
         private readonly ILogger<InvoiceGeneratorService> _logger;
@@ -62,6 +64,7 @@ namespace InventoryManagementSystem.Service.Implementation
             IMetalRepository metalRepo,
             IPurityRepository purityRepo,
             IPaymentRepository paymentRepo,
+            IExchangeRepository exchangeRepo,
             IItemStockService itemStockService,
             IUserRepository userRepo,
             IInvoiceBuilderService invoiceBuilder,
@@ -70,6 +73,7 @@ namespace InventoryManagementSystem.Service.Implementation
             ICompanyDetailsProvider companyProvider,
             INumberToWordsConverter numberConverter,
             ICurrentUser currentUser,
+            IInvoiceSettlementService invoiceSettlementService,
             IMapper mapper,
             ILogger<InvoiceGeneratorService> logger)
         {
@@ -84,6 +88,7 @@ namespace InventoryManagementSystem.Service.Implementation
             _metalRepo = metalRepo;
             _purityRepo = purityRepo;
             _paymentRepo = paymentRepo;
+            _exchangeRepo = exchangeRepo;
             _itemStockService = itemStockService;
             _userRepo = userRepo;
             _invoiceBuilder = invoiceBuilder;
@@ -92,6 +97,7 @@ namespace InventoryManagementSystem.Service.Implementation
             _companyProvider = companyProvider;
             _numberConverter = numberConverter;
             _currentUser = currentUser;
+            _invoiceSettlementService = invoiceSettlementService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -102,6 +108,16 @@ namespace InventoryManagementSystem.Service.Implementation
             string? notes)
         {
             _logger.LogInformation("Generating invoice for Sale Order {SaleOrderId}", saleOrderId);
+
+            var existingInvoice = await _invoiceSettlementService.RefreshSaleInvoicePaymentsAsync(saleOrderId);
+            if (existingInvoice != null)
+            {
+                _logger.LogInformation(
+                    "Reusing existing invoice {InvoiceNumber} for Sale Order {SaleOrderId}",
+                    existingInvoice.InvoiceNumber,
+                    saleOrderId);
+                return existingInvoice;
+            }
 
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -149,6 +165,7 @@ namespace InventoryManagementSystem.Service.Implementation
 
                 // 10. Calculate totals using EXISTING service
                 var totals = _taxService.CalculateInvoiceTotals(invoiceItems);
+                var exchangeSummary = await BuildExchangeInvoiceSummaryAsync(saleOrder, totals.GrandTotal);
 
                 // 11. Get company details from NEW configuration provider
                 var companyDetails = _companyProvider.GetCompanyDetails();
@@ -197,6 +214,8 @@ namespace InventoryManagementSystem.Service.Implementation
                     GrandTotal = totals.GrandTotal,
                     RoundOff = Math.Round(totals.GrandTotal) - totals.GrandTotal,
                     GrandTotalInWords = _numberConverter.Convert(Math.Round(totals.GrandTotal)),
+                    ExchangeCreditApplied = exchangeSummary.ExchangeCreditApplied,
+                    NetAmountPayable = exchangeSummary.NetAmountPayable,
 
                     // Jewellery-specific totals
                     TotalGoldWeight = invoiceItems.Sum(i => i.NetMetalWeight ?? 0),
@@ -219,7 +238,7 @@ namespace InventoryManagementSystem.Service.Implementation
 
                 // 13. Calculate payment allocation
                 decimal totalPaid = 0;
-                var remaining = invoice.GrandTotal;
+                var remaining = invoice.NetAmountPayable;
                 var invoicePayments = new List<InvoicePayment>();
                 foreach (var payment in payments)
                 {
@@ -236,7 +255,7 @@ namespace InventoryManagementSystem.Service.Implementation
                     totalPaid += alloc;
                 }
                 invoice.TotalPaid = totalPaid;
-                invoice.BalanceDue = invoice.GrandTotal - totalPaid;
+                invoice.BalanceDue = Math.Max(0, invoice.NetAmountPayable - totalPaid);
 
                 // 14. Persist using simplified repositories
                 var savedInvoice = await _invoiceRepo.AddInvoiceAsync(invoice);
@@ -332,6 +351,28 @@ namespace InventoryManagementSystem.Service.Implementation
                 _logger.LogError(ex, "Error cancelling invoice {InvoiceNumber}", invoiceNumber);
                 throw;
             }
+        }
+
+        private async Task<(decimal? ExchangeCreditApplied, decimal NetAmountPayable)> BuildExchangeInvoiceSummaryAsync(
+            SaleOrder saleOrder,
+            decimal grandTotal)
+        {
+            if (!saleOrder.IsExchangeSale || !saleOrder.ExchangeOrderId.HasValue)
+            {
+                return (null, grandTotal);
+            }
+
+            var exchangeOrder = await _exchangeRepo.GetExchangeOrderByIdAsync(saleOrder.ExchangeOrderId.Value);
+            if (exchangeOrder == null)
+            {
+                throw new InvalidOperationException(
+                    $"Exchange Order with ID {saleOrder.ExchangeOrderId.Value} not found for Sale Order {saleOrder.Id}");
+            }
+
+            var exchangeCreditApplied = Math.Min(exchangeOrder.TotalCreditAmount, grandTotal);
+            var netAmountPayable = Math.Max(0, grandTotal - exchangeCreditApplied);
+
+            return (exchangeCreditApplied, netAmountPayable);
         }
     }
 }

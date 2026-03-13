@@ -98,7 +98,7 @@ namespace InventoryManagementSystem.Common.Models
 
         // Making Charges GST - 5% GST on making charges (separate from 3% on metal)
         [Required]
-        public decimal MakingChargesGstPercentage { get; set; } = 5m;
+        public decimal MakingChargesGstPercentage { get; set; } 
 
         [Required]
         public decimal MakingChargesGstAmount { get; set; }

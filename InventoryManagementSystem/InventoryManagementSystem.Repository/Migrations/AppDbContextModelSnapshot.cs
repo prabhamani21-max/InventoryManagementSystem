@@ -148,18 +148,6 @@ namespace InventoryManagementSystem.Repository.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("purity_percentage");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("integer")
-                        .HasColumnName("status_id");
-
-                    b.Property<decimal>("TotalDeductionPercent")
-                        .HasColumnType("numeric")
-                        .HasColumnName("total_deduction_percent");
-
-                    b.Property<long?>("UpdatedBy")
-                        .HasColumnType("bigint")
-                        .HasColumnName("updated_by");
-
                     b.Property<decimal>("WastageDeductionPercent")
                         .HasColumnType("numeric")
                         .HasColumnName("wastage_deduction_percent");
@@ -174,10 +162,6 @@ namespace InventoryManagementSystem.Repository.Migrations
 
                     b.HasIndex("PurityId");
 
-                    b.HasIndex("StatusId");
-
-                    b.HasIndex("UpdatedBy");
-
                     b.ToTable("exchange_item");
                 });
 
@@ -189,14 +173,6 @@ namespace InventoryManagementSystem.Repository.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<decimal?>("BalanceRefund")
-                        .HasColumnType("numeric")
-                        .HasColumnName("balance_refund");
-
-                    b.Property<decimal?>("CashPayment")
-                        .HasColumnType("numeric")
-                        .HasColumnName("cash_payment");
 
                     b.Property<long>("CreatedBy")
                         .HasColumnType("bigint")
@@ -221,10 +197,6 @@ namespace InventoryManagementSystem.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("exchange_type");
-
-                    b.Property<decimal?>("NewPurchaseAmount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("new_purchase_amount");
 
                     b.Property<string>("Notes")
                         .HasColumnType("text")
@@ -469,6 +441,10 @@ namespace InventoryManagementSystem.Repository.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("discount_amount");
 
+                    b.Property<decimal?>("ExchangeCreditApplied")
+                        .HasColumnType("numeric")
+                        .HasColumnName("exchange_credit_applied");
+
                     b.Property<string>("EInvoiceCancelReason")
                         .HasColumnType("text")
                         .HasColumnName("einvoice_cancel_reason");
@@ -517,6 +493,10 @@ namespace InventoryManagementSystem.Repository.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text")
                         .HasColumnName("notes");
+
+                    b.Property<decimal>("NetAmountPayable")
+                        .HasColumnType("numeric")
+                        .HasColumnName("net_amount_payable");
 
                     b.Property<string>("PartyAddress")
                         .HasColumnType("text")
@@ -2238,16 +2218,6 @@ namespace InventoryManagementSystem.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InventoryManagementSystem.Repository.Models.GenericStatusDb", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("InventoryManagementSystem.Repository.Models.UserDb", "UpdatedByUser")
-                        .WithMany()
-                        .HasForeignKey("UpdatedBy");
-
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("ExchangeOrder");
@@ -2255,10 +2225,6 @@ namespace InventoryManagementSystem.Repository.Migrations
                     b.Navigation("Metal");
 
                     b.Navigation("Purity");
-
-                    b.Navigation("Status");
-
-                    b.Navigation("UpdatedByUser");
                 });
 
             modelBuilder.Entity("InventoryManagementSystem.Repository.Models.ExchangeOrderDb", b =>

@@ -1,8 +1,8 @@
-using AutoMapper;
 using InventoryManagementSystem.Common.Enum;
 using InventoryManagementSystem.Common.Models;
 using InventoryManagementSystem.Repository.Interface;
 using InventoryManagementSystem.Service.Interface;
+using InventoryManagementSytem.Common.Dtos;
 using Microsoft.Extensions.Logging;
 
 namespace InventoryManagementSystem.Service.Implementation
@@ -10,86 +10,157 @@ namespace InventoryManagementSystem.Service.Implementation
     public class ExchangeService : IExchangeService
     {
         private readonly IExchangeRepository _exchangeRepository;
+        private readonly ISaleOrderService _saleOrderService;
+        private readonly IInvoiceService _invoiceService;
+        private readonly IExchangeValuationService _exchangeValuationService;
         private readonly ICurrentUser _currentUser;
         private readonly ILogger<ExchangeService> _logger;
-        private readonly IMapper _mapper;
 
         public ExchangeService(
             IExchangeRepository exchangeRepository,
+            ISaleOrderService saleOrderService,
+            IInvoiceService invoiceService,
+            IExchangeValuationService exchangeValuationService,
             ICurrentUser currentUser,
-            ILogger<ExchangeService> logger,
-            IMapper mapper)
+            ILogger<ExchangeService> logger)
         {
             _exchangeRepository = exchangeRepository;
+            _saleOrderService = saleOrderService;
+            _invoiceService = invoiceService;
+            _exchangeValuationService = exchangeValuationService;
             _currentUser = currentUser;
             _logger = logger;
-            _mapper = mapper;
         }
 
         public async Task<ExchangeCalculationResult> CalculateExchangeValueAsync(ExchangeCalculationRequest request)
         {
             _logger.LogInformation("Calculating exchange value for customer {CustomerId}", request.CustomerId);
-            return await _exchangeRepository.CalculateExchangeValueAsync(request);
+            EnsureExchangeOnly(request.ExchangeType);
+            return await _exchangeValuationService.CalculateAsync(request);
         }
 
         public async Task<ExchangeOrder> CreateExchangeOrderAsync(ExchangeOrder request)
         {
             _logger.LogInformation("Creating exchange order for customer {CustomerId}", request.CustomerId);
+            EnsureExchangeOnly(request.ExchangeType);
+
+            if (request.Items == null || request.Items.Count == 0)
+            {
+                throw new ArgumentException("At least one exchange item is required.");
+            }
+
+            var valuation = await _exchangeValuationService.CalculateAsync(BuildCalculationRequest(request));
+            ApplyValuationSnapshot(request, valuation);
 
             // Generate order number
             var orderNumber = $"EXC-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
             request.OrderNumber = orderNumber;
 
             // Set audit fields
-            request.ExchangeDate = DateTime.UtcNow;
-            request.CreatedDate = DateTime.UtcNow;
-            request.CreatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin;
+            var currentUserId = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin;
+            var now = DateTime.UtcNow;
+            request.ExchangeDate = now;
+            if (request.CreatedDate == default)
+            {
+                request.CreatedDate = now;
+            }
+
+            if (request.CreatedBy <= 0)
+            {
+                request.CreatedBy = currentUserId;
+            }
             
             // Set default status to PENDING
             if (request.StatusId == 0)
             {
-                request.StatusId = await _exchangeRepository.GetStatusIdByNameAsync("PENDING");
+                request.StatusId = (int)StatusEnum.Active;
             }
 
             // Set audit fields for items
             foreach (var item in request.Items)
             {
-                item.CreatedDate = DateTime.UtcNow;
-                item.CreatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin;
-                if (item.StatusId == 0)
-                {
-                    item.StatusId = request.StatusId;
-                }
+                item.CreatedDate = now;
+                item.CreatedBy = currentUserId;
             }
 
             var createdOrder = await _exchangeRepository.CreateExchangeOrderAsync(request);
             _logger.LogInformation("Exchange order {OrderNumber} created successfully", orderNumber);
 
-            return createdOrder;
+            return await EnrichExchangeOrderAsync(createdOrder);
         }
 
         public async Task<ExchangeOrder?> GetExchangeOrderByIdAsync(long id)
         {
             var order = await _exchangeRepository.GetExchangeOrderByIdAsync(id);
-            return order;
+            return order == null ? null : await EnrichExchangeOrderAsync(order);
         }
 
         public async Task<ExchangeOrder?> GetExchangeOrderByOrderNumberAsync(string orderNumber)
         {
             var order = await _exchangeRepository.GetExchangeOrderByOrderNumberAsync(orderNumber);
-            return order;
+            return order == null ? null : await EnrichExchangeOrderAsync(order);
         }
 
         public async Task<IEnumerable<ExchangeOrder>> GetExchangeOrdersByCustomerIdAsync(long customerId)
         {
             var orders = await _exchangeRepository.GetExchangeOrdersByCustomerIdAsync(customerId);
-            return orders;
+            return await EnrichExchangeOrdersAsync(orders);
         }
 
         public async Task<IEnumerable<ExchangeOrder>> GetAllExchangeOrdersAsync()
         {
             var orders = await _exchangeRepository.GetAllExchangeOrdersAsync();
-            return orders;
+            return await EnrichExchangeOrdersAsync(orders);
+        }
+
+        public async Task<ExchangeOrder> LinkSaleOrderAsync(long exchangeOrderId, long saleOrderId)
+        {
+            _logger.LogInformation(
+                "Linking sale order {SaleOrderId} to exchange order {ExchangeOrderId}",
+                saleOrderId,
+                exchangeOrderId);
+
+            var exchangeOrder = await _exchangeRepository.GetExchangeOrderByIdAsync(exchangeOrderId);
+            if (exchangeOrder == null)
+            {
+                throw new ArgumentException($"Exchange order {exchangeOrderId} not found");
+            }
+
+            EnsureExchangeOnly(exchangeOrder.ExchangeType);
+            EnsureExchangeOrderIsOpen(exchangeOrder);
+
+            var saleOrder = await _saleOrderService.GetSaleOrderByIdAsync((int)saleOrderId);
+            if (saleOrder == null)
+            {
+                throw new ArgumentException($"Sale order {saleOrderId} not found");
+            }
+
+            if (saleOrder.CustomerId != exchangeOrder.CustomerId)
+            {
+                throw new InvalidOperationException("Linked sale order must belong to the same customer as the exchange order.");
+            }
+
+            if (saleOrder.ExchangeOrderId.HasValue && saleOrder.ExchangeOrderId.Value != exchangeOrderId)
+            {
+                throw new InvalidOperationException(
+                    $"Sale order {saleOrderId} is already linked to exchange order {saleOrder.ExchangeOrderId.Value}.");
+            }
+
+            var existingLinkedSale = await _saleOrderService.GetSaleOrderByExchangeOrderIdAsync(exchangeOrderId);
+            if (existingLinkedSale != null && existingLinkedSale.Id != saleOrder.Id)
+            {
+                throw new InvalidOperationException(
+                    $"Exchange order {exchangeOrderId} is already linked to sale order {existingLinkedSale.Id}.");
+            }
+
+            saleOrder.IsExchangeSale = true;
+            saleOrder.ExchangeOrderId = exchangeOrderId;
+            saleOrder.UpdatedDate = DateTime.UtcNow;
+            saleOrder.UpdatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin;
+
+            await _saleOrderService.UpdateSaleOrderAsync(saleOrder);
+
+            return await EnrichExchangeOrderAsync(exchangeOrder);
         }
 
         public async Task<ExchangeOrder> CompleteExchangeOrderAsync(long orderId, string? notes)
@@ -102,31 +173,48 @@ namespace InventoryManagementSystem.Service.Implementation
                 throw new ArgumentException($"Exchange order {orderId} not found");
             }
 
-            // Check if order is in correct status
-            if (order.StatusId != await _exchangeRepository.GetStatusIdByNameAsync("PENDING"))
+            EnsureExchangeOnly(order.ExchangeType);
+            EnsureExchangeOrderIsOpen(order);
+
+            var linkedSaleOrder = await _saleOrderService.GetSaleOrderByExchangeOrderIdAsync(orderId);
+            if (linkedSaleOrder == null)
             {
-                throw new InvalidOperationException("Exchange order cannot be completed. Only PENDING orders can be completed.");
+                throw new InvalidOperationException("Exchange order cannot be completed until it is linked to a sale order.");
             }
 
-            // Get completed status id
-            var completedStatusId = await _exchangeRepository.GetStatusIdByNameAsync("COMPLETED");
+            if (linkedSaleOrder.CustomerId != order.CustomerId)
+            {
+                throw new InvalidOperationException("Linked sale order customer does not match the exchange order customer.");
+            }
+
+            var invoice = await _invoiceService.GetInvoiceBySaleOrderIdAsync(linkedSaleOrder.Id);
+            if (invoice == null)
+            {
+                throw new InvalidOperationException("Generate an invoice for the linked sale order before completing the exchange.");
+            }
+
+            if (invoice.GrandTotal < order.TotalCreditAmount)
+            {
+                throw new InvalidOperationException("Exchange credit cannot exceed the linked sale total in Phase 1.");
+            }
+
+            var remainingCustomerPayment = CalculateRemainingCustomerPayment(order.TotalCreditAmount, invoice);
+            if (remainingCustomerPayment > 0)
+            {
+                throw new InvalidOperationException(
+                    $"Customer payment is still pending for the linked sale. Remaining amount: {remainingCustomerPayment:0.##}");
+            }
 
             // Update order status
-            order.StatusId = completedStatusId;
+            order.StatusId = (int)StatusEnum.Inactive;
             order.UpdatedDate = DateTime.UtcNow;
             order.UpdatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin;
             order.Notes = notes ?? order.Notes;
 
-            // Update items status
-            foreach (var item in order.Items)
-            {
-                item.StatusId = completedStatusId;
-            }
-
             var updatedOrder = await _exchangeRepository.UpdateExchangeOrderAsync(order);
             _logger.LogInformation("Exchange order {OrderId} completed successfully", orderId);
 
-            return updatedOrder;
+            return await EnrichExchangeOrderAsync(updatedOrder);
         }
 
         public async Task<bool> CancelExchangeOrderAsync(long orderId, string? reason)
@@ -139,9 +227,7 @@ namespace InventoryManagementSystem.Service.Implementation
                 return false;
             }
 
-            // Check if order can be cancelled
-            if (order.StatusId == await _exchangeRepository.GetStatusIdByNameAsync("COMPLETED") || 
-                order.StatusId == await _exchangeRepository.GetStatusIdByNameAsync("CANCELLED"))
+            if (order.StatusId == (int)StatusEnum.Inactive || order.StatusId == (int)StatusEnum.Deleted)
             {
                 throw new InvalidOperationException("Exchange order cannot be cancelled in its current status.");
             }
@@ -153,6 +239,112 @@ namespace InventoryManagementSystem.Service.Implementation
             }
 
             return result;
+        }
+
+        private static ExchangeCalculationRequest BuildCalculationRequest(ExchangeOrder request)
+        {
+            return new ExchangeCalculationRequest
+            {
+                CustomerId = request.CustomerId,
+                ExchangeType = request.ExchangeType,
+                Notes = request.Notes,
+                Items = request.Items.Select(item => new ExchangeItemInput
+                {
+                    MetalId = item.MetalId,
+                    PurityId = item.PurityId,
+                    GrossWeight = item.GrossWeight,
+                    NetWeight = item.NetWeight,
+                    MakingChargeDeductionPercent = item.MakingChargeDeductionPercent,
+                    WastageDeductionPercent = item.WastageDeductionPercent,
+                    ItemDescription = item.ItemDescription
+                }).ToList()
+            };
+        }
+
+        private static void EnsureExchangeOnly(int exchangeType)
+        {
+            if (exchangeType != 1)
+            {
+                throw new InvalidOperationException("Phase 1 supports only exchange-against-sale transactions.");
+            }
+        }
+
+        private static void EnsureExchangeOrderIsOpen(ExchangeOrder order)
+        {
+            if (order.StatusId != (int)StatusEnum.Active)
+            {
+                throw new InvalidOperationException("Exchange order is not open for this operation.");
+            }
+        }
+
+        private static decimal CalculateRemainingCustomerPayment(decimal exchangeCredit, InvoiceResponseDto invoice)
+        {
+            var remaining = invoice.GrandTotal - exchangeCredit - invoice.TotalPaid;
+            return remaining > 0 ? remaining : 0;
+        }
+
+        private static void ApplyValuationSnapshot(ExchangeOrder request, ExchangeCalculationResult valuation)
+        {
+            if (valuation.ItemDetails.Count != request.Items.Count)
+            {
+                throw new InvalidOperationException("Exchange valuation could not be completed for all items.");
+            }
+
+            request.TotalGrossWeight = valuation.TotalGrossWeight;
+            request.TotalNetWeight = valuation.TotalNetWeight;
+            request.TotalPureWeight = valuation.TotalPureWeight;
+            request.TotalMarketValue = valuation.TotalMarketValue;
+            request.TotalDeductionAmount = valuation.TotalDeductionAmount;
+            request.TotalCreditAmount = valuation.TotalCreditAmount;
+
+            for (var index = 0; index < request.Items.Count; index++)
+            {
+                var source = request.Items.ElementAt(index);
+                var calculated = valuation.ItemDetails.ElementAt(index);
+
+                source.PurityPercentage = calculated.PurityPercentage;
+                source.PureWeight = calculated.PureWeight;
+                source.CurrentRatePerGram = calculated.CurrentRatePerGram;
+                source.MarketValue = calculated.MarketValue;
+                source.DeductionAmount = calculated.DeductionAmount;
+                source.CreditAmount = calculated.CreditAmount;
+            }
+        }
+
+        private async Task<IEnumerable<ExchangeOrder>> EnrichExchangeOrdersAsync(IEnumerable<ExchangeOrder> orders)
+        {
+            var enrichedOrders = new List<ExchangeOrder>();
+            foreach (var order in orders)
+            {
+                enrichedOrders.Add(await EnrichExchangeOrderAsync(order));
+            }
+
+            return enrichedOrders;
+        }
+
+        private async Task<ExchangeOrder> EnrichExchangeOrderAsync(ExchangeOrder order)
+        {
+            var linkedSaleOrder = await _saleOrderService.GetSaleOrderByExchangeOrderIdAsync(order.Id);
+            if (linkedSaleOrder == null)
+            {
+                return order;
+            }
+
+            order.LinkedSaleOrderId = linkedSaleOrder.Id;
+            order.LinkedSaleOrderNumber = linkedSaleOrder.OrderNumber;
+
+            var invoice = await _invoiceService.GetInvoiceBySaleOrderIdAsync(linkedSaleOrder.Id);
+            if (invoice == null)
+            {
+                return order;
+            }
+
+            order.LinkedInvoiceId = invoice.Id;
+            order.LinkedInvoiceNumber = invoice.InvoiceNumber;
+            order.LinkedSaleGrandTotal = invoice.GrandTotal;
+            order.RemainingCustomerPayment = CalculateRemainingCustomerPayment(order.TotalCreditAmount, invoice);
+
+            return order;
         }
     }
 }

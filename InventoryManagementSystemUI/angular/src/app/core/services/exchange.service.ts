@@ -9,6 +9,7 @@ import {
   ExchangeCalculateResponse,
   ExchangeCompleteRequest,
   ExchangeCancelRequest,
+  ExchangeLinkSaleRequest,
 } from '../models/exchange.model';
 import { ApiResponse } from '../models/api-response.model';
 import { ToastrService } from 'ngx-toastr';
@@ -30,12 +31,12 @@ export class ExchangeService {
    * POST /api/Exchange/calculate
    */
   calculateExchangeValue(request: ExchangeCalculateRequest): Observable<ExchangeCalculateResponse> {
-    return this.http.post<ExchangeCalculateResponse>(`${this.apiUrl}/calculate`, request).pipe(
+    return this.http.post<ApiResponse<ExchangeCalculateResponse>>(`${this.apiUrl}/calculate`, request).pipe(
       map((response) => {
-        return response;
+        return response.Data;
       }),
       catchError((error) => {
-        this.toastr.error(error.error?.message || 'Failed to calculate exchange value');
+        this.toastr.error(error.error?.Data?.message || error.error?.message || 'Failed to calculate exchange value');
         return throwError(() => error);
       })
     );
@@ -46,9 +47,9 @@ export class ExchangeService {
    * GET /api/Exchange
    */
   getAllExchangeOrders(): Observable<ExchangeOrder[]> {
-    return this.http.get<ExchangeOrder[]>(this.apiUrl).pipe(
+    return this.http.get<ApiResponse<ExchangeOrder[]>>(this.apiUrl).pipe(
       map((response) => {
-        return response || [];
+        return response.Data || [];
       }),
       catchError((error) => {
         this.toastr.error('Failed to load exchange orders');
@@ -62,9 +63,9 @@ export class ExchangeService {
    * GET /api/Exchange/{id}
    */
   getExchangeOrderById(id: number): Observable<ExchangeOrder | null> {
-    return this.http.get<ExchangeOrder>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<ApiResponse<ExchangeOrder>>(`${this.apiUrl}/${id}`).pipe(
       map((response) => {
-        return response || null;
+        return response.Data || null;
       }),
       catchError((error) => {
         if (error.status === 404) {
@@ -82,9 +83,9 @@ export class ExchangeService {
    * GET /api/Exchange/orderNumber/{orderNumber}
    */
   getExchangeOrderByOrderNumber(orderNumber: string): Observable<ExchangeOrder | null> {
-    return this.http.get<ExchangeOrder>(`${this.apiUrl}/orderNumber/${orderNumber}`).pipe(
+    return this.http.get<ApiResponse<ExchangeOrder>>(`${this.apiUrl}/orderNumber/${orderNumber}`).pipe(
       map((response) => {
-        return response || null;
+        return response.Data || null;
       }),
       catchError((error) => {
         if (error.status === 404) {
@@ -102,9 +103,9 @@ export class ExchangeService {
    * GET /api/Exchange/customer/{customerId}
    */
   getExchangeOrdersByCustomer(customerId: number): Observable<ExchangeOrder[]> {
-    return this.http.get<ExchangeOrder[]>(`${this.apiUrl}/customer/${customerId}`).pipe(
+    return this.http.get<ApiResponse<ExchangeOrder[]>>(`${this.apiUrl}/customer/${customerId}`).pipe(
       map((response) => {
-        return response || [];
+        return response.Data || [];
       }),
       catchError((error) => {
         this.toastr.error('Failed to load exchange orders for customer');
@@ -118,16 +119,39 @@ export class ExchangeService {
    * POST /api/Exchange
    */
   createExchangeOrder(order: ExchangeOrderCreate): Observable<ExchangeOrder> {
-    return this.http.post<ExchangeOrder>(this.apiUrl, order).pipe(
+    return this.http.post<ApiResponse<ExchangeOrder>>(this.apiUrl, order).pipe(
       map((response) => {
         this.toastr.success('Exchange order created successfully');
-        return response;
+        return response.Data;
       }),
       catchError((error) => {
         if (error.status === 400) {
-          this.toastr.error(error.error?.message || 'Invalid exchange order data');
+          this.toastr.error(error.error?.Data?.message || error.error?.message || 'Invalid exchange order data');
         } else {
           this.toastr.error('Failed to create exchange order');
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Link a sale order to an exchange order
+   * POST /api/Exchange/{orderId}/link-sale
+   */
+  linkSaleOrder(orderId: number, request: ExchangeLinkSaleRequest): Observable<ExchangeOrder> {
+    return this.http.post<ApiResponse<ExchangeOrder>>(`${this.apiUrl}/${orderId}/link-sale`, request).pipe(
+      map((response) => {
+        this.toastr.success('Sale order linked successfully');
+        return response.Data;
+      }),
+      catchError((error) => {
+        if (error.status === 404) {
+          this.toastr.error('Exchange order not found');
+        } else if (error.status === 400) {
+          this.toastr.error(error.error?.Data?.message || error.error?.message || 'Cannot link sale order');
+        } else {
+          this.toastr.error('Failed to link sale order');
         }
         return throwError(() => error);
       })
@@ -139,16 +163,16 @@ export class ExchangeService {
    * POST /api/Exchange/{orderId}/complete
    */
   completeExchangeOrder(orderId: number, request: ExchangeCompleteRequest): Observable<ExchangeOrder> {
-    return this.http.post<ExchangeOrder>(`${this.apiUrl}/${orderId}/complete`, request).pipe(
+    return this.http.post<ApiResponse<ExchangeOrder>>(`${this.apiUrl}/${orderId}/complete`, request).pipe(
       map((response) => {
         this.toastr.success('Exchange order completed successfully');
-        return response;
+        return response.Data;
       }),
       catchError((error) => {
         if (error.status === 404) {
           this.toastr.error('Exchange order not found');
         } else if (error.status === 400) {
-          this.toastr.error(error.error?.message || 'Cannot complete exchange order');
+          this.toastr.error(error.error?.Data?.message || error.error?.message || 'Cannot complete exchange order');
         } else {
           this.toastr.error('Failed to complete exchange order');
         }
@@ -162,7 +186,7 @@ export class ExchangeService {
    * POST /api/Exchange/{orderId}/cancel
    */
   cancelExchangeOrder(orderId: number, request: ExchangeCancelRequest): Observable<boolean> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/${orderId}/cancel`, request).pipe(
+    return this.http.post<ApiResponse<{ message: string }>>(`${this.apiUrl}/${orderId}/cancel`, request).pipe(
       map(() => {
         this.toastr.success('Exchange order cancelled successfully');
         return true;
@@ -171,7 +195,7 @@ export class ExchangeService {
         if (error.status === 404) {
           this.toastr.error('Exchange order not found');
         } else if (error.status === 400) {
-          this.toastr.error(error.error?.message || 'Cannot cancel exchange order');
+          this.toastr.error(error.error?.Data?.message || error.error?.message || 'Cannot cancel exchange order');
         } else {
           this.toastr.error('Failed to cancel exchange order');
         }

@@ -29,6 +29,18 @@ namespace InventoryManagementSystem.Repository.Implementation
             return _mapper.Map<SaleOrder>(saleOrderDb);
         }
 
+        public async Task<SaleOrder?> GetSaleOrderByExchangeOrderIdAsync(long exchangeOrderId)
+        {
+            var saleOrderDb = await _context.SaleOrders
+                .Include(s => s.Customer)
+                .Include(s => s.Status)
+                .Include(s => s.ExchangeOrder)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.ExchangeOrderId == exchangeOrderId);
+
+            return _mapper.Map<SaleOrder>(saleOrderDb);
+        }
+
         public async Task<IEnumerable<SaleOrder>> GetAllSaleOrdersAsync()
         {
             var saleOrdersDb = await _context.SaleOrders
@@ -75,6 +87,24 @@ namespace InventoryManagementSystem.Repository.Implementation
             _context.SaleOrders.Remove(entity);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        /// <summary>
+        /// Get all sale orders for a specific customer
+        /// </summary>
+        /// <param name="customerId">The customer's user ID</param>
+        /// <returns>List of sale orders for the customer</returns>
+        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersByCustomerIdAsync(long customerId)
+        {
+            var saleOrdersDb = await _context.SaleOrders
+                .Include(s => s.Customer)
+                .Include(s => s.Status)
+                .Include(s => s.ExchangeOrder)
+                .Where(s => s.CustomerId == customerId)
+                .OrderByDescending(s => s.OrderDate)
+                .AsNoTracking()
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<SaleOrder>>(saleOrdersDb);
         }
     }
 }

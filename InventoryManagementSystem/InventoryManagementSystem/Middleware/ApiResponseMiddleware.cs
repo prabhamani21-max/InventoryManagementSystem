@@ -47,6 +47,20 @@ namespace InventoryManagementSystem.Middlewares
             {
                 await _next(context);
 
+                if (ShouldBypassWrapping(context, responseBody))
+                {
+                    _logger.LogDebug(
+                        "Bypassing API response wrapping for {Path}. Status: {StatusCode}, Content-Type: {ContentType}",
+                        requestPath,
+                        context.Response.StatusCode,
+                        context.Response.ContentType);
+
+                    context.Response.Body = originalBodyStream;
+                    responseBody.Seek(0, SeekOrigin.Begin);
+                    await responseBody.CopyToAsync(originalBodyStream);
+                    return;
+                }
+
                 context.Response.Body.Seek(0, SeekOrigin.Begin);
                 var bodyText = await new StreamReader(context.Response.Body).ReadToEndAsync();
                 context.Response.Body.Seek(0, SeekOrigin.Begin);
@@ -83,6 +97,7 @@ namespace InventoryManagementSystem.Middlewares
                 _logger.LogError(ex, "Unhandled exception");
 
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Response.Body = originalBodyStream;
                 var errorResponse = new ApiResponse<object>
                 {
                     Status = false,
@@ -100,6 +115,29 @@ namespace InventoryManagementSystem.Middlewares
                 var errorJson = JsonSerializer.Serialize(errorResponse, jsonOptions);
                 await context.Response.WriteAsync(errorJson);
             }
+        }
+
+        private static bool ShouldBypassWrapping(HttpContext context, MemoryStream responseBody)
+        {
+            if (responseBody.Length == 0)
+            {
+                return false;
+            }
+
+            if (context.Response.Headers.ContainsKey("Content-Disposition"))
+            {
+                return true;
+            }
+
+            var contentType = context.Response.ContentType;
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                return false;
+            }
+
+            return !contentType.Contains("application/json", StringComparison.OrdinalIgnoreCase)
+                && !contentType.Contains("+json", StringComparison.OrdinalIgnoreCase)
+                && !contentType.StartsWith("text/json", StringComparison.OrdinalIgnoreCase);
         }
 
         private bool IsJson(string input)

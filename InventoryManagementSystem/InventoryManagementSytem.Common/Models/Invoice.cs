@@ -62,6 +62,10 @@ namespace InventoryManagementSystem.Common.Models
         public decimal GrandTotal { get; set; }
         public string GrandTotalInWords { get; set; } = string.Empty;
 
+        // Exchange Summary
+        public decimal? ExchangeCreditApplied { get; set; }
+        public decimal NetAmountPayable { get; set; }
+
         // Payment Details
         public decimal TotalPaid { get; set; }
         public decimal BalanceDue { get; set; }
@@ -90,15 +94,15 @@ namespace InventoryManagementSystem.Common.Models
         public DateTime? UpdatedDate { get; set; }
         public int StatusId { get; set; }
 
-        // E-Invoice Fields (GST Compliance)
-        public string? IRN { get; set; } // Invoice Reference Number
-        public DateTime? IRNGeneratedDate { get; set; }
-        public string? QRCode { get; set; } // Base64 QR code
-        public string? EInvoiceStatus { get; set; } // Generated, Cancelled, Error
-        public DateTime? EInvoiceCancelledDate { get; set; }
-        public string? EInvoiceCancelReason { get; set; }
-        public string? AcknowledgementNumber { get; set; }
-        public DateTime? AcknowledgementDate { get; set; }
+        // E-Invoice Fields (GST Compliance) - Currently Not Required
+        // public string? IRN { get; set; } // Invoice Reference Number
+        // public DateTime? IRNGeneratedDate { get; set; }
+        // public string? QRCode { get; set; } // Base64 QR code
+        // public string? EInvoiceStatus { get; set; } // Generated, Cancelled, Error
+        // public DateTime? EInvoiceCancelledDate { get; set; }
+        // public string? EInvoiceCancelReason { get; set; }
+        // public string? AcknowledgementNumber { get; set; }
+        // public DateTime? AcknowledgementDate { get; set; }
 
         // Navigation properties for creation
         public ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
@@ -119,6 +123,8 @@ namespace InventoryManagementSystem.Common.Models
         // Metal Details
         public int MetalId { get; set; }
         public int PurityId { get; set; }
+        public string? MetalType { get; set; }
+        public string? Purity { get; set; }
         public decimal? NetMetalWeight { get; set; }
         public decimal? MetalAmount { get; set; }
 
@@ -149,12 +155,18 @@ namespace InventoryManagementSystem.Common.Models
         public decimal MakingChargesSGSTAmount { get; set; }
         public decimal MakingChargesIGSTAmount { get; set; }
         public decimal MakingChargesGSTAmount { get; set; }
+        public decimal? TotalMakingCharges { get; set; }
 
         public decimal TotalGSTAmount { get; set; }
         public decimal TotalAmount { get; set; }
 
         // Hallmark snapshot
         public bool IsHallmarked { get; set; }
+        public string? HallmarkDetails { get; set; }
+        public string? HUID { get; set; }
+        public string? BISCertificationNumber { get; set; }
+        public string? HallmarkCenterName { get; set; }
+        public DateTime? HallmarkDate { get; set; }
     }
 
     /// <summary>

@@ -46,6 +46,8 @@ namespace InventoryManagementSystem.Repository.Implementation
         public async Task<IEnumerable<InvoiceItem>> GetInvoiceItemsByInvoiceIdAsync(long invoiceId)
         {
             var itemsDb = await _context.InvoiceItems
+                .Include(i => i.Metal)
+                .Include(i => i.Purity)
                 .Where(i => i.InvoiceId == invoiceId)
                 .AsNoTracking()
                 .ToListAsync();

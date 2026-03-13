@@ -14,7 +14,6 @@
         public DateOnly DOB { get; set; }
         public string? Address { get; set; }
         public string ContactNumber { get; set; }
-        public string? ProfileImage { get; set; }
 
     }
 }

@@ -35,7 +35,12 @@ namespace InventoryManagementSystem.Service.Interface
         Task<IEnumerable<ExchangeOrder>> GetAllExchangeOrdersAsync();
 
         /// <summary>
-        /// Complete exchange order (add old gold to inventory, apply credit)
+        /// Link a sale order to an exchange order for Phase 1 exchange settlement.
+        /// </summary>
+        Task<ExchangeOrder> LinkSaleOrderAsync(long exchangeOrderId, long saleOrderId);
+
+        /// <summary>
+        /// Complete exchange order after validating the linked sale and invoice.
         /// </summary>
         Task<ExchangeOrder> CompleteExchangeOrderAsync(long orderId, string? notes);
 

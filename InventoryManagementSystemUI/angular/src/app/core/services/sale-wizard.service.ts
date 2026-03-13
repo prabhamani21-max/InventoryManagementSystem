@@ -252,6 +252,10 @@ export class SaleWizardService {
     this.updateState({ saleOrder: order });
   }
 
+  setGeneratedInvoice(invoice: Invoice | null): void {
+    this.updateState({ generatedInvoice: invoice });
+  }
+
   // ==================== STEP 3: Items Methods ====================
 
   /**

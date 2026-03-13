@@ -14,9 +14,6 @@ import {
   formatCurrency,
   getStatusLabel,
   getStatusClass,
-  getEInvoiceStatusLabel,
-  getEInvoiceStatusClass,
-  EInvoiceEligibilityResponse,
 } from 'src/app/core/models/invoice.model';
 import { SaleOrder } from 'src/app/core/models/sale-order.model';
 import { ToastrService } from 'ngx-toastr';
@@ -51,13 +48,6 @@ export class Invoiceform implements OnInit {
   // Sale order lookup
   saleOrder: SaleOrder | null = null;
   saleOrderIdInput: number | null = null;
-
-  // E-Invoice properties
-  isGeneratingIRN: boolean = false;
-  isCancellingEInvoice: boolean = false;
-  eInvoiceEligibility: EInvoiceEligibilityResponse | null = null;
-  showCancelModal: boolean = false;
-  cancelReason: string = '';
 
   // Form validation messages
   validationMessages = {
@@ -244,6 +234,18 @@ export class Invoiceform implements OnInit {
     return formatCurrency(amount);
   }
 
+  hasExchangeAdjustment(invoice: Invoice | null | undefined = this.generatedInvoice): boolean {
+    return (invoice?.exchangeCreditApplied ?? 0) > 0;
+  }
+
+  getExchangeCreditApplied(invoice: Invoice | null | undefined = this.generatedInvoice): number {
+    return invoice?.exchangeCreditApplied ?? 0;
+  }
+
+  getNetAmountPayable(invoice: Invoice | null | undefined = this.generatedInvoice): number {
+    return invoice?.netAmountPayable ?? invoice?.grandTotal ?? 0;
+  }
+
   /**
    * Print invoice
    */
@@ -270,135 +272,6 @@ export class Invoiceform implements OnInit {
    */
   onViewInvoice(invoiceNumber: string): void {
     this.router.navigate(['jewelleryManagement/admin/invoice/view', invoiceNumber]);
-  }
-
-  // ==================== E-INVOICE METHODS ====================
-
-  /**
-   * Check e-invoice eligibility for the current invoice
-   */
-  checkEInvoiceEligibility(): void {
-    if (!this.generatedInvoice?.id) return;
-
-    this.invoiceService.checkEInvoiceEligibility(this.generatedInvoice.id).subscribe({
-      next: (eligibility) => {
-        this.eInvoiceEligibility = eligibility;
-      },
-      error: () => {
-        this.eInvoiceEligibility = null;
-      },
-    });
-  }
-
-  /**
-   * Generate IRN for the invoice
-   */
-  onGenerateIRN(): void {
-    if (!this.generatedInvoice?.id) return;
-
-    this.isGeneratingIRN = true;
-    this.invoiceService.generateIRN(this.generatedInvoice.id).subscribe({
-      next: (response) => {
-        if (this.generatedInvoice) {
-          this.generatedInvoice.irn = response.irn;
-          this.generatedInvoice.irnGeneratedDate = response.irnGeneratedDate;
-          this.generatedInvoice.qrCode = response.qrCode;
-          this.generatedInvoice.eInvoiceStatus = response.status;
-          this.generatedInvoice.acknowledgementNumber = response.acknowledgementNumber;
-          this.generatedInvoice.acknowledgementDate = response.acknowledgementDate;
-        }
-        this.isGeneratingIRN = false;
-      },
-      error: () => {
-        this.isGeneratingIRN = false;
-      },
-    });
-  }
-
-  /**
-   * Open cancel e-invoice modal
-   */
-  openCancelEInvoiceModal(): void {
-    this.cancelReason = '';
-    this.showCancelModal = true;
-  }
-
-  /**
-   * Close cancel e-invoice modal
-   */
-  closeCancelModal(): void {
-    this.showCancelModal = false;
-    this.cancelReason = '';
-  }
-
-  /**
-   * Cancel e-invoice
-   */
-  onCancelEInvoice(): void {
-    if (!this.generatedInvoice?.id || !this.cancelReason.trim()) {
-      this.toastr.warning('Please provide a reason for cancellation');
-      return;
-    }
-
-    this.isCancellingEInvoice = true;
-    this.invoiceService.cancelEInvoice(this.generatedInvoice.id, this.cancelReason).subscribe({
-      next: () => {
-        if (this.generatedInvoice) {
-          this.generatedInvoice.eInvoiceStatus = 'Cancelled';
-          this.generatedInvoice.eInvoiceCancelledDate = new Date();
-          this.generatedInvoice.eInvoiceCancelReason = this.cancelReason;
-        }
-        this.closeCancelModal();
-        this.isCancellingEInvoice = false;
-      },
-      error: () => {
-        this.isCancellingEInvoice = false;
-      },
-    });
-  }
-
-  /**
-   * Get e-invoice status label
-   */
-  getEInvoiceStatusLabel(status: string | undefined): string {
-    return getEInvoiceStatusLabel(status);
-  }
-
-  /**
-   * Get e-invoice status CSS class
-   */
-  getEInvoiceStatusClass(status: string | undefined): string {
-    return getEInvoiceStatusClass(status);
-  }
-
-  /**
-   * Get QR code URL for display
-   */
-  getQRCodeUrl(): string | null {
-    if (!this.generatedInvoice?.qrCode) return null;
-    return `data:image/png;base64,${this.generatedInvoice.qrCode}`;
-  }
-
-  /**
-   * Check if IRN can be generated
-   */
-  canGenerateIRN(): boolean {
-    return (
-      this.generatedInvoice?.id != null &&
-      !this.generatedInvoice.irn &&
-      this.generatedInvoice.partyGSTIN != null &&
-      this.generatedInvoice.grandTotal >= 500000
-    );
-  }
-
-  /**
-   * Check if e-invoice can be cancelled
-   */
-  canCancelEInvoice(): boolean {
-    return (
-      this.generatedInvoice?.irn != null &&
-      this.generatedInvoice?.eInvoiceStatus === 'Generated'
-    );
   }
 
   /**

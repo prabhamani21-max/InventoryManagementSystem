@@ -17,11 +17,19 @@ namespace InventoryManagementSystem.Controllers
     public class InvoiceController : ControllerBase
     {
         private readonly IInvoiceService _invoiceService;
+        private readonly IInvoicePdfService _pdfService;
+        private readonly ICurrentUser _currentUser;
         private readonly ILogger<InvoiceController> _logger;
 
-        public InvoiceController(IInvoiceService invoiceService, ILogger<InvoiceController> logger)
+        public InvoiceController(
+            IInvoiceService invoiceService,
+            IInvoicePdfService pdfService,
+            ICurrentUser currentUser,
+            ILogger<InvoiceController> logger)
         {
             _invoiceService = invoiceService;
+            _pdfService = pdfService;
+            _currentUser = currentUser;
             _logger = logger;
         }
 
@@ -47,6 +55,38 @@ namespace InventoryManagementSystem.Controllers
             {
                 _logger.LogError(ex, "Failed to retrieve all invoices");
                 return StatusCode(500, new { success = false, message = "An error occurred while retrieving invoices" });
+            }
+        }
+
+        /// <summary>
+        /// Get invoices for the currently logged-in customer
+        /// </summary>
+        /// <returns>List of invoices for the current customer</returns>
+        [HttpGet("my-invoices")]
+        public async Task<IActionResult> GetMyInvoices()
+        {
+            try
+            {
+                var userId = _currentUser?.UserId;
+                if (userId == null || userId <= 0)
+                {
+                    _logger.LogWarning("Unable to determine current user ID");
+                    return Unauthorized(new { success = false, message = "Unable to determine user identity" });
+                }
+
+                _logger.LogInformation("Fetching invoices for customer ID: {CustomerId}", userId);
+                var invoices = await _invoiceService.GetInvoicesByPartyIdAsync(userId.Value);
+
+                return Ok(new
+                {
+                    success = true,
+                    data = invoices
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to retrieve customer invoices");
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving your invoices" });
             }
         }
 
@@ -160,6 +200,90 @@ namespace InventoryManagementSystem.Controllers
         }
 
         /// <summary>
+        /// Download invoice as PDF by invoice ID
+        /// </summary>
+        /// <param name="id">Invoice ID</param>
+        /// <returns>PDF file</returns>
+        [HttpGet("{id}/download")]
+        public async Task<IActionResult> DownloadInvoicePdf(long id)
+        {
+            try
+            {
+                _logger.LogInformation("PDF download requested for invoice ID: {InvoiceId}", id);
+
+                var pdfBytes = await _pdfService.GenerateInvoicePdfAsync(id);
+                var invoice = await _invoiceService.GetInvoiceByIdAsync(id);
+
+                if (pdfBytes == null || pdfBytes.Length == 0)
+                {
+                    _logger.LogWarning("PDF generation returned no content for invoice ID: {InvoiceId}", id);
+                    return NotFound(new { success = false, message = "Invoice not found or could not generate PDF" });
+                }
+
+                var fileName = $"Invoice_{invoice?.InvoiceNumber ?? id.ToString()}.pdf";
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to generate PDF for invoice ID {InvoiceId}", id);
+                return StatusCode(500, new { success = false, message = "An error occurred while generating the invoice PDF" });
+            }
+        }
+
+        /// <summary>
+        /// Download invoice as PDF by invoice number.
+        /// Uses a query string so invoice numbers containing '/' still resolve correctly.
+        /// </summary>
+        /// <param name="invoiceNumber">Invoice number</param>
+        /// <returns>PDF file</returns>
+        [HttpGet("by-number/download")]
+        public async Task<IActionResult> DownloadInvoicePdfByNumber([FromQuery] string invoiceNumber)
+        {
+            return await DownloadInvoicePdfByNumberInternal(invoiceNumber);
+        }
+
+        /// <summary>
+        /// Legacy download route for invoice numbers that do not contain '/'.
+        /// </summary>
+        /// <param name="invoiceNumber">Invoice number</param>
+        /// <returns>PDF file</returns>
+        [HttpGet("by-number/{invoiceNumber}/download")]
+        public async Task<IActionResult> DownloadInvoicePdfByNumberLegacy(string invoiceNumber)
+        {
+            return await DownloadInvoicePdfByNumberInternal(invoiceNumber);
+        }
+
+        private async Task<IActionResult> DownloadInvoicePdfByNumberInternal(string invoiceNumber)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(invoiceNumber))
+                {
+                    _logger.LogWarning("PDF download requested without an invoice number");
+                    return BadRequest(new { success = false, message = "Invoice number is required" });
+                }
+
+                _logger.LogInformation("PDF download requested for invoice: {InvoiceNumber}", invoiceNumber);
+
+                var pdfBytes = await _pdfService.GenerateInvoicePdfByNumberAsync(invoiceNumber);
+
+                if (pdfBytes == null || pdfBytes.Length == 0)
+                {
+                    _logger.LogWarning("PDF generation returned no content for invoice {InvoiceNumber}", invoiceNumber);
+                    return NotFound(new { success = false, message = "Invoice not found or could not generate PDF" });
+                }
+
+                var fileName = $"Invoice_{invoiceNumber}.pdf";
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to generate PDF for invoice {InvoiceNumber}", invoiceNumber);
+                return StatusCode(500, new { success = false, message = "An error occurred while generating the invoice PDF" });
+            }
+        }
+
+        /// <summary>
         /// Generate bulk invoices for multiple sale orders
         /// </summary>
         /// <param name="request">Bulk invoice generation request</param>
@@ -190,68 +314,6 @@ namespace InventoryManagementSystem.Controllers
             {
                 _logger.LogError(ex, "Bulk invoice generation failed");
                 return StatusCode(500, new { success = false, message = "An error occurred while generating bulk invoices" });
-            }
-        }
-
-        /// <summary>
-        /// Regenerate invoice with updated details
-        /// </summary>
-        /// <param name="invoiceNumber">Invoice number to regenerate</param>
-        /// <param name="notes">Optional notes to add</param>
-        /// <returns>Updated invoice</returns>
-        [HttpPost("regenerate")]
-        public async Task<IActionResult> RegenerateInvoice([FromQuery] string invoiceNumber, [FromQuery] string? notes)
-        {
-            try
-            {
-                var invoice = await _invoiceService.RegenerateInvoiceAsync(invoiceNumber, notes);
-
-                if (invoice == null)
-                {
-                    return NotFound(new { success = false, message = "Invoice not found" });
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Invoice regenerated successfully",
-                    data = invoice
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Invoice regeneration failed for {InvoiceNumber}", invoiceNumber);
-                return StatusCode(500, new { success = false, message = "An error occurred while regenerating the invoice" });
-            }
-        }
-
-        /// <summary>
-        /// Cancel an invoice
-        /// </summary>
-        /// <param name="invoiceNumber">Invoice number to cancel</param>
-        /// <returns>Cancellation result</returns>
-        [HttpPost("cancel")]
-        public async Task<IActionResult> CancelInvoice([FromQuery] string invoiceNumber)
-        {
-            try
-            {
-                var result = await _invoiceService.CancelInvoiceAsync(invoiceNumber);
-
-                if (!result)
-                {
-                    return BadRequest(new { success = false, message = "Failed to cancel invoice" });
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Invoice cancelled successfully"
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Invoice cancellation failed for {InvoiceNumber}", invoiceNumber);
-                return StatusCode(500, new { success = false, message = "An error occurred while cancelling the invoice" });
             }
         }
 

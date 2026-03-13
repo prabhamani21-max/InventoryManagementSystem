@@ -37,8 +37,8 @@ namespace InventoryManagementSystem.ExceptionHandler
             }
             else if(exception is InvalidOperationException)
             {
-                statusCode = (int)HttpStatusCode.Conflict;
-                message = "This data is already exist";
+                statusCode = (int)HttpStatusCode.BadRequest;
+                message = exception.Message;
             }
             else
             {

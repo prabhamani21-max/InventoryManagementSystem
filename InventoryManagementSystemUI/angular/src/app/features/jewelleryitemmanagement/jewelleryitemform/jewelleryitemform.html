@@ -66,7 +66,7 @@
             <option [ngValue]="null">Select Category</option>
             @for (category of categories; track category.id) {
               <option [ngValue]="category.id">
-                {{ category.name }}
+                {{ category.displayName }}
               </option>
             }
           </select>

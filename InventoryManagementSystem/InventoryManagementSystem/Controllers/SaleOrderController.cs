@@ -49,6 +49,31 @@ namespace InventoryManagementSystem.Controllers
             return Ok(saleOrderDto);
         }
 
+        /// <summary>
+        /// Get sale orders for the currently logged-in customer
+        /// </summary>
+        /// <returns>List of sale orders for the current customer</returns>
+        [HttpGet("my-orders")]
+        public async Task<IActionResult> GetMyOrders()
+        {
+            var userId = _currentUser?.UserId;
+            if (userId == null || userId <= 0)
+            {
+                _logger.LogWarning("Unable to determine current user ID");
+                return Unauthorized(new { success = false, message = "Unable to determine user identity" });
+            }
+
+            _logger.LogInformation("Fetching sale orders for customer ID: {CustomerId}", userId);
+            var saleOrders = await _saleOrderService.GetSaleOrdersByCustomerIdAsync(userId.Value);
+            var saleOrderDtos = _mapper.Map<IEnumerable<SaleOrderDto>>(saleOrders);
+            
+            return Ok(new
+            {
+                success = true,
+                data = saleOrderDtos
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateSaleOrder([FromBody] SaleOrderDto dto)
         {

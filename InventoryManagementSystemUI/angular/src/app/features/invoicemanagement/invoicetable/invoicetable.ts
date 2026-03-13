@@ -16,7 +16,6 @@ import {
   getPartyTypeClass,
 } from 'src/app/core/models/invoice.model';
 import { ToastrService } from 'ngx-toastr';
-import { ConfirmationService } from 'src/app/common/confirm-dialog/confirm-dialog.service';
 
 /**
  * Invoice Table Component
@@ -33,12 +32,12 @@ export class Invoicetable implements OnInit {
   private invoiceService = inject(InvoiceService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
-  private confirmationService = inject(ConfirmationService);
 
   // Properties
   invoices: Invoice[] = [];
   isLoading: boolean = false;
   searchInvoiceNumber: string = '';
+  downloadingInvoiceNumber: string | null = null;
 
   // Table columns
   displayedColumns: string[] = [
@@ -124,49 +123,36 @@ export class Invoicetable implements OnInit {
   }
 
   /**
-   * Regenerate invoice
+   * Download invoice as PDF
    */
-  onRegenerateInvoice(invoiceNumber: string): void {
-    this.confirmationService
-      .confirm(
-        'Regenerate Invoice',
-        'Are you sure you want to regenerate this invoice? This will update the invoice with current details.',
-        'Regenerate',
-        'Cancel'
-      )
-      .then((confirmed) => {
-        if (confirmed) {
-          this.invoiceService.regenerateInvoice(invoiceNumber).subscribe({
-            next: () => {
-              // Refresh the list
-              this.loadAllInvoices();
-            },
-          });
-        }
-      });
-  }
+  downloadInvoicePdf(invoice: Invoice): void {
+    if (!invoice.invoiceNumber) return;
 
-  /**
-   * Cancel invoice with confirmation dialog
-   */
-  onCancelInvoice(invoiceNumber: string): void {
-    this.confirmationService
-      .confirm(
-        'Cancel Invoice',
-        'Are you sure you want to cancel this invoice? This action cannot be undone.',
-        'Cancel Invoice',
-        'Keep'
-      )
-      .then((confirmed) => {
-        if (confirmed) {
-          this.invoiceService.cancelInvoice(invoiceNumber).subscribe({
-            next: () => {
-              // Refresh the list
-              this.loadAllInvoices();
-            },
-          });
-        }
-      });
+    this.downloadingInvoiceNumber = invoice.invoiceNumber;
+    
+    this.invoiceService.downloadInvoicePdfByNumber(invoice.invoiceNumber).subscribe({
+      next: (blob: Blob) => {
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Invoice_${invoice.invoiceNumber}.pdf`;
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        
+        // Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        this.downloadingInvoiceNumber = null;
+      },
+      error: (error) => {
+        console.error('Error downloading invoice:', error);
+        this.downloadingInvoiceNumber = null;
+      }
+    });
   }
 
   /**
@@ -209,12 +195,5 @@ export class Invoicetable implements OnInit {
    */
   getPartyTypeClass(partyType: number): string {
     return getPartyTypeClass(partyType);
-  }
-
-  /**
-   * Check if invoice is cancelled
-   */
-  isInvoiceCancelled(statusId: number): boolean {
-    return statusId === 5;
   }
 }
