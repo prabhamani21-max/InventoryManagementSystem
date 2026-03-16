@@ -1,0 +1,158 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Metal Rate' : 'Add Metal Rate'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading metal rate data...</p>
+    </div>
+  }
+
+  <!-- Metal Rate Form -->
+  @if (!isLoading) {
+    <form [formGroup]="metalRateForm" (ngSubmit)="onSubmit()" class="metal-rate-form">
+      <div class="row">
+        <!-- Metal Selection Field -->
+        <div class="col-md-6 mb-3">
+          <label for="metalId" class="form-label">Metal</label>
+          <select
+            class="form-select"
+            id="metalId"
+            formControlName="metalId"
+            [class.is-invalid]="hasError('metalId')"
+            (change)="onMetalChange($any($event.target).value); onFieldChange('metalId')"
+          >
+            <option [ngValue]="null">All Metals</option>
+            @for (metal of metals; track metal.id) {
+              <option [ngValue]="metal.id">
+                {{ metal.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('metalId')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('metalId') }}
+            </div>
+          }
+          @if (!hasError('metalId')) {
+            <small class="text-muted">Filter purities by metal (optional)</small>
+          }
+        </div>
+
+        <!-- Purity Selection Field -->
+        <div class="col-md-6 mb-3">
+          <label for="purityId" class="form-label">
+            Purity <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="purityId"
+            formControlName="purityId"
+            [class.is-invalid]="hasError('purityId')"
+            (change)="onFieldChange('purityId')"
+            [disabled]="isEditMode"
+          >
+            <option [ngValue]="null">Select a purity</option>
+            @for (purity of filteredPurities; track purity.id) {
+              <option [ngValue]="purity.id">
+                {{ purity.name }} ({{ purity.percentage }}%)
+              </option>
+            }
+          </select>
+          @if (hasError('purityId')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('purityId') }}
+            </div>
+          }
+          @if (!hasError('purityId')) {
+            <small class="text-muted">Select the purity for this rate</small>
+          }
+        </div>
+
+        <!-- Rate Per Gram Field -->
+        <div class="col-md-6 mb-3">
+          <label for="ratePerGram" class="form-label">
+            Rate Per Gram (₹) <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="ratePerGram"
+              formControlName="ratePerGram"
+              placeholder="Enter rate per gram"
+              step="0.01"
+              min="0.01"
+              [class.is-invalid]="hasError('ratePerGram')"
+              (input)="onFieldChange('ratePerGram')"
+            />
+          </div>
+          @if (hasError('ratePerGram')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('ratePerGram') }}
+            </div>
+          }
+          @if (!hasError('ratePerGram')) {
+            <small class="text-muted">Rate per gram in INR</small>
+          }
+        </div>
+
+        <!-- Effective Date Field -->
+        <div class="col-md-6 mb-3">
+          <label for="effectiveDate" class="form-label">
+            Effective Date <span class="text-danger">*</span>
+          </label>
+          <input
+            type="date"
+            class="form-control"
+            id="effectiveDate"
+            formControlName="effectiveDate"
+            [class.is-invalid]="hasError('effectiveDate')"
+            (change)="onFieldChange('effectiveDate')"
+          />
+          @if (hasError('effectiveDate')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('effectiveDate') }}
+            </div>
+          }
+          @if (!hasError('effectiveDate')) {
+            <small class="text-muted">Date from which this rate is effective</small>
+          }
+        </div>
+      </div>
+
+      <!-- Info Box -->
+      <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+        <i class="feather icon-info me-2"></i>
+        <div>
+          <strong>Note:</strong> Metal rates are set per purity level. Each purity can have its own rate per gram.
+          The rate will be effective from the specified date.
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="metalRateForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

@@ -1,0 +1,118 @@
+<app-card cardTitle="Supplier Management" [customHeader]="true">
+  <!-- Header with Add Button and Search -->
+  <div class="app-card-header d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">Suppliers</h5>
+    <div class="d-flex gap-2">
+      <!-- Search Input -->
+      <div class="input-group" style="width: 300px;">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by name, GST, TAN..."
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+        />
+        <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
+          <i class="feather icon-search"></i>
+        </button>
+        @if (searchTerm) {
+          <button class="btn btn-outline-secondary" type="button" (click)="onClearSearch()">
+            <i class="feather icon-x"></i>
+          </button>
+        }
+      </div>
+      <!-- Add Button -->
+      <button class="btn btn-primary" (click)="onAddSupplier()">
+        <i class="feather icon-plus me-2"></i>Add Supplier
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading suppliers...</p>
+    </div>
+  }
+
+  <!-- Suppliers Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Contact Person</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>GST Number</th>
+            <th>TAN Number</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredSuppliers.length === 0) {
+            <tr>
+              <td colspan="8" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  @if (searchTerm) {
+                    No suppliers found matching "{{ searchTerm }}". Try a different search term.
+                  } @else {
+                    No suppliers found. Click "Add Supplier" to create one.
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+          @for (supplier of filteredSuppliers; track supplier.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">{{ supplier.name }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ supplier.contactPerson || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ supplier.email || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ supplier.phone || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ supplier.gstNumber || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ supplier.tanNumber || '-' }}</span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(supplier.statusId)">
+                  {{ getStatusLabel(supplier.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditSupplier(supplier.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteSupplier(supplier.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    }
+</app-card>

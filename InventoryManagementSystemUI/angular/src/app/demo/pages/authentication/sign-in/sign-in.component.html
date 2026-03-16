@@ -1,0 +1,75 @@
+<div class="auth-wrapper">
+  <div class="auth-content">
+    <div class="card">
+      <div class="row align-items-center text-center">
+        <div class="col-md-12">
+          <div class="card-body">
+  <form
+            [formGroup]="signInForm"
+            (ngSubmit)="login()"
+            class="authentication-form"
+          >              <img src="assets/images/logo-dark.png" alt="logo" class="img-fluid mb-4" />
+              <h4 class="mb-3 f-w-400">Signin</h4>
+              <div class="input-group mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="floatingInput"
+                  [class.is-invalid]="signInForm.get('identifier')?.invalid && (signInForm.get('identifier')?.dirty || signInForm.get('identifier')?.touched)"
+                  placeholder="Email Address or Phone Number"
+                  formControlName="identifier"
+                />
+                <div *ngIf="signInForm.get('identifier')?.invalid && (signInForm.get('identifier')?.dirty || signInForm.get('identifier')?.touched)"
+                   class="invalid-feedback">
+                <div *ngIf="signInForm.get('identifier')?.errors?.['required']">
+                  Email or phone number is required
+                </div>
+              </div>
+              </div>
+              <div class="input-group mb-4">
+                @if (!showPassword()) {
+                  <input
+                    type="password"
+                    id="password"
+                    formControlName="password"
+                    class="form-control"
+                    [class.is-invalid]="signInForm.get('password')?.invalid && (signInForm.get('password')?.dirty || signInForm.get('password')?.touched)"
+                    placeholder="Enter your password"
+                  />
+                } @else {
+                  <input
+                    type="password"
+                    formControlName="password"
+                    id="password"
+                    class="form-control"
+                    [class.is-invalid]="signInForm.get('password')?.invalid && (signInForm.get('password')?.dirty || signInForm.get('password')?.touched)"
+                    placeholder="Enter your password"
+                  />
+                }
+                 <div *ngIf="signInForm.get('password')?.invalid && (signInForm.get('password')?.dirty || signInForm.get('password')?.touched)"
+                     class="invalid-feedback">
+                  <div *ngIf="signInForm.get('password')?.errors?.['required']">
+                    Password is required
+                  </div>
+                </div>
+              </div>
+              
+              <div class="d-grid">
+                <button class="btn btn-block btn-primary mb-4" type="submit"
+                [disabled]="!signInForm.valid">Signin</button>
+              </div>
+              <p class="mb-2 text-muted">
+                Forgot password?
+                <a href="#" class="f-w-400">Reset</a>
+              </p>
+            </form>
+            <p class="mb-0 text-muted">
+              Don't have an account?
+              <a routerLink ="/jewelleryManagement/auth/sign-up"class="f-w-400">Signup</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

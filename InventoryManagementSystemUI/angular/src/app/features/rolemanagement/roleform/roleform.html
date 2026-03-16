@@ -1,0 +1,125 @@
+<app-card [cardTitle]="isViewMode ? 'View Role' : (isEditMode ? 'Edit Role' : 'Add Role')">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading role data...</p>
+    </div>
+  }
+
+  <!-- View Mode - Role Details -->
+  @if (!isLoading && isViewMode && role) {
+    <div class="role-details">
+      <!-- Role Information -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Role Information</h6>
+          <hr class="mt-0">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Role ID</label>
+          <p class="fw-medium">#{{ role.id }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Role Name</label>
+          <p class="fw-medium">{{ role.name }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Status</label>
+          <p><span [ngClass]="getStatusClass(role.statusId)">{{ getStatusLabel(role.statusId) }}</span></p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          Back to List
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onCancel()">
+          <i class="feather icon-edit me-2"></i>Edit Role
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Create/Edit Form -->
+  @if (!isLoading && !isViewMode) {
+    <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" class="role-form">
+      <div class="row">
+        <!-- Basic Information Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Role Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Name Field -->
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">
+            Role Name <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+            placeholder="Enter role name"
+            [class.is-invalid]="hasError('name')"
+          />
+          @if (hasError('name')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('name') }}
+            </div>
+          }
+        </div>
+
+        <!-- Status Field -->
+        <div class="col-md-6 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+          >
+            @for (status of statusOptions; track status.id) {
+              <option [ngValue]="status.id">
+                {{ status.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="roleForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

@@ -1,0 +1,106 @@
+<app-card cardTitle="Warehouse Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Warehouses</h5>
+    <button class="btn btn-primary" (click)="onAddWarehouse()">
+      <i class="feather icon-plus me-2"></i>Add Warehouse
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading warehouses...</p>
+    </div>
+  }
+
+  <!-- Warehouses Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Manager</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (warehouses.length === 0) {
+            <tr>
+              <td colspan="6" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No warehouses found. Click "Add Warehouse" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (warehouse of warehouses; track warehouse.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">#{{ warehouse.id }}</span>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <i class="feather icon-home me-2 text-primary"></i>
+                  <span class="fw-medium">{{ warehouse.name }}</span>
+                </div>
+              </td>
+              <td>
+                <span>
+                  @if (warehouse.address) {
+                    <i class="feather icon-map-pin me-1"></i>{{ warehouse.address }}
+                  } @else {
+                    <span class="text-muted">-</span>
+                  }
+                </span>
+              </td>
+              <td>
+                <span>
+                  @if (warehouse.managerName) {
+                    <i class="feather icon-user me-1"></i>{{ warehouse.managerName }}
+                  } @else {
+                    <span class="text-muted">-</span>
+                  }
+                </span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(warehouse.statusId)">
+                  {{ getStatusLabel(warehouse.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- View Button -->
+                  <button type="button" class="btn btn-sm btn-outline-info" 
+                          (click)="onViewWarehouse(warehouse.id)" title="View Details">
+                    <i class="feather icon-eye"></i>
+                  </button>
+                  
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditWarehouse(warehouse.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteWarehouse(warehouse.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

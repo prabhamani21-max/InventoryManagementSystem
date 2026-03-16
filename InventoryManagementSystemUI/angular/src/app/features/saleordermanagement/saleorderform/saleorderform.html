@@ -1,0 +1,181 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Sale Order' : 'Add Sale Order'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading sale order data...</p>
+    </div>
+  }
+
+  <!-- Sale Order Form -->
+  @if (!isLoading) {
+    <form [formGroup]="saleOrderForm" (ngSubmit)="onSubmit()" class="sale-order-form">
+      <div class="row">
+        <!-- Basic Information Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Order Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Customer ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="customerId" class="form-label">
+            Customer ID <span class="text-danger">*</span>
+          </label>
+          @if (wizardMode) {
+            <input
+              type="number"
+              class="form-control"
+              id="customerId"
+              formControlName="customerId"
+              [readonly]="true"
+              [class.is-invalid]="hasError('customerId')"
+            />
+            <small class="text-muted">Auto-filled from selected customer in Step 1</small>
+          } @else {
+            <input
+              type="number"
+              class="form-control"
+              id="customerId"
+              formControlName="customerId"
+              placeholder="Enter customer ID"
+              [class.is-invalid]="hasError('customerId')"
+            />
+            <small class="text-muted">Select the customer for this order</small>
+          }
+          @if (hasError('customerId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('customerId') }}
+            </div>
+          }
+        </div>
+
+        <!-- Date Information Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Date Details</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Order Date Field -->
+        <div class="col-md-6 mb-3">
+          <label for="orderDate" class="form-label">
+            Order Date <span class="text-danger">*</span>
+          </label>
+          <input
+            type="date"
+            class="form-control"
+            id="orderDate"
+            formControlName="orderDate"
+            [class.is-invalid]="hasError('orderDate')"
+          />
+          @if (hasError('orderDate')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('orderDate') }}
+            </div>
+          }
+        </div>
+
+        <!-- Delivery Date Field -->
+        <div class="col-md-6 mb-3">
+          <label for="deliveryDate" class="form-label">
+            Delivery Date
+          </label>
+          <input
+            type="date"
+            class="form-control"
+            id="deliveryDate"
+            formControlName="deliveryDate"
+            placeholder="Select delivery date"
+          />
+          <small class="text-muted">Expected delivery date (optional)</small>
+        </div>
+
+        <!-- Additional Information Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Additional Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Exchange Sale Field -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Exchange Sale</label>
+          <div class="form-check form-switch mt-2">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="isExchangeSale"
+              formControlName="isExchangeSale"
+            />
+            <label class="form-check-label" for="isExchangeSale">
+              {{ saleOrderForm.get('isExchangeSale')?.value ? 'Yes, this is an exchange sale' : 'No, this is a regular sale' }}
+            </label>
+          </div>
+          <small class="text-muted">Toggle if this order is part of an exchange transaction</small>
+        </div>
+
+        <!-- Exchange Order ID Field (shown only when isExchangeSale is true) -->
+        @if (saleOrderForm.get('isExchangeSale')?.value) {
+          <div class="col-md-6 mb-3">
+            <label for="exchangeOrderId" class="form-label">Exchange Order ID</label>
+            <input
+              type="number"
+              class="form-control"
+              id="exchangeOrderId"
+              formControlName="exchangeOrderId"
+              placeholder="Enter Exchange Order ID"
+            />
+            <small class="text-muted">Link this sale order to an existing exchange order</small>
+          </div>
+        }
+
+        <!-- Status Field -->
+        <div class="col-md-6 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+          >
+            @for (status of statusOptions; track status.id) {
+              <option [ngValue]="status.id">
+                {{ status.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="saleOrderForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

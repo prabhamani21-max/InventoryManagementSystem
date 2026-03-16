@@ -1,0 +1,259 @@
+2026-02-24 15:24:11.7568|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-24 15:24:19.1395|0|INFO|InventoryManagementSystem.Repository.Data.DatabaseSeeder|Database already seeded. Skipping... 
+2026-02-24 15:24:21.5709|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/index.html | Body:  
+2026-02-24 15:24:21.9803|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  
+2026-02-24 15:24:31.3042|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-24 15:24:33.8864|0|INFO|InventoryManagementSystem.Repository.Data.DatabaseSeeder|Database already seeded. Skipping... 
+2026-02-24 15:24:36.3928|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/index.html | Body:  
+2026-02-24 15:24:36.8068|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  
+2026-02-24 15:26:06.4315|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/login | Body:  
+2026-02-24 15:26:06.4736|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/User/login | Body: {"identifier":"santosh@gmail.com","password":"Password@123"} 
+2026-02-24 15:26:06.6886|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/login 
+2026-02-24 15:26:07.6484|0|INFO|InventoryManagementSystem.Controllers.UserController|Login attempt for identifier: santosh@gmail.com 
+2026-02-24 15:26:08.2261|0|INFO|InventoryManagementSystem.Controllers.UserController|Login Successfull 
+2026-02-24 15:26:27.8443|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Category | Body:  
+2026-02-24 15:26:27.8660|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Category | Body:  
+2026-02-24 15:26:28.1615|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Category 
+2026-02-24 15:26:56.9263|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Category | Body:  
+2026-02-24 15:26:56.9532|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Category | Body:  
+2026-02-24 15:26:56.9621|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Category 
+2026-02-24 15:28:15.3549|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Category | Body:  
+2026-02-24 15:28:15.3696|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Category | Body: {"name":"Temple design short necklace","description":"Most intricate jewelery you have ever seen","parentId":1,"statusId":1} 
+2026-02-24 15:28:15.3808|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Category 
+2026-02-24 15:28:16.3039|0|INFO|InventoryManagementSystem.Repository.Implementation.CategoryRepository|Category Temple design short necklace created with ID 5 
+2026-02-24 15:28:16.3248|0|INFO|InventoryManagementSystem.Service.Implementation.CategoryService|Category Temple design short necklace created successfully 
+2026-02-24 15:28:16.4206|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Category | Body:  
+2026-02-24 15:28:16.4267|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Category 
+2026-02-24 15:29:26.6823|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock | Body:  
+2026-02-24 15:29:26.6823|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-24 15:29:26.6823|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Warehouse | Body:  
+2026-02-24 15:29:26.7613|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:29:26.7613|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:29:26.7999|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Warehouse | Body:  
+2026-02-24 15:29:26.7999|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock | Body:  
+2026-02-24 15:29:26.7999|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock 
+2026-02-24 15:29:26.7999|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Warehouse 
+2026-02-24 15:29:26.8215|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:29:26.8457|0|INFO|InventoryManagementSystem.Controllers.WarehouseController|Fetching all warehouses 
+2026-02-24 15:29:26.8457|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching all item stocks 
+2026-02-24 15:29:55.9288|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/GetAllUsers | Body:  
+2026-02-24 15:29:55.9288|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /hubs/user/negotiate | Body:  
+2026-02-24 15:29:55.9484|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/User/GetAllUsers | Body:  
+2026-02-24 15:29:55.9484|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/GetAllUsers 
+2026-02-24 15:29:55.9562|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /hubs/user/negotiate | Body:  
+2026-02-24 15:29:55.9562|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /hubs/user/negotiate 
+2026-02-24 15:29:55.9883|0|INFO|InventoryManagementSystem.Controllers.UserController|Fetching all users 
+2026-02-24 15:29:57.5178|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Role/GetAllRoles | Body:  
+2026-02-24 15:29:57.5439|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Role/GetAllRoles | Body:  
+2026-02-24 15:29:57.5439|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Role/GetAllRoles 
+2026-02-24 15:30:03.9465|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Warehouse | Body:  
+2026-02-24 15:30:03.9570|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Warehouse | Body:  
+2026-02-24 15:30:03.9723|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Warehouse 
+2026-02-24 15:30:03.9956|0|INFO|InventoryManagementSystem.Controllers.WarehouseController|Fetching all warehouses 
+2026-02-24 15:30:16.3691|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Warehouse | Body:  
+2026-02-24 15:30:16.3691|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock | Body:  
+2026-02-24 15:30:16.3691|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-24 15:30:16.3784|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Warehouse | Body:  
+2026-02-24 15:30:16.3784|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Warehouse 
+2026-02-24 15:30:16.4044|0|INFO|InventoryManagementSystem.Controllers.WarehouseController|Fetching all warehouses 
+2026-02-24 15:30:16.4044|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:30:16.4114|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:30:16.4114|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock | Body:  
+2026-02-24 15:30:16.4114|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock 
+2026-02-24 15:30:16.4608|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching all item stocks 
+2026-02-24 15:30:16.5001|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:30:18.3709|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Warehouse | Body:  
+2026-02-24 15:30:18.3709|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Warehouse 
+2026-02-24 15:30:18.3799|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:30:18.3799|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:30:18.3799|0|INFO|InventoryManagementSystem.Controllers.WarehouseController|Fetching all warehouses 
+2026-02-24 15:30:18.4238|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:30:27.8657|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-24 15:30:27.8657|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Warehouse | Body:  
+2026-02-24 15:30:27.8657|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock | Body:  
+2026-02-24 15:30:27.8657|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:30:27.8657|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:30:27.8657|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Warehouse | Body:  
+2026-02-24 15:30:27.8657|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Warehouse 
+2026-02-24 15:30:27.8657|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock | Body:  
+2026-02-24 15:30:27.8780|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock 
+2026-02-24 15:30:27.8780|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:30:27.8944|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching all item stocks 
+2026-02-24 15:30:27.8944|0|INFO|InventoryManagementSystem.Controllers.WarehouseController|Fetching all warehouses 
+2026-02-24 15:30:39.4236|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Role/GetAllRoles | Body:  
+2026-02-24 15:30:39.4327|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/GetAllUsers | Body:  
+2026-02-24 15:30:39.4787|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Role/GetAllRoles | Body:  
+2026-02-24 15:30:39.4787|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/User/GetAllUsers | Body:  
+2026-02-24 15:30:39.4787|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Role/GetAllRoles 
+2026-02-24 15:30:39.4787|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/GetAllUsers 
+2026-02-24 15:30:39.5505|0|INFO|InventoryManagementSystem.Controllers.UserController|Fetching all users 
+2026-02-24 15:31:23.3463|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Exchange | Body:  
+2026-02-24 15:31:23.3677|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Exchange | Body:  
+2026-02-24 15:31:23.3677|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Exchange 
+2026-02-24 15:32:02.8837|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Exchange | Body:  
+2026-02-24 15:32:02.8971|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Exchange | Body:  
+2026-02-24 15:32:02.8971|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Exchange 
+2026-02-24 15:32:08.3709|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Role/GetAllRoles | Body:  
+2026-02-24 15:32:08.3709|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/GetAllUsers | Body:  
+2026-02-24 15:32:08.3952|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/User/GetAllUsers | Body:  
+2026-02-24 15:32:08.3952|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Role/GetAllRoles | Body:  
+2026-02-24 15:32:08.3952|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Role/GetAllRoles 
+2026-02-24 15:32:08.3952|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/GetAllUsers 
+2026-02-24 15:32:08.4233|0|INFO|InventoryManagementSystem.Controllers.UserController|Fetching all users 
+2026-02-24 15:32:13.5952|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/SaleOrder | Body:  
+2026-02-24 15:32:13.6141|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/SaleOrder | Body: {"customerId":7,"orderDate":"2026-02-24","deliveryDate":null,"isExchangeSale":false,"exchangeOrderId":null,"statusId":1} 
+2026-02-24 15:32:13.6141|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/SaleOrder 
+2026-02-24 15:32:13.7344|0|INFO|InventoryManagementSystem.Controllers.SaleOrderController|Creating sale order: SO-20260224-62EBEB 
+2026-02-24 15:32:14.0425|0|INFO|InventoryManagementSystem.Services.SaleOrderNotificationService|Sent sale order creation notification for Order SO-20260224-62EBEB 
+2026-02-24 15:32:14.0533|0|INFO|InventoryManagementSystem.Controllers.SaleOrderController|Sale order created successfully ID: 10, OrderNumber: SO-20260224-62EBEB 
+2026-02-24 15:32:14.1022|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-24 15:32:14.1022|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:32:14.1112|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:32:14.1385|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:32:14.1828|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/MetalRate/current | Body:  
+2026-02-24 15:32:14.1917|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/MetalRate/current | Body:  
+2026-02-24 15:32:14.1917|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/MetalRate/current 
+2026-02-24 15:32:14.2094|0|INFO|InventoryManagementSystem.Controllers.MetalRateController|Getting all current rates 
+2026-02-24 15:32:14.2094|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting all current rates 
+2026-02-24 15:32:14.3173|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 1 
+2026-02-24 15:32:14.4208|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 1 
+2026-02-24 15:32:14.4909|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 2 
+2026-02-24 15:32:14.5044|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 3 
+2026-02-24 15:32:14.5183|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 2 
+2026-02-24 15:32:14.5183|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 5 
+2026-02-24 15:32:14.5525|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 4 
+2026-02-24 15:32:14.5684|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rates for metal 3 
+2026-02-24 15:32:14.5824|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 6 
+2026-02-24 15:32:14.6392|0|WARN|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|No rate found for purity 6 
+2026-02-24 15:32:14.6517|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting current rate for purity 7 
+2026-02-24 15:32:14.6651|0|WARN|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|No rate found for purity 7 
+2026-02-24 15:32:34.1586|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock/by-item/1 | Body:  
+2026-02-24 15:32:34.1586|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock/by-item/1 | Body:  
+2026-02-24 15:32:34.1586|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock/by-item/1 | Body:  
+2026-02-24 15:32:34.2067|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock/by-item/1 | Body:  
+2026-02-24 15:32:34.2067|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock/by-item/1 
+2026-02-24 15:32:34.2346|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching item stock by JewelleryItemId: 1 
+2026-02-24 15:32:34.7553|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock/by-item/1 | Body:  
+2026-02-24 15:32:34.7553|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock/by-item/1 
+2026-02-24 15:32:34.7703|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching item stock by JewelleryItemId: 1 
+2026-02-24 15:32:34.7990|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock/by-item/1 | Body:  
+2026-02-24 15:32:34.7990|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock/by-item/1 
+2026-02-24 15:32:34.7990|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching item stock by JewelleryItemId: 1 
+2026-02-24 15:33:14.1020|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock/by-item/2 | Body:  
+2026-02-24 15:33:14.1020|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock/by-item/2 | Body:  
+2026-02-24 15:33:14.1020|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/ItemStock/by-item/2 | Body:  
+2026-02-24 15:33:14.1683|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock/by-item/2 | Body:  
+2026-02-24 15:33:14.1683|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock/by-item/2 
+2026-02-24 15:33:14.1750|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching item stock by JewelleryItemId: 2 
+2026-02-24 15:33:14.2181|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock/by-item/2 | Body:  
+2026-02-24 15:33:14.2216|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock/by-item/2 
+2026-02-24 15:33:14.2410|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching item stock by JewelleryItemId: 2 
+2026-02-24 15:33:14.2734|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/ItemStock/by-item/2 | Body:  
+2026-02-24 15:33:14.2734|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/ItemStock/by-item/2 
+2026-02-24 15:33:14.2734|0|INFO|InventoryManagementSystem.Controllers.ItemStockController|Fetching item stock by JewelleryItemId: 2 
+2026-02-24 15:33:48.9435|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/SaleOrderItem/calculate | Body:  
+2026-02-24 15:33:48.9866|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/SaleOrderItem/calculate | Body: {"saleOrderId":10,"jewelleryItemId":2,"quantity":1,"discountAmount":0,"gstPercentage":3,"stoneAmount":null} 
+2026-02-24 15:33:48.9866|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/SaleOrderItem/calculate 
+2026-02-24 15:33:49.0629|0|INFO|InventoryManagementSystem.Controllers.SaleOrderItemController|Creating sale order item with automatic price calculation for JewelleryItemId: 2 
+2026-02-24 15:33:49.2230|0|INFO|InventoryManagementSystem.Service.Implementation.SaleOrderItemService|Metal Rate Lookup: MetalId=1, PurityId=2, NetMetalWeight=18.63 
+2026-02-24 15:33:49.2889|0|INFO|InventoryManagementSystem.Repository.Implementation.MetalRateRepository|Getting latest rate per gram for purity 2 
+2026-02-24 15:33:49.3521|0|INFO|InventoryManagementSystem.Service.Implementation.SaleOrderItemService|Metal Rate Result: PurityId=2, RatePerGram=14600, MetalAmount=271998.00 
+2026-02-24 15:33:50.1023|0|INFO|InventoryManagementSystem.Repository.Implementation.ItemStockRepository|Reserved 1 units of JewelleryItemId: 2 
+2026-02-24 15:33:50.1121|0|INFO|InventoryManagementSystem.Service.Implementation.SaleOrderItemService|Successfully reserved 1 units for JewelleryItemId: 2 
+2026-02-24 15:33:50.1308|0|INFO|InventoryManagementSystem.Controllers.SaleOrderItemController|Sale order item created successfully with automatic calculation. ID: 12, TotalAmount: 316578.4722 
+2026-02-24 15:35:09.1583|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Payment | Body:  
+2026-02-24 15:35:09.2282|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Payment | Body: {"orderId":10,"orderType":"SALE","customerId":7,"salesPersonId":null,"amount":316578.47,"paymentMethod":"Card","paymentDate":"2026-02-24","referenceNumber":null,"statusId":1} 
+2026-02-24 15:35:09.2282|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Payment 
+2026-02-24 15:35:09.3046|0|INFO|InventoryManagementSystem.Controllers.PaymentController|Creating payment for OrderId: 10 
+2026-02-24 15:35:09.9541|0|INFO|InventoryManagementSystem.Controllers.PaymentController|Payment created successfully ID: 5 
+2026-02-24 15:36:22.7550|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Payment | Body:  
+2026-02-24 15:36:22.8141|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Payment | Body:  
+2026-02-24 15:36:22.8141|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Payment 
+2026-02-24 15:36:22.8621|0|INFO|InventoryManagementSystem.Controllers.PaymentController|Fetching all payments 
+2026-02-24 15:36:44.7378|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/SaleOrder/10 | Body:  
+2026-02-24 15:36:44.7783|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/SaleOrder/10 | Body:  
+2026-02-24 15:36:44.7783|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/SaleOrder/10 
+2026-02-24 15:36:44.8072|0|INFO|InventoryManagementSystem.Controllers.SaleOrderController|Fetching sale order by ID: 10 
+2026-02-24 15:36:52.3597|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Invoice/generate | Body:  
+2026-02-24 15:36:52.3795|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/Invoice/generate | Body: {"saleOrderId":10,"includeTermsAndConditions":true} 
+2026-02-24 15:36:52.3925|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Invoice/generate 
+2026-02-24 15:36:52.4406|0|INFO|InventoryManagementSystem.Controllers.InvoiceController|Invoice generation requested for Sale Order 10 
+2026-02-24 15:36:52.4635|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Generating invoice for Sale Order 10 
+2026-02-24 15:36:52.5324|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Generating invoice for Sale Order 10 
+2026-02-24 15:36:54.5737|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Deducted 1 units from stock for JewelleryItemId: 2. Remaining: 4 
+2026-02-24 15:36:54.5810|0|INFO|InventoryManagementSystem.Repository.Implementation.InvoiceRepository|Invoice INV/25-26/000008 generated successfully 
+2026-02-24 15:36:54.6225|0|INFO|InventoryManagementSystem.Service.Implementation.InvoiceService|Invoice INV/25-26/000008 generated successfully 
+2026-02-24 15:39:01.8820|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Role/GetAllRoles | Body:  
+2026-02-24 15:39:01.8820|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/GetAllUsers | Body:  
+2026-02-24 15:39:01.8977|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Role/GetAllRoles | Body:  
+2026-02-24 15:39:01.8977|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/User/GetAllUsers | Body:  
+2026-02-24 15:39:01.8977|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Role/GetAllRoles 
+2026-02-24 15:39:01.8977|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/GetAllUsers 
+2026-02-24 15:39:01.8977|0|INFO|InventoryManagementSystem.Controllers.UserController|Fetching all users 
+2026-02-24 15:39:12.0416|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-24 15:39:12.0416|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:39:12.0416|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:39:12.0516|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:39:18.9596|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem/1 | Body:  
+2026-02-24 15:39:18.9596|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Purity | Body:  
+2026-02-24 15:39:18.9596|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Category | Body:  
+2026-02-24 15:39:18.9596|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Metal | Body:  
+2026-02-24 15:39:18.9596|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Stone | Body:  
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Category | Body:  
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Category 
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Purity | Body:  
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Purity 
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Stone | Body:  
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem/1 | Body:  
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Metal | Body:  
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem/1 
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Metal 
+2026-02-24 15:39:18.9724|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Stone 
+2026-02-24 15:39:19.0096|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching jewellery item by ID: 1 
+2026-02-24 15:39:19.0096|0|INFO|InventoryManagementSystem.Controllers.PurityController|Fetching all purities 
+2026-02-24 15:39:19.0096|0|INFO|InventoryManagementSystem.Controllers.StoneController|Fetching all stones 
+2026-02-24 15:39:19.0096|0|INFO|InventoryManagementSystem.Controllers.MetalController|Fetching all metals 
+2026-02-24 15:39:28.8317|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-24 15:39:28.8317|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:39:28.8317|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:39:28.8317|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:50:13.2352|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/User/login | Body:  
+2026-02-24 15:50:13.2697|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] POST /api/User/login | Body: {"identifier":"santosh@gmail.com","password":"Password@123"} 
+2026-02-24 15:50:13.2697|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/User/login 
+2026-02-24 15:50:13.2697|0|INFO|InventoryManagementSystem.Controllers.UserController|Login attempt for identifier: santosh@gmail.com 
+2026-02-24 15:50:13.3415|0|INFO|InventoryManagementSystem.Controllers.UserController|Login Successfull 
+2026-02-24 15:50:17.7861|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Payment | Body:  
+2026-02-24 15:50:17.7861|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Payment | Body:  
+2026-02-24 15:50:17.7861|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Payment 
+2026-02-24 15:50:17.7861|0|INFO|InventoryManagementSystem.Controllers.PaymentController|Fetching all payments 
+2026-02-24 15:50:27.3859|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/SaleOrderItem | Body:  
+2026-02-24 15:50:27.3936|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/SaleOrderItem | Body:  
+2026-02-24 15:50:27.3936|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/SaleOrderItem 
+2026-02-24 15:50:27.3936|0|INFO|InventoryManagementSystem.Controllers.SaleOrderItemController|Fetching all sale order items 
+2026-02-24 15:50:39.5610|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-24 15:50:39.5654|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:50:39.5654|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:50:39.5654|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:50:41.4907|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Category | Body:  
+2026-02-24 15:50:41.4907|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Stone | Body:  
+2026-02-24 15:50:41.4907|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Metal | Body:  
+2026-02-24 15:50:41.4907|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/Purity | Body:  
+2026-02-24 15:50:41.5266|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Category | Body:  
+2026-02-24 15:50:41.5266|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Stone | Body:  
+2026-02-24 15:50:41.5266|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Metal | Body:  
+2026-02-24 15:50:41.5266|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Metal 
+2026-02-24 15:50:41.5266|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Stone 
+2026-02-24 15:50:41.5266|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Category 
+2026-02-24 15:50:41.5359|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/Purity | Body:  
+2026-02-24 15:50:41.5359|0|INFO|InventoryManagementSystem.Controllers.StoneController|Fetching all stones 
+2026-02-24 15:50:41.5359|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/Purity 
+2026-02-24 15:50:41.5359|0|INFO|InventoryManagementSystem.Controllers.MetalController|Fetching all metals 
+2026-02-24 15:50:41.5510|0|INFO|InventoryManagementSystem.Controllers.PurityController|Fetching all purities 
+2026-02-24 15:50:57.6309|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] OPTIONS /api/JewelleryItem | Body:  
+2026-02-24 15:50:57.6309|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /api/JewelleryItem | Body:  
+2026-02-24 15:50:57.6309|0|INFO|InventoryManagementSystem.Middlewares.ApiResponseMiddleware|MIDDLEWARE CHECK: Request Path is /api/JewelleryItem 
+2026-02-24 15:50:57.6309|0|INFO|InventoryManagementSystem.Controllers.JewelleryItemController|Fetching all jewellery items 
+2026-02-24 15:53:49.8723|0|INFO|InventoryManagementSystem.Program|Starting Inventory Management System  Web API 
+2026-02-24 15:53:53.5589|0|INFO|InventoryManagementSystem.Repository.Data.DatabaseSeeder|Database already seeded. Skipping... 
+2026-02-24 15:53:55.4118|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/index.html | Body:  
+2026-02-24 15:53:55.6861|0|INFO|InventoryManagementSystem.Middlewares.RequestResponseLoggingMiddleware|[Request] GET /swagger/v1/swagger.json | Body:  

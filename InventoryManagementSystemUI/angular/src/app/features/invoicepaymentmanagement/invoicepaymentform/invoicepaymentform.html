@@ -1,0 +1,210 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Payment' : 'Add Payment'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading payment data...</p>
+    </div>
+  }
+
+  <!-- Payment Form -->
+  @if (!isLoading) {
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" class="payment-form">
+      <div class="row">
+        <!-- Order Information Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Order Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Order ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="orderId" class="form-label">
+            Order ID
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="orderId"
+            formControlName="orderId"
+            placeholder="Enter order ID (optional)"
+          />
+          <small class="text-muted">Associated sale or purchase order ID</small>
+        </div>
+
+        <!-- Order Type Field -->
+        <div class="col-md-6 mb-3">
+          <label for="orderType" class="form-label">
+            Order Type <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="orderType"
+            formControlName="orderType"
+            [class.is-invalid]="hasError('orderType')"
+          >
+            @for (type of transactionTypeOptions; track type.value) {
+              <option [ngValue]="type.value">
+                {{ type.label }}
+              </option>
+            }
+          </select>
+          @if (hasError('orderType')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('orderType') }}
+            </div>
+          }
+        </div>
+
+        <!-- Customer & Sales Person Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Customer & Sales Person</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Customer ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="customerId" class="form-label">
+            Customer ID
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="customerId"
+            formControlName="customerId"
+            placeholder="Enter customer ID (optional)"
+          />
+          <small class="text-muted">Customer who made the payment</small>
+        </div>
+
+        <!-- Sales Person ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="salesPersonId" class="form-label">
+            Sales Person ID
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="salesPersonId"
+            formControlName="salesPersonId"
+            placeholder="Enter sales person ID (optional)"
+          />
+          <small class="text-muted">Sales person who processed the payment</small>
+        </div>
+
+        <!-- Payment Details Section -->
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-3">Payment Details</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Amount Field -->
+        <div class="col-md-6 mb-3">
+          <label for="amount" class="form-label">
+            Amount <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input
+              type="number"
+              class="form-control"
+              id="amount"
+              formControlName="amount"
+              placeholder="Enter amount"
+              step="0.01"
+              min="0"
+              [class.is-invalid]="hasError('amount')"
+            />
+          </div>
+          @if (hasError('amount')) {
+            <div class="invalid-feedback d-block">
+              {{ getErrorMessage('amount') }}
+            </div>
+          }
+        </div>
+
+        <!-- Payment Method Field -->
+        <div class="col-md-6 mb-3">
+          <label for="paymentMethod" class="form-label">
+            Payment Method <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="paymentMethod"
+            formControlName="paymentMethod"
+            [class.is-invalid]="hasError('paymentMethod')"
+          >
+            @for (method of paymentMethodOptions; track method.value) {
+              <option [ngValue]="method.value">
+                {{ method.label }}
+              </option>
+            }
+          </select>
+          @if (hasError('paymentMethod')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('paymentMethod') }}
+            </div>
+          }
+        </div>
+
+        <!-- Payment Date Field -->
+        <div class="col-md-6 mb-3">
+          <label for="paymentDate" class="form-label">
+            Payment Date <span class="text-danger">*</span>
+          </label>
+          <input
+            type="date"
+            class="form-control"
+            id="paymentDate"
+            formControlName="paymentDate"
+            [class.is-invalid]="hasError('paymentDate')"
+          />
+          @if (hasError('paymentDate')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('paymentDate') }}
+            </div>
+          }
+        </div>
+
+        <!-- Reference Number Field -->
+        <div class="col-md-6 mb-3">
+          <label for="referenceNumber" class="form-label">
+            Reference Number
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="referenceNumber"
+            formControlName="referenceNumber"
+            placeholder="Enter reference number (optional)"
+          />
+          <small class="text-muted">Transaction reference, cheque number, etc.</small>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="paymentForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

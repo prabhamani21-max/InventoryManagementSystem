@@ -1,0 +1,81 @@
+<app-card [cardTitle]="isEditMode ? 'Edit General Status' : 'Add General Status'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading general status data...</p>
+    </div>
+  }
+
+  <!-- General Status Form -->
+  @if (!isLoading) {
+    <form [formGroup]="generalStatusForm" (ngSubmit)="onSubmit()" class="general-status-form">
+      <div class="row">
+        <!-- Name Field -->
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">
+            General Status Name <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+            placeholder="Enter general status name"
+            [class.is-invalid]="hasError('name')"
+          />
+          @if (hasError('name')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('name') }}
+            </div>
+          }
+        </div>
+
+        <!-- Is Active Field -->
+        <div class="col-md-6 mb-3">
+          <label for="isActive" class="form-label">
+            Is Active <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="isActive"
+            formControlName="isActive"
+            [class.is-invalid]="hasError('isActive')"
+          >
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+          </select>
+          @if (hasError('isActive')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('isActive') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="generalStatusForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

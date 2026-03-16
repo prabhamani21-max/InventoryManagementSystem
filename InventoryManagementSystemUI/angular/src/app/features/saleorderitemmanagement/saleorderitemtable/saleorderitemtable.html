@@ -1,0 +1,110 @@
+<app-card cardTitle="Sale Order Item Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Sale Order Items</h5>
+    <button class="btn btn-primary" (click)="onAddSaleOrderItem()">
+      <i class="feather icon-plus me-2"></i>Add Sale Order Item
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading sale order items...</p>
+    </div>
+  }
+
+  <!-- Sale Order Items Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Item Name</th>
+            <th>Sale Order</th>
+            <th>Qty</th>
+            <th>Gross Wt.</th>
+            <th>Metal Amount</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (saleOrderItems.length === 0) {
+            <tr>
+              <td colspan="9" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No sale order items found. Click "Add Sale Order Item" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (item of saleOrderItems; track item.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">#{{ item.id }}</span>
+              </td>
+              <td>
+                <div>
+                  <span class="fw-medium">{{ item.itemName }}</span>
+                  @if (item.itemCode) {
+                    <br><small class="text-muted">{{ item.itemCode }}</small>
+                  }
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark">
+                  <i class="feather icon-file-text me-1"></i>{{ item.saleOrderNumber || ('Order #' + item.saleOrderId) }}
+                </span>
+              </td>
+              <td>
+                <span class="badge bg-secondary">{{ item.quantity }}</span>
+              </td>
+              <td>
+                <span>{{ formatWeight(item.grossWeight) }}</span>
+              </td>
+              <td>
+                <span>{{ formatCurrency(item.metalAmount) }}</span>
+              </td>
+              <td>
+                <span class="fw-medium text-success">{{ formatCurrency(item.totalAmount) }}</span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(item.statusId)">
+                  {{ getStatusLabel(item.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- View Button -->
+                  <button type="button" class="btn btn-sm btn-outline-info"
+                          (click)="onEditSaleOrderItem(item.id)" title="View/Edit">
+                    <i class="feather icon-eye"></i>
+                  </button>
+                  
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditSaleOrderItem(item.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteSaleOrderItem(item.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

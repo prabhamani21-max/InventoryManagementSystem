@@ -1,0 +1,167 @@
+<app-card [cardTitle]="isViewMode ? 'View Warehouse' : (isEditMode ? 'Edit Warehouse' : 'Add Warehouse')">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading warehouse data...</p>
+    </div>
+  }
+
+  <!-- View Mode - Warehouse Details -->
+  @if (!isLoading && isViewMode && warehouse) {
+    <div class="warehouse-details">
+      <!-- Warehouse Header Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="text-center mb-4">
+            <div class="warehouse-icon-large mx-auto mb-3">
+              <i class="feather icon-home" style="font-size: 2.5rem;"></i>
+            </div>
+            <h4 class="mb-1">{{ warehouse.name }}</h4>
+            <p class="text-muted mb-0">Warehouse #{{ warehouse.id }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warehouse Information -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Warehouse Information</h6>
+          <hr class="mt-0">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Warehouse ID</label>
+          <p class="fw-medium">#{{ warehouse.id }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Warehouse Name</label>
+          <p class="fw-medium">{{ warehouse.name }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Address</label>
+          <p class="fw-medium">{{ warehouse.address || '-' }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Manager</label>
+          <p class="fw-medium">{{ warehouse.managerName || '-' }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Status</label>
+          <p><span [ngClass]="getStatusClass(warehouse.statusId)">{{ getStatusLabel(warehouse.statusId) }}</span></p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          Back to List
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onEdit()">
+          <i class="feather icon-edit me-2"></i>Edit Warehouse
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Create/Edit Form -->
+  @if (!isLoading && !isViewMode) {
+    <form [formGroup]="warehouseForm" (ngSubmit)="onSubmit()" class="warehouse-form">
+      <div class="row">
+        <!-- Basic Information Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">Basic Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- Name Field -->
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">
+            Warehouse Name <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+            placeholder="Enter warehouse name"
+            [class.is-invalid]="hasError('name')"
+          />
+          @if (hasError('name')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('name') }}
+            </div>
+          }
+        </div>
+
+        <!-- Address Field -->
+        <div class="col-md-6 mb-3">
+          <label for="address" class="form-label">
+            Address
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="address"
+            formControlName="address"
+            placeholder="Enter warehouse address"
+          />
+        </div>
+
+        <!-- Manager ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="managerId" class="form-label">
+            Manager ID
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            id="managerId"
+            formControlName="managerId"
+            placeholder="Enter manager ID (optional)"
+          />
+        </div>
+
+        <!-- Status Field -->
+        <div class="col-md-6 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+          >
+            @for (status of statusOptions; track status.id) {
+              <option [value]="status.id">{{ status.name }}</option>
+            }
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || warehouseForm.invalid">
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          }
+          @if (isEditMode) {
+            Update Warehouse
+          } @else {
+            Create Warehouse
+          }
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

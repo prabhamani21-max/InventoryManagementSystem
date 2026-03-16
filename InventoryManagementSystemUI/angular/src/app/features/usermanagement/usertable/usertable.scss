@@ -1,0 +1,19 @@
+/**
+ * User Table Component Styles
+ */
+
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-initial {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6c757d;
+}

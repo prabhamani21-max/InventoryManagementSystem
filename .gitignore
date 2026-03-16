@@ -45,3 +45,4 @@ msbuild.wrn
 # Ignore logs
 Api/SalexiHRSystem/Logs/
 
+/.dotnet-home/.dotnet

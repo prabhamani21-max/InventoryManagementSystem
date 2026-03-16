@@ -1,0 +1,134 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Purity' : 'Add Purity'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading purity data...</p>
+    </div>
+  }
+
+  <!-- Purity Form -->
+  @if (!isLoading) {
+    <form [formGroup]="purityForm" (ngSubmit)="onSubmit()" class="purity-form">
+      <div class="row">
+        <!-- Metal Field -->
+        <div class="col-md-6 mb-3">
+          <label for="metalId" class="form-label">
+            Metal <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="metalId"
+            formControlName="metalId"
+            [class.is-invalid]="hasError('metalId')"
+          >
+            <option [ngValue]="null" disabled>Select Metal</option>
+            @for (metal of metals; track metal.id) {
+              <option [ngValue]="metal.id">
+                {{ metal.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('metalId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('metalId') }}
+            </div>
+          }
+        </div>
+
+        <!-- Name Field -->
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">
+            Purity Name <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+            placeholder="Enter purity name (e.g., 24K, 22K, 18K)"
+            [class.is-invalid]="hasError('name')"
+          />
+          @if (hasError('name')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('name') }}
+            </div>
+          }
+          <small class="text-muted">e.g., 24K, 22K, 18K, 14K</small>
+        </div>
+
+        <!-- Percentage Field -->
+        <div class="col-md-6 mb-3">
+          <label for="percentage" class="form-label">
+            Percentage <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <input
+              type="number"
+              class="form-control"
+              id="percentage"
+              formControlName="percentage"
+              placeholder="Enter purity percentage"
+              min="0"
+              max="100"
+              step="0.01"
+              [class.is-invalid]="hasError('percentage')"
+            />
+            <span class="input-group-text">%</span>
+          </div>
+          @if (hasError('percentage')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('percentage') }}
+            </div>
+          }
+          <small class="text-muted">Gold purity percentage (e.g., 99.9 for 24K, 91.6 for 22K)</small>
+        </div>
+
+        <!-- Status Field -->
+        <div class="col-md-6 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+          >
+            <option [ngValue]="1">Active</option>
+            <option [ngValue]="2">Inactive</option>
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="purityForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

@@ -1,0 +1,100 @@
+<app-card [cardTitle]="isEditMode ? 'Edit Stone' : 'Add Stone'">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading stone data...</p>
+    </div>
+  }
+
+  <!-- Stone Form -->
+  @if (!isLoading) {
+    <form [formGroup]="stoneForm" (ngSubmit)="onSubmit()" class="stone-form">
+      <div class="row">
+        <!-- Name Field -->
+        <div class="col-md-6 mb-3">
+          <label for="name" class="form-label">
+            Stone Name <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            formControlName="name"
+            placeholder="Enter stone name (e.g., Diamond, Emerald, Pearl)"
+            [class.is-invalid]="hasError('name')"
+          />
+          @if (hasError('name')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('name') }}
+            </div>
+          }
+        </div>
+
+        <!-- Unit Field -->
+        <div class="col-md-6 mb-3">
+          <label for="unit" class="form-label">Unit</label>
+          <input
+            type="text"
+            class="form-control"
+            id="unit"
+            formControlName="unit"
+            placeholder="Enter unit (e.g., Carat, Gram)"
+            [class.is-invalid]="hasError('unit')"
+          />
+          @if (hasError('unit')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('unit') }}
+            </div>
+          }
+          <small class="text-muted">Unit of measurement for the stone (e.g., Carat, Gram)</small>
+        </div>
+
+        <!-- Status Field -->
+        <div class="col-md-6 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+          >
+            <option [ngValue]="1">Active</option>
+            <option [ngValue]="2">Inactive</option>
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="stoneForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

@@ -1,0 +1,189 @@
+.step5-invoice {
+  .step-header {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+  }
+
+  .invoice-preview {
+    border: 2px solid #e9ecef;
+
+    .card-header {
+      border-bottom: 2px solid #e9ecef;
+    }
+  }
+
+  .invoice-header {
+    h4 {
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 0.95rem;
+    }
+  }
+
+  .invoice-meta-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+
+    .meta-pill {
+      border: 1px solid #dee2e6;
+      border-radius: 0.5rem;
+      padding: 0.625rem 0.75rem;
+      background-color: #f8f9fa;
+
+      .meta-label {
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: #6c757d;
+      }
+
+      .meta-value {
+        display: block;
+        margin-top: 0.1rem;
+        font-weight: 600;
+        color: #212529;
+      }
+    }
+  }
+
+  .customer-details {
+    h6 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .invoice-items {
+    .table {
+      th {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.45px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      td {
+        font-size: 0.85rem;
+        vertical-align: top;
+      }
+
+      tfoot td {
+        font-size: 0.82rem;
+      }
+    }
+
+    .item-name {
+      font-size: 0.9rem;
+    }
+  }
+
+  .invoice-summary {
+    .summary-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8f9fb 100%);
+    }
+
+    .totals-table {
+      td {
+        padding: 0.5rem;
+      }
+    }
+
+    .amount-words {
+      font-style: italic;
+    }
+  }
+
+  .terms-list {
+    margin: 0;
+    padding-left: 1.15rem;
+
+    li {
+      margin-bottom: 0.35rem;
+    }
+  }
+
+  .invoice-signoff {
+    min-height: 85px;
+
+    .signature-label {
+      font-size: 0.8rem;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .signature-line {
+      margin: 1.6rem 0 0.35rem auto;
+      width: 180px;
+      border-top: 1px solid #495057;
+    }
+  }
+
+  .sale-summary {
+    .summary-item {
+      height: 100%;
+    }
+  }
+
+  .generate-section {
+    .btn-lg {
+      padding: 1rem 2rem;
+    }
+  }
+}
+
+// Print Styles
+@media print {
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body.print-invoice-mode * {
+    visibility: hidden !important;
+  }
+
+  body.print-invoice-mode #invoice-preview,
+  body.print-invoice-mode #invoice-preview * {
+    visibility: visible !important;
+  }
+
+  body.print-invoice-mode #invoice-preview {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    z-index: 9999 !important;
+    background: #fff !important;
+    border: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body.print-invoice-mode .step5-invoice,
+  body.print-invoice-mode .invoice-generated {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.print-invoice-mode .invoice-actions,
+  body.print-invoice-mode .step-header,
+  body.print-invoice-mode .alert {
+    display: none !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 8mm;
+  }
+}

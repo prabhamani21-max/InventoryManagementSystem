@@ -1,0 +1,211 @@
+<app-card [cardTitle]="isViewMode ? 'View User KYC' : (isEditMode ? 'Edit User KYC' : 'Add User KYC')">
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading user KYC data...</p>
+    </div>
+  }
+
+  <!-- View Mode - User KYC Details -->
+  @if (!isLoading && isViewMode && userKyc) {
+    <div class="userkyc-details">
+      <!-- User KYC Information -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <h6 class="text-muted mb-3">User KYC Information</h6>
+          <hr class="mt-0">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">KYC ID</label>
+          <p class="fw-medium">#{{ userKyc.id }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">User</label>
+          <p class="fw-medium">{{ getUserName(userKyc.userId) }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">PAN Card Number</label>
+          <p class="fw-medium">{{ userKyc.panCardNumber || '-' }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Aadhaar Card Number</label>
+          <p class="fw-medium">{{ userKyc.aadhaarCardNumber }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Verification Status</label>
+          <p>
+            <span [ngClass]="userKyc.isVerified ? 'badge bg-success' : 'badge bg-warning'">
+              {{ userKyc.isVerified ? 'Verified' : 'Not Verified' }}
+            </span>
+          </p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label text-muted">Status</label>
+          <p>
+            <span [ngClass]="getStatusClass(userKyc.statusId)">{{ getStatusLabel(userKyc.statusId) }}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          Back to List
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onCancel()">
+          <i class="feather icon-edit me-2"></i>Edit User KYC
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Create/Edit Form -->
+  @if (!isLoading && !isViewMode) {
+    <form [formGroup]="userKycForm" (ngSubmit)="onSubmit()" class="userkyc-form">
+      <div class="row">
+        <!-- Basic Information Section -->
+        <div class="col-12">
+          <h6 class="text-muted mb-3">User KYC Information</h6>
+          <hr class="mt-0">
+        </div>
+
+        <!-- User Field -->
+        <div class="col-md-6 mb-3">
+          <label for="userId" class="form-label">
+            User <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="userId"
+            formControlName="userId"
+            [class.is-invalid]="hasError('userId')"
+            [attr.disabled]="isEditMode ? true : null"
+          >
+            <option value="">Select User</option>
+            @for (user of users; track user.id) {
+              <option [ngValue]="user.id">
+                {{ user.name }} ({{ user.email }})
+              </option>
+            }
+          </select>
+          @if (hasError('userId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('userId') }}
+            </div>
+          }
+        </div>
+
+        <!-- Status Field -->
+        <div class="col-md-6 mb-3">
+          <label for="statusId" class="form-label">
+            Status <span class="text-danger">*</span>
+          </label>
+          <select
+            class="form-select"
+            id="statusId"
+            formControlName="statusId"
+            [class.is-invalid]="hasError('statusId')"
+          >
+            @for (status of statusOptions; track status.id) {
+              <option [ngValue]="status.id">
+                {{ status.name }}
+              </option>
+            }
+          </select>
+          @if (hasError('statusId')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('statusId') }}
+            </div>
+          }
+        </div>
+
+        <!-- PAN Card Number Field -->
+        <div class="col-md-6 mb-3">
+          <label for="panCardNumber" class="form-label">
+            PAN Card Number
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="panCardNumber"
+            formControlName="panCardNumber"
+            placeholder="Enter PAN card number (e.g., ABCDE1234F)"
+            [class.is-invalid]="hasError('panCardNumber')"
+            maxlength="10"
+          />
+          @if (hasError('panCardNumber')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('panCardNumber') }}
+            </div>
+          }
+          <small class="text-muted">Format: ABCDE1234F</small>
+        </div>
+
+        <!-- Aadhaar Card Number Field -->
+        <div class="col-md-6 mb-3">
+          <label for="aadhaarCardNumber" class="form-label">
+            Aadhaar Card Number <span class="text-danger">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="aadhaarCardNumber"
+            formControlName="aadhaarCardNumber"
+            placeholder="Enter Aadhaar card number (12 digits)"
+            [class.is-invalid]="hasError('aadhaarCardNumber')"
+            maxlength="12"
+          />
+          @if (hasError('aadhaarCardNumber')) {
+            <div class="invalid-feedback">
+              {{ getErrorMessage('aadhaarCardNumber') }}
+            </div>
+          }
+          <small class="text-muted">Format: 12 digits</small>
+        </div>
+
+        <!-- Is Verified Field -->
+        <div class="col-md-6 mb-3">
+          <label for="isVerified" class="form-label">
+            Verification Status <span class="text-danger">*</span>
+          </label>
+          <div class="form-check form-switch mt-2">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="isVerified"
+              formControlName="isVerified"
+            />
+            <label class="form-check-label" for="isVerified">
+              {{ userKycForm.get('isVerified')?.value ? 'Verified' : 'Not Verified' }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="userKycForm.invalid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+          }
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  }
+</app-card>

@@ -1,0 +1,129 @@
+<app-card cardTitle="Stone Rate History Management" [customHeader]="true">
+  <!-- Header with Add Button and Search -->
+  <div class="app-card-header d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">Stone Rates</h5>
+    <div class="d-flex gap-2">
+      <!-- Search Input -->
+      <div class="input-group" style="width: 350px;">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by stone, cut, color, clarity..."
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+        />
+        <button class="btn btn-outline-secondary" type="button" (click)="onSearch()">
+          <i class="feather icon-search"></i>
+        </button>
+        @if (searchTerm) {
+          <button class="btn btn-outline-secondary" type="button" (click)="onClearSearch()">
+            <i class="feather icon-x"></i>
+          </button>
+        }
+      </div>
+      <!-- Add Button -->
+      <button class="btn btn-primary" (click)="onAddStoneRate()">
+        <i class="feather icon-plus me-2"></i>Add Stone Rate
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading stone rates...</p>
+    </div>
+  }
+
+  <!-- Stone Rates Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Stone Name</th>
+            <th>Carat</th>
+            <th>Cut</th>
+            <th>Color</th>
+            <th>Clarity</th>
+            <th>Grade</th>
+            <th>Rate Per Unit</th>
+            <th>Effective Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredStoneRates.length === 0) {
+            <tr>
+              <td colspan="10" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  @if (searchTerm) {
+                    No stone rates found matching "{{ searchTerm }}". Try a different search term.
+                  } @else {
+                    No stone rates found. Click "Add Stone Rate" to create one.
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+          @for (stoneRate of filteredStoneRates; track stoneRate.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">{{ stoneRate.stoneName || '-' }}</span>
+                @if (stoneRate.stoneUnit) {
+                  <small class="text-muted d-block">({{ stoneRate.stoneUnit }})</small>
+                }
+              </td>
+              <td>
+                <span class="text-muted">{{ stoneRate.carat }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ stoneRate.cut || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ stoneRate.color || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ stoneRate.clarity || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ stoneRate.grade || '-' }}</span>
+              </td>
+              <td>
+                <span class="fw-medium text-success">{{ formatCurrency(stoneRate.ratePerUnit) }}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{ formatDate(stoneRate.effectiveDate) }}</span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(stoneRate.statusId)">
+                  {{ getStatusLabel(stoneRate.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- History Button -->
+                  <button type="button" class="btn btn-sm btn-outline-info" 
+                          (click)="onViewHistory(stoneRate.stoneId)" title="View History">
+                    <i class="feather icon-clock"></i>
+                  </button>
+                  
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditStoneRate(stoneRate.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

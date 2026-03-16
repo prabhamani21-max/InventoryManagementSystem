@@ -1,0 +1,99 @@
+<app-card cardTitle="Category Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Categories</h5>
+    <button class="btn btn-primary" (click)="onAddCategory()">
+      <i class="feather icon-plus me-2"></i>Add Category
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading categories...</p>
+    </div>
+  }
+
+  <!-- Categories Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Parent Category</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (flattenedCategories.length === 0) {
+            <tr>
+              <td colspan="5" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No categories found. Click "Add Category" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (category of flattenedCategories; track category.id) {
+            <tr>
+              <td>
+                <span [style.padding-left.px]="category.indent.length * 4" class="fw-medium">
+                  @if (category.indent) {
+                    <i class="feather icon-corner-down-right me-1 text-muted"></i>
+                  }
+                  {{ category.name }}
+                </span>
+              </td>
+              <td>
+                <span class="text-truncate d-inline-block" style="max-width: 200px;" [title]="category.description || ''">
+                  {{ category.description || '-' }}
+                </span>
+              </td>
+              <td>{{ getParentName(category.parentId) }}</td>
+              <td>
+                <span [ngClass]="getStatusClass(category.statusId)">
+                  {{ getStatusLabel(category.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditCategory(category.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Activate/Deactivate Button -->
+                  @if (category.statusId === 1) {
+                    <button type="button" class="btn btn-sm btn-outline-warning" 
+                            (click)="onDeactivateCategory(category.id)" title="Deactivate">
+                      <i class="feather icon-slash"></i>
+                    </button>
+                  } @else {
+                    <button type="button" class="btn btn-sm btn-outline-success" 
+                            (click)="onActivateCategory(category.id)" title="Activate">
+                      <i class="feather icon-check-circle"></i>
+                    </button>
+                  }
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteCategory(category.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

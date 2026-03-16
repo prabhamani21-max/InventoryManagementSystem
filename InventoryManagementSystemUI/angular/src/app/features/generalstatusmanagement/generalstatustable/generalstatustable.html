@@ -1,0 +1,73 @@
+<app-card cardTitle="General Status Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">General Statuses</h5>
+    <button class="btn btn-primary" (click)="onAddGeneralStatus()">
+      <i class="feather icon-plus me-2"></i>Add General Status
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading general statuses...</p>
+    </div>
+  }
+
+  <!-- General Statuses Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (generalStatuses.length === 0) {
+            <tr>
+              <td colspan="4" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No general statuses found. Click "Add General Status" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (status of generalStatuses; track status.id) {
+            <tr>
+              <td>{{ status.id }}</td>
+              <td class="fw-medium">{{ status.name }}</td>
+              <td>
+                <span [ngClass]="getStatusClass(status.isActive)">
+                  {{ getStatusLabel(status.isActive) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditGeneralStatus(status.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeleteGeneralStatus(status.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>

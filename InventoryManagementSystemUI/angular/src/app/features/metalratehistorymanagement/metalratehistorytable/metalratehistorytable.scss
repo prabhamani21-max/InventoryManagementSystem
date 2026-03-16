@@ -1,0 +1,25 @@
+// Metal Rate History Table Styles
+
+.app-card-header {
+  .form-check-input {
+    width: 3rem;
+    height: 1.25rem;
+    cursor: pointer;
+  }
+  
+  .form-check-label {
+    font-weight: 500;
+    color: #495057;
+  }
+}
+
+.table-responsive {
+  th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+  }
+  
+  td {
+    vertical-align: middle;
+  }
+}

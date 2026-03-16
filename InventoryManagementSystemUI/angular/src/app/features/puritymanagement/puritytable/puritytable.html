@@ -1,0 +1,79 @@
+<app-card cardTitle="Purity Management" [customHeader]="true">
+  <!-- Header with Add Button -->
+  <div class="app-card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Purities</h5>
+    <button class="btn btn-primary" (click)="onAddPurity()">
+      <i class="feather icon-plus me-2"></i>Add Purity
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading purities...</p>
+    </div>
+  }
+
+  <!-- Purities Table -->
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Metal</th>
+            <th>Percentage</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (purities.length === 0) {
+            <tr>
+              <td colspan="5" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
+                  No purities found. Click "Add Purity" to create one.
+                </div>
+              </td>
+            </tr>
+          }
+          @for (purity of purities; track purity.id) {
+            <tr>
+              <td>
+                <span class="fw-medium">{{ purity.name }}</span>
+              </td>
+              <td>{{ getMetalName(purity.metalId) }}</td>
+              <td>
+                <span class="badge bg-info">{{ purity.percentage }}%</span>
+              </td>
+              <td>
+                <span [ngClass]="getStatusClass(purity.statusId)">
+                  {{ getStatusLabel(purity.statusId) }}
+                </span>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <!-- Edit Button -->
+                  <button type="button" class="btn btn-sm btn-outline-primary" 
+                          (click)="onEditPurity(purity.id)" title="Edit">
+                    <i class="feather icon-edit"></i>
+                  </button>
+                  
+                  <!-- Delete Button -->
+                  <button type="button" class="btn btn-sm btn-outline-danger" 
+                          (click)="onDeletePurity(purity.id)" title="Delete">
+                    <i class="feather icon-trash-2"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</app-card>
