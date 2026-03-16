@@ -1,10 +1,7 @@
 <app-card cardTitle="Invoice Item Management" [customHeader]="true">
-  <!-- Header with Add Button -->
-  <div class="app-card-header d-flex justify-content-between align-items-center">
+  <!-- Header -->
+  <div class="app-card-header">
     <h5 class="mb-0">Invoice Items</h5>
-    <button class="btn btn-primary" (click)="onAddInvoiceItem()">
-      <i class="feather icon-plus me-2"></i>Add Invoice Item
-    </button>
   </div>
 
   <!-- Loading Spinner -->
@@ -40,7 +37,7 @@
               <td colspan="9" class="text-center py-4">
                 <div class="text-muted">
                   <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
-                  No invoice items found. Click "Add Invoice Item" to create one.
+                  No invoice items found.
                 </div>
               </td>
             </tr>
@@ -82,18 +79,6 @@
               </td>
               <td>
                 <div class="btn-group" role="group">
-                  <!-- View Button -->
-                  <button type="button" class="btn btn-sm btn-outline-info"
-                          (click)="onEditInvoiceItem(item.id)" title="View/Edit">
-                    <i class="feather icon-eye"></i>
-                  </button>
-                  
-                  <!-- Edit Button -->
-                  <button type="button" class="btn btn-sm btn-outline-primary" 
-                          (click)="onEditInvoiceItem(item.id)" title="Edit">
-                    <i class="feather icon-edit"></i>
-                  </button>
-                  
                   <!-- Delete Button -->
                   <button type="button" class="btn btn-sm btn-outline-danger" 
                           (click)="onDeleteInvoiceItem(item.id)" title="Delete">

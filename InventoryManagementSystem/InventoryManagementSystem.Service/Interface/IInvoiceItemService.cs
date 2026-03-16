@@ -1,12 +1,12 @@
 using InventoryManagementSystem.Common.Models;
 
-namespace InventoryManagementSystem.Repository.Interface
+namespace InventoryManagementSystem.Service.Interface
 {
     /// <summary>
-    /// Invoice Item Repository Interface
-    /// Handles data operations for invoice items only (ISP compliance)
+    /// Invoice Item Service Interface
+    /// Business logic layer for invoice item operations (Three-tier architecture compliance)
     /// </summary>
-    public interface IInvoiceItemRepository
+    public interface IInvoiceItemService
     {
         /// <summary>
         /// Get a specific invoice item by ID

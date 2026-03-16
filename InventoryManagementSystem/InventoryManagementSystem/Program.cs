@@ -138,6 +138,7 @@ try
     builder.Services.AddScoped<IInvoiceTaxService, InvoiceTaxService>();
     builder.Services.AddScoped<IInvoiceNumberService, InvoiceNumberService>();
     builder.Services.AddScoped<ITcsService, TcsService>();
+    builder.Services.AddScoped<IInvoiceItemService, InvoiceItemService>();
 
     // SignalR Services
     builder.Services.AddScoped<IUserNotificationService, UserNotificationService>();

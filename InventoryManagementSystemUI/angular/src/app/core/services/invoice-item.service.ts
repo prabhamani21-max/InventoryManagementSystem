@@ -11,8 +11,18 @@ import { ApiResponse } from '../models/api-response.model';
 import { ToastrService } from 'ngx-toastr';
 
 /**
+ * Internal response type for InvoiceItem controller responses
+ * The controller returns { success: true, data: T } which gets wrapped by middleware
+ */
+interface InvoiceItemControllerResponse<T> {
+  success: boolean;
+  data: T;
+}
+
+/**
  * InvoiceItem Service
  * Handles all HTTP operations for InvoiceItem management
+ * Uses the separate InvoiceItemController endpoint
  */
 @Injectable({
   providedIn: 'root',
@@ -20,16 +30,16 @@ import { ToastrService } from 'ngx-toastr';
 export class InvoiceItemService {
   private http = inject(HttpClient);
   private toastr = inject(ToastrService);
-  private readonly apiUrl = `${environment.apiUrl}/Invoice`;
+  private readonly apiUrl = `${environment.apiUrl}/InvoiceItem`;
 
   /**
    * Get all invoice items
-   * GET /api/Invoice/items
+   * GET /api/InvoiceItem
    */
   getAllInvoiceItems(): Observable<InvoiceItem[]> {
-    return this.http.get<ApiResponse<InvoiceItem[]>>(`${this.apiUrl}/items`).pipe(
+    return this.http.get<ApiResponse<InvoiceItemControllerResponse<InvoiceItem[]>>>(this.apiUrl).pipe(
       map((response) => {
-        return response.Data || [];
+        return response.Data?.data || [];
       }),
       catchError((error) => {
         this.toastr.error('Failed to load invoice items');
@@ -40,12 +50,12 @@ export class InvoiceItemService {
 
   /**
    * Get invoice item by ID
-   * GET /api/Invoice/items/{id}
+   * GET /api/InvoiceItem/{id}
    */
   getInvoiceItemById(id: number): Observable<InvoiceItem | null> {
-    return this.http.get<ApiResponse<InvoiceItem>>(`${this.apiUrl}/items/${id}`).pipe(
+    return this.http.get<ApiResponse<InvoiceItemControllerResponse<InvoiceItem>>>(`${this.apiUrl}/${id}`).pipe(
       map((response) => {
-        return response.Data || null;
+        return response.Data?.data || null;
       }),
       catchError((error) => {
         if (error.status === 404) {
@@ -60,12 +70,12 @@ export class InvoiceItemService {
 
   /**
    * Get invoice items by invoice ID
-   * GET /api/Invoice/{invoiceId}/items
+   * GET /api/InvoiceItem/invoice/{invoiceId}
    */
   getInvoiceItemsByInvoiceId(invoiceId: number): Observable<InvoiceItem[]> {
-    return this.http.get<ApiResponse<InvoiceItem[]>>(`${this.apiUrl}/${invoiceId}/items`).pipe(
+    return this.http.get<ApiResponse<InvoiceItemControllerResponse<InvoiceItem[]>>>(`${this.apiUrl}/invoice/${invoiceId}`).pipe(
       map((response) => {
-        return response.Data || [];
+        return response.Data?.data || [];
       }),
       catchError((error) => {
         this.toastr.error('Failed to load invoice items');
@@ -76,13 +86,13 @@ export class InvoiceItemService {
 
   /**
    * Create a new invoice item
-   * POST /api/Invoice/items
+   * POST /api/InvoiceItem
    */
   createInvoiceItem(item: InvoiceItemCreate): Observable<InvoiceItem> {
-    return this.http.post<ApiResponse<InvoiceItem>>(`${this.apiUrl}/items`, item).pipe(
+    return this.http.post<ApiResponse<InvoiceItemControllerResponse<InvoiceItem>>>(this.apiUrl, item).pipe(
       map((response) => {
         this.toastr.success('Invoice item created successfully');
-        return response.Data;
+        return response.Data.data;
       }),
       catchError((error) => {
         if (error.status === 400) {
@@ -97,13 +107,13 @@ export class InvoiceItemService {
 
   /**
    * Update an existing invoice item
-   * PUT /api/Invoice/items/{id}
+   * PUT /api/InvoiceItem/{id}
    */
   updateInvoiceItem(item: InvoiceItemUpdate): Observable<InvoiceItem> {
-    return this.http.put<ApiResponse<InvoiceItem>>(`${this.apiUrl}/items/${item.id}`, item).pipe(
+    return this.http.put<ApiResponse<InvoiceItemControllerResponse<InvoiceItem>>>(`${this.apiUrl}/${item.id}`, item).pipe(
       map((response) => {
         this.toastr.success('Invoice item updated successfully');
-        return response.Data;
+        return response.Data.data;
       }),
       catchError((error) => {
         if (error.status === 400) {
@@ -120,10 +130,10 @@ export class InvoiceItemService {
 
   /**
    * Delete an invoice item
-   * DELETE /api/Invoice/items/{id}
+   * DELETE /api/InvoiceItem/{id}
    */
   deleteInvoiceItem(id: number): Observable<boolean> {
-    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/items/${id}`, { observe: 'response' }).pipe(
+    return this.http.delete<ApiResponse<InvoiceItemControllerResponse<void>>>(`${this.apiUrl}/${id}`, { observe: 'response' }).pipe(
       map((response) => {
         if (response.status === 200 || response.status === 204) {
           this.toastr.success('Invoice item deleted successfully');

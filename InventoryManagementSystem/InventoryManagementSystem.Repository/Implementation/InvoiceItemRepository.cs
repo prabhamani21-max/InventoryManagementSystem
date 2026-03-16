@@ -55,6 +55,17 @@ namespace InventoryManagementSystem.Repository.Implementation
             return _mapper.Map<IEnumerable<InvoiceItem>>(itemsDb);
         }
 
+        public async Task<IEnumerable<InvoiceItem>> GetAllInvoiceItemsAsync()
+        {
+            var itemsDb = await _context.InvoiceItems
+                .Include(i => i.Metal)
+                .Include(i => i.Purity)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<InvoiceItem>>(itemsDb);
+        }
+
         public async Task<InvoiceItem> AddInvoiceItemAsync(InvoiceItem item)
         {
             var itemDb = _mapper.Map<InvoiceItemDb>(item);

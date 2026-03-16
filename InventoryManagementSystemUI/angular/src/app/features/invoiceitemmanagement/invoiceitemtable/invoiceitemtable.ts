@@ -1,7 +1,6 @@
 // angular import
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -12,15 +11,12 @@ import {
   formatWeight,
   getHallmarkLabel,
   getHallmarkClass,
-  getStoneLabel,
-  getStoneClass,
 } from 'src/app/core/models/invoice-item.model';
-import { ToastrService } from 'ngx-toastr';
 import { ConfirmationService } from 'src/app/common/confirm-dialog/confirm-dialog.service';
 
 /**
  * InvoiceItem Table Component
- * Displays invoice items in a table format with CRUD operations
+ * Displays invoice items in a table format with delete actions
  */
 @Component({
   selector: 'app-invoiceitemtable',
@@ -31,8 +27,6 @@ import { ConfirmationService } from 'src/app/common/confirm-dialog/confirm-dialo
 export class Invoiceitemtable implements OnInit {
   // Injected services
   private invoiceItemService = inject(InvoiceItemService);
-  private router = inject(Router);
-  private toastr = inject(ToastrService);
   private confirmationService = inject(ConfirmationService);
 
   // Properties
@@ -69,20 +63,6 @@ export class Invoiceitemtable implements OnInit {
         this.isLoading = false;
       },
     });
-  }
-
-  /**
-   * Navigate to add invoice item form
-   */
-  onAddInvoiceItem(): void {
-    this.router.navigate(['jewelleryManagement/admin/invoiceitem/add']);
-  }
-
-  /**
-   * Navigate to edit invoice item form
-   */
-  onEditInvoiceItem(id: number): void {
-    this.router.navigate(['jewelleryManagement/admin/invoiceitem/edit', id]);
   }
 
   /**
@@ -135,24 +115,4 @@ export class Invoiceitemtable implements OnInit {
     return getHallmarkClass(isHallmarked);
   }
 
-  /**
-   * Get stone label
-   */
-  getStoneLabel(hasStone: boolean): string {
-    return getStoneLabel(hasStone);
-  }
-
-  /**
-   * Get stone CSS class
-   */
-  getStoneClass(hasStone: boolean): string {
-    return getStoneClass(hasStone);
-  }
-
-  /**
-   * Check if item has stone
-   */
-  hasStone(item: InvoiceItem): boolean {
-    return !!(item.stoneId && item.stoneWeight && item.stoneAmount);
-  }
 }
