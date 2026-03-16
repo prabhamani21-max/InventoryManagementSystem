@@ -6,6 +6,7 @@ namespace InventoryManagementSystem.Service.Interface
     {
         Task<SaleOrderItem> GetSaleOrderItemByIdAsync(int id);
         Task<IEnumerable<SaleOrderItem>> GetAllSaleOrderItemsAsync();
+        Task<IEnumerable<SaleOrderItem>> GetSaleOrderItemsBySaleOrderIdAsync(long saleOrderId);
         Task<SaleOrderItem> CreateSaleOrderItemAsync(SaleOrderItem saleOrderItem);
         Task<SaleOrderItem> UpdateSaleOrderItemAsync(SaleOrderItem saleOrderItem);
         Task<bool> DeleteSaleOrderItemAsync(int id);

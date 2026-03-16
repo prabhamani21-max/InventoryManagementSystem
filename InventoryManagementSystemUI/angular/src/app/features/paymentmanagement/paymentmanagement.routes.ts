@@ -24,6 +24,10 @@ export const PAYMENT_ROUTES: Routes = [
         component: Paymentform,
       },
       {
+        path: 'view/:id',
+        component: Paymentform,
+      },
+      {
         path: 'edit/:id',
         component: Paymentform,
       },

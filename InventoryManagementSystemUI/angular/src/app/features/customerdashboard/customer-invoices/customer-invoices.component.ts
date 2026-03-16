@@ -186,12 +186,7 @@ export class CustomerInvoicesComponent implements OnInit {
     });
   }
 
-  /**
-   * View invoice details
-   */
-  viewInvoice(invoice: Invoice): void {
-    this.router.navigate(['/jewelleryManagement/admin/invoice/view', invoice.invoiceNumber]);
-  }
+
 
   /**
    * Check if currently downloading this invoice

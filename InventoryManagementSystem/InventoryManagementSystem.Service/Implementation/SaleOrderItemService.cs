@@ -50,6 +50,11 @@ namespace InventoryManagementSystem.Service.Implementation
             return await _saleOrderItemRepository.GetAllSaleOrderItemsAsync();
         }
 
+        public async Task<IEnumerable<SaleOrderItem>> GetSaleOrderItemsBySaleOrderIdAsync(long saleOrderId)
+        {
+            return await _saleOrderItemRepository.GetSaleOrderItemsBySaleOrderIdAsync(saleOrderId);
+        }
+
         /// <summary>
         /// Creates a sale order item with automatic price calculation.
         /// Calculates: MetalAmount, MakingCharges, WastageAmount, ItemSubtotal, TaxableAmount, GstAmount, TotalAmount

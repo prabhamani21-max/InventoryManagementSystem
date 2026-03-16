@@ -17,7 +17,7 @@ namespace InventoryManagementSystem.Repository.Models
         [Column("id")]
         public long Id { get; set; }
         [Column("order_id")]
-        public int? OrderId { get; set; } // PurchaseOrderId or SaleOrderId
+        public long? OrderId { get; set; } // PurchaseOrderId or SaleOrderId
         [Required]
         [Column("order_type")]
         public TransactionType OrderType { get; set; } // 'PURCHASE' or 'SALE'

@@ -13,7 +13,9 @@ namespace InventoryManagementSystem.Common.Models
         public long? OrderId { get; set; } // PurchaseOrderId or SaleOrderId
         public string OrderType { get; set; } // 'PURCHASE' or 'SALE'
         public long? CustomerId { get; set; } // Customer who made the payment
+        public string? CustomerName { get; set; } // Customer name for display
         public long? SalesPersonId { get; set; } // Salesperson who processed the sale
+        public string? SalesPersonName { get; set; } // Salesperson name for display
         public decimal Amount { get; set; }
         public string PaymentMethod { get; set; } // Cash, Card, Bank Transfer, etc.
         public DateTime PaymentDate { get; set; }

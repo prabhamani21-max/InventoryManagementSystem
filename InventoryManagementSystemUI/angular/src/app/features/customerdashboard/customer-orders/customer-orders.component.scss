@@ -21,3 +21,136 @@
     vertical-align: middle;
   }
 }
+
+.order-details-row {
+  td {
+    background: #fbfcff;
+    padding: 0;
+  }
+}
+
+.order-details-panel {
+  padding: 1.25rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.order-details-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.order-details-kicker {
+  color: #6c757d;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ordered-items-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.ordered-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e8edf5;
+  border-radius: 0.9rem;
+  background: #fff;
+}
+
+.ordered-item-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.ordered-item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ordered-item-title {
+  color: #1f2a44;
+}
+
+.ordered-item-description {
+  color: #6c757d;
+  line-height: 1.5;
+}
+
+.item-code-badge {
+  font-size: 0.75rem;
+}
+
+.ordered-item-metrics {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.metric-chip {
+  min-width: 100px;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.8rem;
+  background: #f5f7fb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.metric-label {
+  color: #6c757d;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.metric-value {
+  color: #1f2a44;
+  font-weight: 700;
+}
+
+.total-chip {
+  background: #eef5ff;
+}
+
+.empty-items-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px dashed #d6dce5;
+  border-radius: 0.9rem;
+  color: #6c757d;
+
+  i {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .order-details-header,
+  .ordered-item-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ordered-item-metrics {
+    justify-content: flex-start;
+  }
+
+  .metric-chip {
+    min-width: calc(50% - 0.4rem);
+  }
+}

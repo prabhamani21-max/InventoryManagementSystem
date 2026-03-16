@@ -52,27 +52,21 @@
                 </span>
               </td>
               <td>
-                <div class="btn-group">
-                  <button 
-                    class="btn btn-sm btn-outline-primary"
-                    (click)="viewInvoice(invoice)"
-                    title="View Invoice">
-                    <i class="feather icon-eye"></i>
-                  </button>
-                  <button 
-                    class="btn btn-sm btn-outline-primary"
-                    (click)="downloadInvoicePdf(invoice)"
-                    [disabled]="downloadingInvoiceNumber === invoice.invoiceNumber"
-                    title="Download PDF">
-                    @if (downloadingInvoiceNumber === invoice.invoiceNumber) {
-                      <span class="spinner-border spinner-border-sm" role="status">
-                        <span class="visually-hidden">Downloading...</span>
-                      </span>
-                    } @else {
-                      <i class="feather icon-download"></i>
-                    }
-                  </button>
-                </div>
+                 <div class="btn-group">
+                   <button 
+                     class="btn btn-sm btn-outline-primary"
+                     (click)="downloadInvoicePdf(invoice)"
+                     [disabled]="downloadingInvoiceNumber === invoice.invoiceNumber"
+                     title="Download PDF">
+                     @if (downloadingInvoiceNumber === invoice.invoiceNumber) {
+                       <span class="spinner-border spinner-border-sm" role="status">
+                         <span class="visually-hidden">Downloading...</span>
+                       </span>
+                     } @else {
+                       <i class="feather icon-download"></i>
+                     }
+                   </button>
+                 </div>
               </td>
             </tr>
           }

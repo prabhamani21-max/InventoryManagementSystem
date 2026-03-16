@@ -65,7 +65,9 @@ export interface Payment {
   orderId?: number;
   orderType: TransactionType;
   customerId?: number;
+  customerName?: string;
   salesPersonId?: number;
+  salesPersonName?: string;
   amount: number;
   paymentMethod: PaymentMethod;
   paymentDate: Date | string;

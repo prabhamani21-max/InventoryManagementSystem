@@ -56,6 +56,15 @@ namespace InventoryManagementSystem.Controllers
             return Ok(saleOrderItemDto);
         }
 
+        [HttpGet("by-sale-order/{saleOrderId}")]
+        public async Task<IActionResult> GetSaleOrderItemsBySaleOrderId(long saleOrderId)
+        {
+            _logger.LogInformation("Fetching sale order items for sale order ID: {SaleOrderId}", saleOrderId);
+            var saleOrderItems = await _saleOrderItemService.GetSaleOrderItemsBySaleOrderIdAsync(saleOrderId);
+            var saleOrderItemDtos = _mapper.Map<IEnumerable<SaleOrderItemDto>>(saleOrderItems);
+            return Ok(saleOrderItemDtos);
+        }
+
         /// <summary>
         /// Creates a sale order item with AUTOMATIC PRICE CALCULATION.
         /// Metal rate, making charges, wastage, and tax are calculated server-side.

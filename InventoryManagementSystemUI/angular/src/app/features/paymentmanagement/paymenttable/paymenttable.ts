@@ -43,7 +43,7 @@ export class Paymenttable implements OnInit {
   isLoading: boolean = false;
 
   // Table columns
-  displayedColumns: string[] = ['id', 'orderId', 'orderType', 'amount', 'paymentMethod', 'paymentDate', 'referenceNumber', 'status', 'actions'];
+  displayedColumns: string[] = ['id', 'orderId', 'orderType', 'customerName', 'salesPersonName', 'amount', 'paymentMethod', 'paymentDate', 'referenceNumber', 'status', 'actions'];
 
   ngOnInit(): void {
     this.loadPayments();
@@ -80,6 +80,13 @@ export class Paymenttable implements OnInit {
   }
 
   /**
+   * Navigate to view payment details
+   */
+  onViewPayment(id: number): void {
+    this.router.navigate(['jewelleryManagement/admin/payment/view', id]);
+  }
+
+  /**
    * Delete payment with confirmation dialog
    */
   onDeletePayment(id: number): void {
@@ -99,14 +106,14 @@ export class Paymenttable implements OnInit {
   /**
    * Get payment method label
    */
-  getPaymentMethodLabel(method: PaymentMethod | string): string {
+  getPaymentMethodLabel(method: PaymentMethod | string | number): string {
     return getPaymentMethodLabel(method);
   }
 
   /**
    * Get payment method CSS class
    */
-  getPaymentMethodClass(method: PaymentMethod | string): string {
+  getPaymentMethodClass(method: PaymentMethod | string | number): string {
     return getPaymentMethodClass(method);
   }
 

@@ -40,7 +40,7 @@ export class Invoicepaymenttable implements OnInit {
   isLoading: boolean = false;
 
   // Table columns
-  displayedColumns: string[] = ['id', 'orderId', 'orderType', 'amount', 'paymentMethod', 'paymentDate', 'referenceNumber', 'status', 'actions'];
+  displayedColumns: string[] = ['id', 'orderId', 'orderType', 'customerName', 'salesPersonName', 'amount', 'paymentMethod', 'paymentDate', 'referenceNumber', 'status', 'actions'];
 
   ngOnInit(): void {
     this.loadPayments();

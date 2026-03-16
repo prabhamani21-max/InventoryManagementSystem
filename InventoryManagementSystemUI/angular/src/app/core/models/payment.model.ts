@@ -5,13 +5,14 @@
 
 /**
  * Payment Method enum matching backend PaymentMethod enum
+ * Backend uses int values: CASH=1, CARD=2, UPI=3, BANK_TRANSFER=4, CHEQUE=5
  */
 export enum PaymentMethod {
-  CASH = 'Cash',
-  CARD = 'Card',
-  UPI = 'UPI',
-  BANK_TRANSFER = 'BankTransfer',
-  CHEQUE = 'Cheque',
+  CASH = 1,
+  CARD = 2,
+  UPI = 3,
+  BANK_TRANSFER = 4,
+  CHEQUE = 5,
 }
 
 /**
@@ -30,9 +31,11 @@ export interface Payment {
   orderId: number | null;
   orderType: TransactionType;
   customerId: number | null;
+  customerName: string | null;
   salesPersonId: number | null;
+  salesPersonName: string | null;
   amount: number;
-  paymentMethod: PaymentMethod | string;
+  paymentMethod: PaymentMethod | string | number;
   paymentDate: Date | string;
   referenceNumber: string | null;
   createdDate: Date | string;
@@ -51,7 +54,7 @@ export interface PaymentCreate {
   customerId: number | null;
   salesPersonId: number | null;
   amount: number;
-  paymentMethod: PaymentMethod | string;
+  paymentMethod: PaymentMethod | string | number;
   paymentDate: Date | string;
   referenceNumber?: string | null;
   statusId: number;
@@ -69,7 +72,7 @@ export interface PaymentUpdate {
   customerId: number | null;
   salesPersonId: number | null;
   amount: number;
-  paymentMethod: PaymentMethod | string;
+  paymentMethod: PaymentMethod | string | number;
   paymentDate: Date | string;
   referenceNumber?: string | null;
   statusId: number;
@@ -77,23 +80,26 @@ export interface PaymentUpdate {
 
 /**
  * Helper function to get payment method label
+ * Handles both numeric enum values (1-5) and string values
  */
-export function getPaymentMethodLabel(method: PaymentMethod | string): string {
-  switch (method) {
+export function getPaymentMethodLabel(method: PaymentMethod | string | number): string {
+  const methodNum = typeof method === 'string' ? parseInt(method, 10) : method;
+  
+  switch (methodNum) {
     case PaymentMethod.CASH:
-    case 'Cash':
+    case 1:
       return 'Cash';
     case PaymentMethod.CARD:
-    case 'Card':
+    case 2:
       return 'Card';
     case PaymentMethod.UPI:
-    case 'UPI':
+    case 3:
       return 'UPI';
     case PaymentMethod.BANK_TRANSFER:
-    case 'BankTransfer':
+    case 4:
       return 'Bank Transfer';
     case PaymentMethod.CHEQUE:
-    case 'Cheque':
+    case 5:
       return 'Cheque';
     default:
       return 'Unknown';
@@ -102,23 +108,26 @@ export function getPaymentMethodLabel(method: PaymentMethod | string): string {
 
 /**
  * Helper function to get payment method CSS class
+ * Handles both numeric enum values (1-5) and string values
  */
-export function getPaymentMethodClass(method: PaymentMethod | string): string {
-  switch (method) {
+export function getPaymentMethodClass(method: PaymentMethod | string | number): string {
+  const methodNum = typeof method === 'string' ? parseInt(method, 10) : method;
+  
+  switch (methodNum) {
     case PaymentMethod.CASH:
-    case 'Cash':
+    case 1:
       return 'badge bg-success';
     case PaymentMethod.CARD:
-    case 'Card':
+    case 2:
       return 'badge bg-primary';
     case PaymentMethod.UPI:
-    case 'UPI':
+    case 3:
       return 'badge bg-info';
     case PaymentMethod.BANK_TRANSFER:
-    case 'BankTransfer':
+    case 4:
       return 'badge bg-warning';
     case PaymentMethod.CHEQUE:
-    case 'Cheque':
+    case 5:
       return 'badge bg-secondary';
     default:
       return 'badge bg-light text-dark';

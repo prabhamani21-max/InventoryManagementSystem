@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InventoryManagementSytem.Common.Dtos;
+using InventoryManagementSytem.Common.Enums;
 using InventoryManagementSystem.Common.Models;
 using InventoryManagementSystem.Dto;
 using InventoryManagementSystem.DTO;
@@ -8,6 +9,32 @@ using InventoryManagementSystem.Service.Interface;
 
 namespace InventoryManagementSystem.Mapper
 {
+    /// <summary>
+    /// Custom value converter to convert PaymentMethod string (numeric or name) to PaymentMethod enum
+    /// </summary>
+    public class PaymentMethodStringToEnumConverter : IValueConverter<string, PaymentMethod>
+    {
+        public PaymentMethod Convert(string sourceMember, ResolutionContext context)
+        {
+            if (string.IsNullOrEmpty(sourceMember))
+                return PaymentMethod.CASH; // Default
+            
+            // Try parsing as numeric first
+            if (int.TryParse(sourceMember, out int numericValue))
+            {
+                return (PaymentMethod)numericValue;
+            }
+            
+            // Try parsing as enum name
+            if (Enum.TryParse<PaymentMethod>(sourceMember, true, out var method))
+            {
+                return method;
+            }
+            
+            return PaymentMethod.CASH; // Default fallback
+        }
+    }
+
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
@@ -56,8 +83,23 @@ namespace InventoryManagementSystem.Mapper
                 .ForMember(dest => dest.ExchangeOrderNumber, opt => opt.MapFrom(src => src.ExchangeOrder != null ? src.ExchangeOrder.OrderNumber : null));
             CreateMap<PurchaseOrderDto, PurchaseOrder>().ReverseMap();
             CreateMap<PurchaseOrder, PurchaseOrderDb>().ReverseMap();
-            CreateMap<PaymentDto, Payment>().ReverseMap();
-            CreateMap<Payment, PaymentDb>().ReverseMap();
+            // Payment mappings - handle PaymentMethod enum to numeric string conversion
+            CreateMap<PaymentDto, Payment>()
+                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod));
+            CreateMap<Payment, PaymentDto>()
+                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod));
+            CreateMap<Payment, PaymentDb>()
+                .ForMember(dest => dest.PaymentMethod, opt => opt.ConvertUsing<PaymentMethodStringToEnumConverter, string>());
+            // PaymentDb to Payment with navigation properties for Customer and SalesPerson names
+            CreateMap<PaymentDb, Payment>()
+                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => ((int)src.PaymentMethod).ToString()))
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : null))
+                .ForMember(dest => dest.SalesPersonName, opt => opt.MapFrom(src => src.SalesPerson != null ? src.SalesPerson.Name : null));
+            // PaymentDb to PaymentDto with navigation properties for Customer and SalesPerson names
+            CreateMap<PaymentDb, PaymentDto>()
+                .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => ((int)src.PaymentMethod).ToString()))
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : null))
+                .ForMember(dest => dest.SalesPersonName, opt => opt.MapFrom(src => src.SalesPerson != null ? src.SalesPerson.Name : null));
             CreateMap<PurchaseOrderItemDto, PurchaseOrderItem>().ReverseMap();
             CreateMap<PurchaseOrderItem, PurchaseOrderItemDb>().ReverseMap();
             CreateMap<PurityDto, Purity>().ReverseMap();

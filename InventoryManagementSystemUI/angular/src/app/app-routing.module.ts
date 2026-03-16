@@ -36,14 +36,11 @@ export const routes: Routes = [
         path: 'customer',
         canActivate: [RoleGuard],
         data: { roleId: [RoleEnum.Customer] },
+        loadComponent: () =>
+          import('./features/customerdashboard/customerdashboard.component').then(
+            (c) => c.CustomerDashboardComponent
+          ),
         children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import('./features/customerdashboard/customerdashboard.component').then(
-                (c) => c.CustomerDashboardComponent
-              )
-          },
           {
             path: 'orders',
             loadComponent: () =>

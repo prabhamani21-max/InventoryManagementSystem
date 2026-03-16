@@ -23,6 +23,8 @@ namespace InventoryManagementSystem.Repository.Implementation
         {
             var paymentDb = await _context.Payments
                 .Include(p => p.Status)
+                .Include(p => p.Customer)
+                .Include(p => p.SalesPerson)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == id);
             return _mapper.Map<Payment>(paymentDb);
@@ -32,6 +34,8 @@ namespace InventoryManagementSystem.Repository.Implementation
         {
             var paymentsDb = await _context.Payments
                 .Include(p => p.Status)
+                .Include(p => p.Customer)
+                .Include(p => p.SalesPerson)
                 .AsNoTracking()
                 .ToListAsync();
             return _mapper.Map<IEnumerable<Payment>>(paymentsDb);
@@ -40,6 +44,12 @@ namespace InventoryManagementSystem.Repository.Implementation
         public async Task<Payment> CreatePaymentAsync(Payment payment)
         {
             var entity = _mapper.Map<PaymentDb>(payment);
+            // Set the appropriate foreign key based on OrderType
+            if (payment.OrderType == TransactionType.SALE.ToString())
+            {
+                entity.OrderId = payment.OrderId;
+            }
+         
             await _context.Payments.AddAsync(entity);
             await _context.SaveChangesAsync();
             return _mapper.Map<Payment>(entity);
@@ -51,7 +61,15 @@ namespace InventoryManagementSystem.Repository.Implementation
             if (entity == null) return null;
 
             // Manual mapping to preserve CreatedBy and CreatedDate
-            entity.OrderId = (int?)payment.OrderId;
+            // Set the appropriate foreign key based on OrderType
+            if (payment.OrderType == TransactionType.SALE.ToString())
+            {
+                entity.OrderId = payment.OrderId;
+            }
+            //else if (payment.OrderType == TransactionType.PURCHASE.ToString())
+            //{
+            //    entity.PurchaseOrderId = payment.OrderId;
+            //}
             entity.OrderType = Enum.Parse<TransactionType>(payment.OrderType);
             entity.CustomerId = (int?)payment.CustomerId;
             entity.SalesPersonId = (int?)payment.SalesPersonId;
@@ -84,9 +102,24 @@ namespace InventoryManagementSystem.Repository.Implementation
         /// <returns>List of payment DB models</returns>
         public async Task<List<PaymentDb>> GetPaymentsByOrderIdAndTypeAsync(long orderId, TransactionType orderType)
         {
-            return await _context.Payments
-                .Where(p => p.OrderId == orderId && p.OrderType == orderType)
-                .ToListAsync();
+            if (orderType == TransactionType.SALE)
+            {
+                return await _context.Payments
+                    .Where(p => p.OrderId == orderId && p.OrderType == orderType)
+                    .ToListAsync();
+            }
+            //else if (orderType == TransactionType.PURCHASE)
+            //{
+            //    return await _context.Payments
+            //        .Where(p => p.PurchaseOrderId == orderId && p.OrderType == orderType)
+            //        .ToListAsync();
+            //}
+            else
+            {
+                // For other order types, we don't have a direct foreign key, but we can return empty list or handle as needed.
+                // Since the original method used OrderId, and we've split it, we assume only SALE and PURCHASE are used.
+                return new List<PaymentDb>();
+            }
         }
     }
 }

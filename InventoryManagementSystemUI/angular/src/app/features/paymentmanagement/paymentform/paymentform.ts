@@ -22,6 +22,7 @@ import { ToastrService } from 'ngx-toastr';
 /**
  * Payment Form Component
  * Handles both create and edit operations for payments
+ * Supports view mode for read-only display
  */
 @Component({
   selector: 'app-paymentform',
@@ -39,6 +40,7 @@ export class Paymentform implements OnInit {
 
   // Properties
   paymentForm!: UntypedFormGroup;
+  isViewMode: boolean = false;
   isEditMode: boolean = false;
   paymentId: number | null = null;
   isLoading: boolean = false;
@@ -97,13 +99,16 @@ export class Paymentform implements OnInit {
   }
 
   /**
-   * Check if we're in edit mode and load payment data
+   * Check if we're in view/edit mode and load payment data
    */
   checkEditMode(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.isEditMode = true;
       this.paymentId = +id;
+      // Check if it's view mode based on URL
+      const urlSegments = this.route.snapshot.url;
+      this.isViewMode = urlSegments.some((segment) => segment.path === 'view');
+      this.isEditMode = !this.isViewMode;
       this.loadPaymentData(this.paymentId);
     }
   }
@@ -130,6 +135,11 @@ export class Paymentform implements OnInit {
             referenceNumber: payment.referenceNumber,
             statusId: payment.statusId,
           });
+
+          // Disable form in view mode
+          if (this.isViewMode) {
+            this.paymentForm.disable();
+          }
         } else {
           this.toastr.error('Payment not found');
           this.router.navigate(['jewelleryManagement/admin/payment']);
@@ -249,5 +259,14 @@ export class Paymentform implements OnInit {
    */
   onCancel(): void {
     this.router.navigate(['jewelleryManagement/admin/payment']);
+  }
+
+  /**
+   * Navigate to edit mode from view mode
+   */
+  onEdit(): void {
+    if (this.paymentId) {
+      this.router.navigate(['jewelleryManagement/admin/payment/edit', this.paymentId]);
+    }
   }
 }

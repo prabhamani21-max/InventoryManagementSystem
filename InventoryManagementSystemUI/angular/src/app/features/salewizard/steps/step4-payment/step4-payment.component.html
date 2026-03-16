@@ -206,9 +206,9 @@
               [class.is-invalid]="hasError('paymentMethod')"
             >
               @for (method of getAvailablePaymentMethods(); track method.value) {
-                <option [ngValue]="method.value" [disabled]="method.value === 'Cash' && isCashPaymentDisabled()">
+                <option [ngValue]="method.value" [disabled]="method.value === 1 && isCashPaymentDisabled()">
                   {{ method.label }}
-                  @if (method.value === 'Cash' && isCashPaymentDisabled()) {
+                  @if (method.value === 1 && isCashPaymentDisabled()) {
                     (Not allowed for high-value transactions)
                   }
                 </option>

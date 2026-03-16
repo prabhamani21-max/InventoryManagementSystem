@@ -26,6 +26,8 @@
             <th>ID</th>
             <th>Order ID</th>
             <th>Order Type</th>
+            <th>Customer</th>
+            <th>Salesperson</th>
             <th>Amount</th>
             <th>Payment Method</th>
             <th>Payment Date</th>
@@ -37,7 +39,7 @@
         <tbody>
           @if (payments.length === 0) {
             <tr>
-              <td colspan="9" class="text-center py-4">
+              <td colspan="11" class="text-center py-4">
                 <div class="text-muted">
                   <i class="feather icon-inbox d-block mb-2" style="font-size: 2rem;"></i>
                   No payments found. Click "Add Payment" to create one.
@@ -59,6 +61,12 @@
                 <span [ngClass]="getOrderTypeClass(payment.orderType)">
                   {{ getOrderTypeLabel(payment.orderType) }}
                 </span>
+              </td>
+              <td>
+                <span class="text-dark">{{ payment.customerName || '-' }}</span>
+              </td>
+              <td>
+                <span class="text-dark">{{ payment.salesPersonName || '-' }}</span>
               </td>
               <td>
                 <span class="fw-medium text-success">
@@ -83,6 +91,12 @@
               </td>
               <td>
                 <div class="btn-group" role="group">
+                  <!-- View Button -->
+                  <button type="button" class="btn btn-sm btn-outline-info" 
+                          (click)="onViewPayment(payment.id)" title="View">
+                    <i class="feather icon-eye"></i>
+                  </button>
+                  
                   <!-- Edit Button -->
                   <button type="button" class="btn btn-sm btn-outline-primary" 
                           (click)="onEditPayment(payment.id)" title="Edit">
