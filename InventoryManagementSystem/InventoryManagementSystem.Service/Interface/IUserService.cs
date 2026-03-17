@@ -14,6 +14,11 @@ namespace InventoryManagementSystem.Service.Interface
         Task<bool> EmailExistsAsync(string email);
         Task<bool> ContactNumberExistsAsync(string contactNo);
 
-
+        /// <summary>
+        /// Get all customers served by a specific sales person
+        /// </summary>
+        /// <param name="salesPersonId">The sales person's user ID</param>
+        /// <returns>List of customers served by the sales person</returns>
+        Task<IEnumerable<User>> GetCustomersBySalesPersonIdAsync(long salesPersonId);
     }
 }

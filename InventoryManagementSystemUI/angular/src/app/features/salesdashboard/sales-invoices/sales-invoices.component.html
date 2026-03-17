@@ -1,0 +1,83 @@
+<div class="sales-invoices">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">My Invoices</h4>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Search</label>
+          <input type="text" class="form-control" placeholder="Search by invoice number or customer..."
+            [value]="searchTerm" (input)="onSearchChange($event)">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Date Range</label>
+          <select class="form-select" [value]="dateFilter" (change)="onDateFilterChange($event)">
+            <option value="">All Time</option>
+            <option value="today">Today</option>
+            <option value="week">Last 7 Days</option>
+            <option value="month">Last 30 Days</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-outline-secondary" (click)="clearFilters()">
+            <i class="feather icon-x me-1"></i>Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 text-muted">Loading your invoices...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredInvoices.length === 0" class="text-center py-5">
+    <i class="feather icon-file-text" style="font-size: 3rem; color: #ccc;"></i>
+    <h5 class="mt-3 text-muted">No Invoices Found</h5>
+    <p class="text-muted">You don't have any invoices yet.</p>
+  </div>
+
+  <!-- Invoices Table -->
+  <div *ngIf="!isLoading && filteredInvoices.length > 0" class="card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Invoice Number</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of filteredInvoices">
+              <td>{{ invoice.invoiceNumber }}</td>
+              <td>{{ formatDate(invoice.invoiceDate) }}</td>
+              <td>{{ invoice.partyName }}</td>
+              <td>{{ formatAmount(invoice.grandTotal) }}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-1" (click)="viewInvoice(invoice.invoiceNumber)" title="View Invoice">
+                  <i class="feather icon-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-success" (click)="downloadInvoice(invoice)" title="Download PDF">
+                  <i class="feather icon-download"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -226,4 +226,26 @@ getCurrentUser(): Observable<
       })
     );
   }
+
+  /**
+   * Get customers served by the currently logged-in sales person
+   * GET /api/User/my-customers
+   */
+  getMyCustomers(): Observable<User[]> {
+    return this.http.get<ApiResponse<User[]>>(`${this.apiUrl}/my-customers`).pipe(
+      map((response) => {
+        if (response.Status && response.Data) {
+          if ((response.Data as any).data) {
+            return (response.Data as any).data as User[];
+          }
+          return response.Data as User[];
+        }
+        return [];
+      }),
+      catchError((error) => {
+        this.toastr.error('Failed to load your customers');
+        return throwError(() => error);
+      })
+    );
+  }
 }

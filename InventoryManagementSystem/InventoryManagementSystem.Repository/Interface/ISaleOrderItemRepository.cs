@@ -5,11 +5,11 @@ namespace InventoryManagementSystem.Repository.Interface
 {
     public interface ISaleOrderItemRepository
     {
-        Task<SaleOrderItem> GetSaleOrderItemByIdAsync(int id);
+        Task<SaleOrderItem> GetSaleOrderItemByIdAsync(long id);
         Task<IEnumerable<SaleOrderItem>> GetAllSaleOrderItemsAsync();
         Task<SaleOrderItem> CreateSaleOrderItemAsync(SaleOrderItem saleOrderItem);
         Task<SaleOrderItem> UpdateSaleOrderItemAsync(SaleOrderItem saleOrderItem);
-        Task<bool> DeleteSaleOrderItemAsync(int id);
+        Task<bool> DeleteSaleOrderItemAsync(long id);
         
         /// <summary>
         /// Gets all sale order items for a specific sale order

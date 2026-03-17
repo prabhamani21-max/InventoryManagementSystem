@@ -4,12 +4,12 @@ namespace InventoryManagementSystem.Service.Interface
 {
     public interface ISaleOrderItemService
     {
-        Task<SaleOrderItem> GetSaleOrderItemByIdAsync(int id);
+        Task<SaleOrderItem> GetSaleOrderItemByIdAsync(long id);
         Task<IEnumerable<SaleOrderItem>> GetAllSaleOrderItemsAsync();
         Task<IEnumerable<SaleOrderItem>> GetSaleOrderItemsBySaleOrderIdAsync(long saleOrderId);
         Task<SaleOrderItem> CreateSaleOrderItemAsync(SaleOrderItem saleOrderItem);
         Task<SaleOrderItem> UpdateSaleOrderItemAsync(SaleOrderItem saleOrderItem);
-        Task<bool> DeleteSaleOrderItemAsync(int id);
+        Task<bool> DeleteSaleOrderItemAsync(long id);
 
         /// <summary>
         /// Creates a sale order item with automatic price calculation.

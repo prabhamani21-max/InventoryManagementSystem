@@ -1,0 +1,37 @@
+<div class="row">
+  <!-- Navigation Tabs -->
+  <div class="col-12 mb-4">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'overview'" routerLink="/jewelleryManagement/admin/sales-dashboard">
+          <i class="feather icon-home me-1"></i>Overview
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'orders'" routerLink="/jewelleryManagement/admin/sales-dashboard/orders">
+          <i class="feather icon-shopping-bag me-1"></i>My Orders
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'invoices'" routerLink="/jewelleryManagement/admin/sales-dashboard/invoices">
+          <i class="feather icon-file-text me-1"></i>My Invoices
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'customers'" routerLink="/jewelleryManagement/admin/sales-dashboard/customers">
+          <i class="feather icon-users me-1"></i>My Customers
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'exchanges'" routerLink="/jewelleryManagement/admin/sales-dashboard/exchanges">
+          <i class="feather icon-refresh-cw me-1"></i>My Exchanges
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Router Outlet for Child Routes -->
+  <div class="col-12">
+    <router-outlet></router-outlet>
+  </div>
+</div>

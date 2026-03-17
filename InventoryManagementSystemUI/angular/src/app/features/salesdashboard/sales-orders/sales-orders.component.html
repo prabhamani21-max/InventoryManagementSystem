@@ -1,0 +1,149 @@
+<div class="sales-orders">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">My Orders</h4>
+    <button class="btn btn-primary" (click)="goToSaleWizard()">
+      <i class="feather icon-plus me-1"></i>New Sale Order
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Search</label>
+          <input type="text" class="form-control" placeholder="Search by order number..."
+            [value]="searchTerm" (input)="onSearchChange($event)">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Status</label>
+          <select class="form-select" [value]="statusFilter" (change)="onStatusFilterChange($event)">
+            <option value="">All Status</option>
+            <option value="1">Active</option>
+            <option value="2">Inactive</option>
+            <option value="3">Pending</option>
+            <option value="4">Completed</option>
+            <option value="5">Cancelled</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-outline-secondary" (click)="clearFilters()">
+            <i class="feather icon-x me-1"></i>Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 text-muted">Loading your orders...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredOrders.length === 0" class="text-center py-5">
+    <i class="feather icon-shopping-bag" style="font-size: 3rem; color: #ccc;"></i>
+    <h5 class="mt-3 text-muted">No Orders Found</h5>
+    <p class="text-muted">You haven't created any orders yet.</p>
+    <button class="btn btn-primary" (click)="goToSaleWizard()">
+      <i class="feather icon-plus me-1"></i>Create Your First Order
+    </button>
+  </div>
+
+  <!-- Orders Table -->
+  <div *ngIf="!isLoading && filteredOrders.length > 0" class="card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Order Number</th>
+              <th>Order Date</th>
+              <th>Delivery Date</th>
+              <th>Status</th>
+              <th>Exchange</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let order of filteredOrders">
+              <tr class="order-row" (click)="toggleOrderDetails(order)">
+                <td>
+                  <i class="feather" 
+                    [ngClass]="{'icon-chevron-down': isOrderExpanded(order.id), 'icon-chevron-right': !isOrderExpanded(order.id)}" 
+                    class="me-2"></i>
+                  {{ order.orderNumber }}
+                </td>
+                <td>{{ formatDate(order.orderDate) }}</td>
+                <td>{{ formatDate(order.deliveryDate) }}</td>
+                <td>
+                  <span [class]="getStatusClass(order.statusId)">
+                    {{ getStatusLabel(order.statusId) }}
+                  </span>
+                </td>
+                <td>
+                  <span *ngIf="order.isExchangeSale" class="badge bg-info">Yes</span>
+                  <span *ngIf="!order.isExchangeSale" class="text-muted">No</span>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1" (click)="viewOrderDetails(order.id); $event.stopPropagation()">
+                    <i class="feather icon-eye"></i>
+                  </button>
+                </td>
+              </tr>
+              
+              <!-- Expanded Order Items -->
+              <tr *ngIf="isOrderExpanded(order.id)" class="order-items-row">
+                <td colspan="6">
+                  <div class="p-3 bg-light">
+                    <h6 class="mb-3">Order Items</h6>
+                    
+                    <!-- Items Loading -->
+                    <div *ngIf="isOrderItemsLoading(order.id)" class="text-center py-3">
+                      <div class="spinner-border spinner-border-sm text-primary" role="status">
+                        <span class="visually-hidden">Loading items...</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Items Table -->
+                    <div *ngIf="!isOrderItemsLoading(order.id) && getOrderItems(order.id).length > 0" class="table-responsive">
+                      <table class="table table-sm mb-0">
+                        <thead>
+                          <tr>
+                            <th>Item</th>
+                            <th>Metal</th>
+                            <th>Gross Weight</th>
+                            <th>Net Weight</th>
+                            <th>Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+           <tr *ngFor="let item of getOrderItems(order.id)">
+                             <td>{{ item.itemName || 'Item #' + item.jewelleryItemId }}</td>
+                             <td>-</td>
+                             <td>{{ formatItemWeight(item.grossWeight) }}</td>
+                             <td>{{ formatItemWeight(item.netMetalWeight) }}</td>
+                             <td>{{ formatAmount(item.totalAmount) }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <!-- No Items -->
+                    <div *ngIf="!isOrderItemsLoading(order.id) && getOrderItems(order.id).length === 0" class="text-center text-muted py-3">
+                      No items found for this order
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

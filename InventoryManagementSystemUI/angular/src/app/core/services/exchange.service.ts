@@ -203,4 +203,20 @@ export class ExchangeService {
       })
     );
   }
+
+  /**
+   * Get exchange orders created by the currently logged-in sales person
+   * GET /api/Exchange/my-exchanges
+   */
+  getMyExchanges(): Observable<ExchangeOrder[]> {
+    return this.http.get<ApiResponse<ExchangeOrder[]>>(`${this.apiUrl}/my-exchanges`).pipe(
+      map((response) => {
+        return response.Data || [];
+      }),
+      catchError((error) => {
+        this.toastr.error('Failed to load your exchange orders');
+        return throwError(() => error);
+      })
+    );
+  }
 }

@@ -18,7 +18,7 @@ namespace InventoryManagementSystem.Repository.Implementation
             _mapper = mapper;
         }
 
-        public async Task<SaleOrderItem> GetSaleOrderItemByIdAsync(int id)
+        public async Task<SaleOrderItem> GetSaleOrderItemByIdAsync(long id)
         {
             var saleOrderItemDb = await _context.SaleOrderItems
                 .Include(s => s.SaleOrder)
@@ -86,7 +86,7 @@ namespace InventoryManagementSystem.Repository.Implementation
             return _mapper.Map<SaleOrderItem>(entity);
         }
 
-        public async Task<bool> DeleteSaleOrderItemAsync(int id)
+        public async Task<bool> DeleteSaleOrderItemAsync(long id)
         {
             var entity = await _context.SaleOrderItems.FindAsync(id);
             if (entity == null) return false;
