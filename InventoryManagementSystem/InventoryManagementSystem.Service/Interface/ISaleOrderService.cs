@@ -21,8 +21,8 @@ namespace InventoryManagementSystem.Service.Interface
         /// <summary>
         /// Get all sale orders created by a specific sales person
         /// </summary>
-        /// <param name="createdBy">The sales person's user ID</param>
+        /// <param name="salesPersonId">The sales person's user ID</param>
         /// <returns>List of sale orders created by the sales person</returns>
-        Task<IEnumerable<SaleOrder>> GetSaleOrdersByCreatedByAsync(long createdBy);
+        Task<IEnumerable<SaleOrder>> GetSaleOrdersBySalesPersonAsync(long salesPersonId);
     }
 }

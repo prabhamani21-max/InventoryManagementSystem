@@ -22,34 +22,51 @@
         <!-- Customer ID Field -->
         <div class="col-md-6 mb-3">
           <label for="customerId" class="form-label">
-            Customer ID <span class="text-danger">*</span>
+            Customer <span class="text-danger">*</span>
           </label>
-          @if (wizardMode) {
-            <input
-              type="number"
-              class="form-control"
-              id="customerId"
-              formControlName="customerId"
-              [readonly]="true"
-              [class.is-invalid]="hasError('customerId')"
-            />
-            <small class="text-muted">Auto-filled from selected customer in Step 1</small>
-          } @else {
-            <input
-              type="number"
-              class="form-control"
-              id="customerId"
-              formControlName="customerId"
-              placeholder="Enter customer ID"
-              [class.is-invalid]="hasError('customerId')"
-            />
-            <small class="text-muted">Select the customer for this order</small>
-          }
+          <select
+            class="form-select"
+            id="customerId"
+            formControlName="customerId"
+            [attr.disabled]="wizardMode ? true : null"
+            [class.is-invalid]="hasError('customerId')"
+          >
+            <option [ngValue]="null" disabled>Select customer</option>
+            @for (customer of customers; track customer.id) {
+              <option [ngValue]="customer.id">
+                {{ customer.name }}
+              </option>
+            }
+          </select>
+          <small class="text-muted">
+            {{ wizardMode ? 'Auto-filled from selected customer in Step 1' : 'Select the customer for this order' }}
+          </small>
           @if (hasError('customerId')) {
             <div class="invalid-feedback">
               {{ getErrorMessage('customerId') }}
             </div>
           }
+        </div>
+
+        <!-- Sales Person ID Field -->
+        <div class="col-md-6 mb-3">
+          <label for="salesPersonId" class="form-label">Sales Person</label>
+          <select
+            class="form-select"
+            id="salesPersonId"
+            formControlName="salesPersonId"
+            [attr.disabled]="wizardMode && currentUserId ? true : null"
+          >
+            <option [ngValue]="null">Select sales person</option>
+            @for (salesPerson of salesPeople; track salesPerson.id) {
+              <option [ngValue]="salesPerson.id">
+                {{ salesPerson.name }}
+              </option>
+            }
+          </select>
+          <small class="text-muted">
+            {{ wizardMode && currentUserId ? 'Auto-filled from the logged-in sales person' : 'Sales person who processed the sale' }}
+          </small>
         </div>
 
         <!-- Date Information Section -->

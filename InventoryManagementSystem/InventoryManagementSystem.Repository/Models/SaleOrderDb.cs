@@ -55,6 +55,12 @@ namespace InventoryManagementSystem.Repository.Models
         public DateTime? UpdatedDate { get; set; }
         [Column("status_id")]
         public int StatusId { get; set; }
+
+        [Column("sales_person_id")]
+        public long? SalesPersonId { get; set; } // Salesperson who processed the sale    
+
+        [ForeignKey(nameof(SalesPersonId))]
+        public virtual UserDb? SalesPerson { get; set; }
         [ForeignKey(nameof(CustomerId))]
         public virtual UserDb Customer { get; set; }
         [ForeignKey(nameof(StatusId))]

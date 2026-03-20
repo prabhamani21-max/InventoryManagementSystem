@@ -87,11 +87,11 @@ namespace InventoryManagementSystem.Service.Implementation
         /// <summary>
         /// Get all sale orders created by a specific sales person
         /// </summary>
-        /// <param name="createdBy">The sales person's user ID</param>
+        /// <param name="salespersonId">The sales person's user ID</param>
         /// <returns>List of sale orders created by the sales person</returns>
-        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersByCreatedByAsync(long createdBy)
+        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersBySalesPersonAsync(long salesPersonId)
         {
-            return await _saleOrderRepository.GetSaleOrdersByCreatedByAsync(createdBy);
+            return await _saleOrderRepository.GetSaleOrdersBySalesPersonAsync(salesPersonId);
         }
 
         private static void NormalizeExchangeFlags(SaleOrder saleOrder)

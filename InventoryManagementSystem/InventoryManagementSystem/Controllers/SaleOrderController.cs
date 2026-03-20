@@ -89,7 +89,7 @@ namespace InventoryManagementSystem.Controllers
             }
 
             _logger.LogInformation("Fetching sale orders created by sales person ID: {UserId}", userId);
-            var saleOrders = await _saleOrderService.GetSaleOrdersByCreatedByAsync(userId.Value);
+            var saleOrders = await _saleOrderService.GetSaleOrdersBySalesPersonAsync(userId.Value);
             var saleOrderDtos = _mapper.Map<IEnumerable<SaleOrderDto>>(saleOrders);
             
             return Ok(new

@@ -23,6 +23,7 @@ namespace InventoryManagementSystem.Repository.Implementation
             var saleOrderDb = await _context.SaleOrders
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
+                .Include(p => p.SalesPerson)
                 .Include(s => s.ExchangeOrder)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
@@ -35,6 +36,7 @@ namespace InventoryManagementSystem.Repository.Implementation
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
                 .Include(s => s.ExchangeOrder)
+                .Include(s => s.SalesPerson)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.ExchangeOrderId == exchangeOrderId);
 
@@ -47,6 +49,8 @@ namespace InventoryManagementSystem.Repository.Implementation
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
                 .Include(s => s.ExchangeOrder)
+                                .Include(s => s.SalesPerson)
+
                 .AsNoTracking()
                 .ToListAsync();
             return _mapper.Map<IEnumerable<SaleOrder>>(saleOrdersDb);
@@ -69,6 +73,7 @@ namespace InventoryManagementSystem.Repository.Implementation
             entity.CustomerId = saleOrder.CustomerId;
             entity.OrderNumber = saleOrder.OrderNumber;
             entity.OrderDate = saleOrder.OrderDate;
+            entity.SalesPersonId = saleOrder.SalesPersonId;
             entity.IsExchangeSale = saleOrder.IsExchangeSale;
             entity.ExchangeOrderId = saleOrder.ExchangeOrderId;
             entity.DeliveryDate = saleOrder.DeliveryDate;
@@ -100,7 +105,10 @@ namespace InventoryManagementSystem.Repository.Implementation
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
                 .Include(s => s.ExchangeOrder)
+                .Include(s => s.SalesPerson)
                 .Where(s => s.CustomerId == customerId)
+                
+
                 .OrderByDescending(s => s.OrderDate)
                 .AsNoTracking()
                 .ToListAsync();
@@ -112,13 +120,14 @@ namespace InventoryManagementSystem.Repository.Implementation
         /// </summary>
         /// <param name="createdBy">The sales person's user ID</param>
         /// <returns>List of sale orders created by the sales person</returns>
-        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersByCreatedByAsync(long createdBy)
+        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersBySalesPersonAsync(long salesPersonId)
         {
             var saleOrdersDb = await _context.SaleOrders
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
                 .Include(s => s.ExchangeOrder)
-                .Where(s => s.CreatedBy == createdBy)
+                .Include(s => s.SalesPerson)
+                .Where(s => s.SalesPersonId == salesPersonId)
                 .OrderByDescending(s => s.OrderDate)
                 .AsNoTracking()
                 .ToListAsync();

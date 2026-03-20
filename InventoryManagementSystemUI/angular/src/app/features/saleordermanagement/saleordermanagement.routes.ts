@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 
 // Project Import
 import { Saleordermanagement } from './saleordermanagement';
-import { Saleordertable } from './saleordertable/saleordertable';
 import { Saleorderform } from './saleorderform/saleorderform';
 
 /**
@@ -17,7 +16,10 @@ export const SALE_ORDER_ROUTES: Routes = [
     children: [
       {
         path: '',
-        component: Saleordertable,
+        loadComponent: () =>
+          import('../salesdashboard/sales-orders/sales-orders.component').then(
+            (c) => c.SalesOrdersComponent
+          ),
       },
       {
         path: 'add',

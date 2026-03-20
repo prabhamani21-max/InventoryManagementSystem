@@ -67,13 +67,11 @@ namespace InventoryManagementSystem.Mapper
             // PaymentDb to Payment with navigation properties for Customer and SalesPerson names
             CreateMap<PaymentDb, Payment>()
                 .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod.ToString()))
-                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : null))
-                .ForMember(dest => dest.SalesPersonName, opt => opt.MapFrom(src => src.SalesPerson != null ? src.SalesPerson.Name : null));
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : null));
             // PaymentDb to PaymentDto with navigation properties for Customer and SalesPerson names
             CreateMap<PaymentDb, PaymentDto>()
                 .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod))
-                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : null))
-                .ForMember(dest => dest.SalesPersonName, opt => opt.MapFrom(src => src.SalesPerson != null ? src.SalesPerson.Name : null));
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : null));
             CreateMap<PurchaseOrderItemDto, PurchaseOrderItem>().ReverseMap();
             CreateMap<PurchaseOrderItem, PurchaseOrderItemDb>().ReverseMap();
             CreateMap<PurityDto, Purity>().ReverseMap();
