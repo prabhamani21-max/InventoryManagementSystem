@@ -4,6 +4,7 @@ import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { SaleWizardService, SaleWizardState } from 'src/app/core/services/sale-wizard.service';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 
 /**
  * Step configuration interface
@@ -27,6 +28,7 @@ interface StepConfig {
 })
 export class SaleWizardComponent implements OnInit, OnDestroy {
   wizardService = inject(SaleWizardService);
+  private authService = inject(AuthenticationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   
@@ -158,7 +160,7 @@ export class SaleWizardComponent implements OnInit, OnDestroy {
    */
   onCancel(): void {
     this.wizardService.resetWizard();
-    this.router.navigate(['jewelleryManagement/admin/analytics']);
+    this.navigateToHome();
   }
 
   /**
@@ -166,7 +168,12 @@ export class SaleWizardComponent implements OnInit, OnDestroy {
    */
   onComplete(): void {
     this.wizardService.resetWizard();
-    this.router.navigate(['jewelleryManagement/admin/analytics']);
+    this.navigateToHome();
+  }
+
+  private navigateToHome(): void {
+    const homeRoute = this.authService.getHomeRoute();
+    this.router.navigate(homeRoute);
   }
 
   /**
