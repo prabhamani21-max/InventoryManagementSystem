@@ -12,6 +12,8 @@ export interface SaleOrder {
   orderNumber: string;
   orderDate: Date | string;
   deliveryDate: Date | string | null;
+  salesPersonId?: number | null;
+  salesPersonName?: string | null;
   isExchangeSale: boolean;
   exchangeOrderId?: number | null;
   exchangeOrderNumber?: string | null;
@@ -26,6 +28,7 @@ export interface SaleOrderCreate {
   customerId: number;
   orderDate: Date | string;
   deliveryDate?: Date | string | null;
+  salesPersonId?: number | null;
   isExchangeSale: boolean;
   exchangeOrderId?: number | null;
   statusId: number;
@@ -40,6 +43,7 @@ export interface SaleOrderUpdate {
   customerId: number;
   orderDate: Date | string;
   deliveryDate?: Date | string | null;
+  salesPersonId?: number | null;
   isExchangeSale: boolean;
   exchangeOrderId?: number | null;
   statusId: number;

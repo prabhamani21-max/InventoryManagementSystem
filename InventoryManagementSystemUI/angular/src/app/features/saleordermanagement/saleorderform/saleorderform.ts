@@ -10,6 +10,9 @@ import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { SaleWizardService } from 'src/app/core/services/sale-wizard.service';
 import { SaleOrder, SaleOrderCreate, SaleOrderUpdate } from 'src/app/core/models/sale-order.model';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
+import { UserService } from 'src/app/core/services/user.service';
+import { User } from 'src/app/core/models/user.model';
 
 /**
  * SaleOrder Form Component
@@ -30,6 +33,8 @@ export class Saleorderform implements OnInit {
   private route = inject(ActivatedRoute);
   private toastr = inject(ToastrService);
   private wizardService = inject(SaleWizardService);
+  private authService = inject(AuthenticationService);
+  private userService = inject(UserService);
 
   // Wizard mode inputs
   @Input() wizardMode: boolean = false;
@@ -43,6 +48,9 @@ export class Saleorderform implements OnInit {
   saleOrderId: number | null = null;
   isLoading: boolean = false;
   isSubmitting: boolean = false;
+  currentUserId: number | null = null;
+  customers: User[] = [];
+  salesPeople: User[] = [];
 
   // Status options
   statusOptions = [
@@ -68,6 +76,9 @@ export class Saleorderform implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.currentUserId = this.getCurrentUserId();
+    this.loadCustomers();
+    this.loadSalesPeople();
     
     // Check if wizardMode is set via route data
     this.route.data.subscribe((data) => {
@@ -84,6 +95,9 @@ export class Saleorderform implements OnInit {
       } else if (this.preselectedCustomerId) {
         // Fallback to preselectedCustomerId if provided
         this.saleOrderForm.patchValue({ customerId: this.preselectedCustomerId });
+      }
+      if (this.currentUserId) {
+        this.saleOrderForm.patchValue({ salesPersonId: this.currentUserId });
       }
       // Watch for exchange sale toggle
       this.saleOrderForm.get('isExchangeSale')?.valueChanges.subscribe((isExchange) => {
@@ -111,6 +125,7 @@ export class Saleorderform implements OnInit {
       customerId: [null, [Validators.required]],
       orderDate: [today, [Validators.required]],
       deliveryDate: [null],
+      salesPersonId: [null],
       isExchangeSale: [false],
       exchangeOrderId: [null],
       statusId: [1, [Validators.required]],
@@ -145,6 +160,7 @@ export class Saleorderform implements OnInit {
             customerId: order.customerId,
             orderDate: orderDate,
             deliveryDate: deliveryDate,
+            salesPersonId: order.salesPersonId ?? null,
             isExchangeSale: order.isExchangeSale,
             exchangeOrderId: order.exchangeOrderId,
             statusId: order.statusId,
@@ -210,6 +226,7 @@ export class Saleorderform implements OnInit {
         customerId: formValue.customerId,
         orderDate: formValue.orderDate,
         deliveryDate: formValue.deliveryDate || null,
+        salesPersonId: formValue.salesPersonId ?? null,
         isExchangeSale: formValue.isExchangeSale || false,
         exchangeOrderId: formValue.exchangeOrderId || null,
         statusId: formValue.statusId,
@@ -235,6 +252,7 @@ export class Saleorderform implements OnInit {
         customerId: formValue.customerId,
         orderDate: formValue.orderDate,
         deliveryDate: formValue.deliveryDate || null,
+        salesPersonId: formValue.salesPersonId ?? null,
         isExchangeSale: formValue.isExchangeSale,
         exchangeOrderId: formValue.exchangeOrderId || null,
         statusId: formValue.statusId,
@@ -255,6 +273,7 @@ export class Saleorderform implements OnInit {
         customerId: formValue.customerId,
         orderDate: formValue.orderDate,
         deliveryDate: formValue.deliveryDate || null,
+        salesPersonId: formValue.salesPersonId ?? null,
         isExchangeSale: formValue.isExchangeSale,
         exchangeOrderId: formValue.exchangeOrderId || null,
         statusId: formValue.statusId,
@@ -290,5 +309,36 @@ export class Saleorderform implements OnInit {
     } else {
       this.router.navigate(['jewelleryManagement/admin/saleorder']);
     }
+  }
+
+  private loadCustomers(): void {
+    this.userService.getCustomers().subscribe({
+      next: (customers) => {
+        this.customers = customers ?? [];
+      },
+      error: () => {
+        this.customers = [];
+      },
+    });
+  }
+
+  private loadSalesPeople(): void {
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.salesPeople = (users ?? []).filter((user) => user.roleId === 3);
+      },
+      error: () => {
+        this.salesPeople = [];
+      },
+    });
+  }
+
+  private getCurrentUserId(): number | null {
+    const currentUser = this.authService.getUserInformation();
+    if (!currentUser?.userId) {
+      return null;
+    }
+    const parsedId = Number(currentUser.userId);
+    return Number.isFinite(parsedId) ? parsedId : null;
   }
 }

@@ -242,6 +242,32 @@ export class InvoiceService {
   }
 
   /**
+   * Get invoices for orders created by the currently logged-in sales person
+   * GET /api/Invoice/my-sales-invoices
+   */
+  getMySalesInvoices(): Observable<Invoice[]> {
+    return this.http.get<ApiResponse<Invoice[]>>(`${this.apiUrl}/my-sales-invoices`).pipe(
+      map((response) => {
+        if (response.Status && response.Data) {
+          if ((response.Data as any).data) {
+            return ((response.Data as any).data as Invoice[]).map((invoice) =>
+              this.normalizeInvoice(invoice) as Invoice
+            );
+          }
+          return (response.Data as Invoice[]).map((invoice) =>
+            this.normalizeInvoice(invoice) as Invoice
+          );
+        }
+        return [];
+      }),
+      catchError((error) => {
+        this.toastr.error('Failed to load your sales invoices');
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
    * Download invoice as PDF by invoice ID
    * GET /api/Invoice/{id}/download
    */

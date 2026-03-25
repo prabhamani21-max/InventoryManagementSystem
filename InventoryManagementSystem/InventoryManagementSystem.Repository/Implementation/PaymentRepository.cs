@@ -24,7 +24,6 @@ namespace InventoryManagementSystem.Repository.Implementation
             var paymentDb = await _context.Payments
                 .Include(p => p.Status)
                 .Include(p => p.Customer)
-                .Include(p => p.SalesPerson)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == id);
             return _mapper.Map<Payment>(paymentDb);
@@ -35,7 +34,6 @@ namespace InventoryManagementSystem.Repository.Implementation
             var paymentsDb = await _context.Payments
                 .Include(p => p.Status)
                 .Include(p => p.Customer)
-                .Include(p => p.SalesPerson)
                 .AsNoTracking()
                 .ToListAsync();
             return _mapper.Map<IEnumerable<Payment>>(paymentsDb);
@@ -72,7 +70,6 @@ namespace InventoryManagementSystem.Repository.Implementation
             //}
             entity.OrderType = Enum.Parse<TransactionType>(payment.OrderType);
             entity.CustomerId = (int?)payment.CustomerId;
-            entity.SalesPersonId = (int?)payment.SalesPersonId;
             entity.Amount = payment.Amount;
             entity.PaymentMethod = Enum.Parse<PaymentMethod>(payment.PaymentMethod);
             entity.PaymentDate = payment.PaymentDate;

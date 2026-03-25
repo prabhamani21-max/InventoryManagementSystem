@@ -65,6 +65,52 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'sales-dashboard',
+        canActivate: [RoleGuard],
+        data: { roleId: [RoleEnum.Sales] },
+        loadComponent: () =>
+          import('./features/salesdashboard/salesdashboard.component').then(
+            (c) => c.SalesDashboardComponent
+          ),
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/salesdashboard/sales-overview/sales-overview.component').then(
+                (c) => c.SalesOverviewComponent
+              )
+          },
+          {
+            path: 'orders',
+            loadComponent: () =>
+              import('./features/salesdashboard/sales-orders/sales-orders.component').then(
+                (c) => c.SalesOrdersComponent
+              )
+          },
+          {
+            path: 'invoices',
+            loadComponent: () =>
+              import('./features/salesdashboard/sales-invoices/sales-invoices.component').then(
+                (c) => c.SalesInvoicesComponent
+              )
+          },
+          {
+            path: 'customers',
+            loadComponent: () =>
+              import('./features/salesdashboard/sales-customers/sales-customers.component').then(
+                (c) => c.SalesCustomersComponent
+              )
+          },
+          {
+            path: 'exchanges',
+            loadComponent: () =>
+              import('./features/salesdashboard/sales-exchanges/sales-exchanges.component').then(
+                (c) => c.SalesExchangesComponent
+              )
+          }
+        ]
+      },
+      {
         path: 'category',
         canActivate: [RoleGuard],
         data: { roleId: [RoleEnum.SuperAdmin, RoleEnum.Manager] },

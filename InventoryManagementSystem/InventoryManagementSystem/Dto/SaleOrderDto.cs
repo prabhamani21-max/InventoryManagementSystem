@@ -7,6 +7,10 @@ namespace InventoryManagementSystem.DTO
         public string? OrderNumber { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime? DeliveryDate { get; set; }
+        public long? SalesPersonId { get; set; }
+        public string? SalesPersonName { get; set; }
+
+
         /* ---------------- EXCHANGE AWARENESS (MINIMAL) ---------- */
 
         /// <summary>

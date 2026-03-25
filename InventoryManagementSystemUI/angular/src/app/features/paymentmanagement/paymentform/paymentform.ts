@@ -18,6 +18,8 @@ import {
   STATUS_OPTIONS,
 } from 'src/app/core/models/payment.model';
 import { ToastrService } from 'ngx-toastr';
+import { UserService } from 'src/app/core/services/user.service';
+import { User } from 'src/app/core/models/user.model';
 
 /**
  * Payment Form Component
@@ -37,6 +39,7 @@ export class Paymentform implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toastr = inject(ToastrService);
+  private userService = inject(UserService);
 
   // Properties
   paymentForm!: UntypedFormGroup;
@@ -45,6 +48,8 @@ export class Paymentform implements OnInit {
   paymentId: number | null = null;
   isLoading: boolean = false;
   isSubmitting: boolean = false;
+  customers: User[] = [];
+  salesPeople: User[] = [];
 
   // Dropdown options
   paymentMethodOptions = PAYMENT_METHOD_OPTIONS;
@@ -76,6 +81,8 @@ export class Paymentform implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.loadCustomers();
+    this.loadSalesPeople();
     this.checkEditMode();
   }
 
@@ -268,5 +275,27 @@ export class Paymentform implements OnInit {
     if (this.paymentId) {
       this.router.navigate(['jewelleryManagement/admin/payment/edit', this.paymentId]);
     }
+  }
+
+  private loadCustomers(): void {
+    this.userService.getCustomers().subscribe({
+      next: (customers) => {
+        this.customers = customers ?? [];
+      },
+      error: () => {
+        this.customers = [];
+      },
+    });
+  }
+
+  private loadSalesPeople(): void {
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.salesPeople = (users ?? []).filter((user) => user.roleId === 3);
+      },
+      error: () => {
+        this.salesPeople = [];
+      },
+    });
   }
 }

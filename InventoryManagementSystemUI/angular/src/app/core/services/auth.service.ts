@@ -247,16 +247,38 @@ getUserInformation(): DecodedToken | null {
   }
   private readonly roleIdToEnumMap: Record<string, RoleEnum> = {
     '1': RoleEnum.SuperAdmin,
-   
+    '2': RoleEnum.Manager,
+    '3': RoleEnum.Sales,
+    '4': RoleEnum.Customer
   };
-  getCurrentUserRole(): RoleEnum | null {
-    const decoded = this.getUserInformation();
-    const roleId = decoded?.roleId; // Assuming your decoded token has a "roleId" claim
 
-    if (!roleId || !(roleId in this.roleIdToEnumMap)) {
+  getHomeRoute(roleId?: string | number | null): string[] {
+    const currentRoleId = roleId ?? this.getUserInformation()?.roleId ?? this.getDecodedToken()?.roleId;
+    const role = this.normalizeRoleId(currentRoleId);
+
+    switch (role) {
+      case RoleEnum.SuperAdmin:
+      case RoleEnum.Manager:
+        return ['/jewelleryManagement/admin/analytics'];
+      case RoleEnum.Sales:
+        return ['/jewelleryManagement/admin/sales-dashboard'];
+      case RoleEnum.Customer:
+        return ['/jewelleryManagement/admin/customer'];
+      default:
+        return ['/jewelleryManagement/auth/sign-in'];
+    }
+  }
+
+  private normalizeRoleId(roleId: string | number | null | undefined): RoleEnum | null {
+    if (roleId === null || roleId === undefined) {
       return null;
     }
 
-    return this.roleIdToEnumMap[roleId];
+    return this.roleIdToEnumMap[roleId.toString()] ?? null;
+  }
+
+  getCurrentUserRole(): RoleEnum | null {
+    const decoded = this.getUserInformation() ?? this.getDecodedToken();
+    return this.normalizeRoleId(decoded?.roleId);
   }
 }

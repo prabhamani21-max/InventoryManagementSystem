@@ -20,7 +20,7 @@ namespace InventoryManagementSystem.Service.Implementation
             _notificationService = notificationService;
         }
 
-        public async Task<SaleOrder> GetSaleOrderByIdAsync(int id)
+        public async Task<SaleOrder> GetSaleOrderByIdAsync(long id)
         {
             return await _saleOrderRepository.GetSaleOrderByIdAsync(id);
         }
@@ -61,7 +61,7 @@ namespace InventoryManagementSystem.Service.Implementation
             return updatedOrder;
         }
 
-        public async Task<bool> DeleteSaleOrderAsync(int id)
+        public async Task<bool> DeleteSaleOrderAsync(long id)
         {
             var result = await _saleOrderRepository.DeleteSaleOrderAsync(id);
             
@@ -82,6 +82,16 @@ namespace InventoryManagementSystem.Service.Implementation
         public async Task<IEnumerable<SaleOrder>> GetSaleOrdersByCustomerIdAsync(long customerId)
         {
             return await _saleOrderRepository.GetSaleOrdersByCustomerIdAsync(customerId);
+        }
+
+        /// <summary>
+        /// Get all sale orders created by a specific sales person
+        /// </summary>
+        /// <param name="salespersonId">The sales person's user ID</param>
+        /// <returns>List of sale orders created by the sales person</returns>
+        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersBySalesPersonAsync(long salesPersonId)
+        {
+            return await _saleOrderRepository.GetSaleOrdersBySalesPersonAsync(salesPersonId);
         }
 
         private static void NormalizeExchangeFlags(SaleOrder saleOrder)

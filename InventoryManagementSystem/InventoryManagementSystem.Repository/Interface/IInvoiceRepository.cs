@@ -44,6 +44,13 @@ namespace InventoryManagementSystem.Repository.Interface
         /// <returns>List of invoices for the customer</returns>
         Task<IEnumerable<Invoice>> GetInvoicesByPartyIdAsync(long partyId);
 
+        /// <summary>
+        /// Get all invoices for orders created by a specific sales person
+        /// </summary>
+        /// <param name="createdBy">The sales person's user ID</param>
+        /// <returns>List of invoices for orders created by the sales person</returns>
+        Task<IEnumerable<Invoice>> GetInvoicesByCreatedByAsync(long createdBy);
+
         // ==================== WRITE OPERATIONS ====================
         
         /// <summary>
