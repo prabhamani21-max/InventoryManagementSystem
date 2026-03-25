@@ -60,10 +60,9 @@ export class Invoicepaymentform implements OnInit {
   paymentMethodOptions = [
     { value: PaymentMethod.Cash, label: 'Cash' },
     { value: PaymentMethod.Card, label: 'Card' },
-    { value: PaymentMethod.BankTransfer, label: 'Bank Transfer' },
     { value: PaymentMethod.UPI, label: 'UPI' },
+    { value: PaymentMethod.BankTransfer, label: 'Bank Transfer' },
     { value: PaymentMethod.Cheque, label: 'Cheque' },
-    { value: PaymentMethod.Other, label: 'Other' },
   ];
 
   // Transaction type options

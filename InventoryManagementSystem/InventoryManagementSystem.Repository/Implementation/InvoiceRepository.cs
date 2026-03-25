@@ -131,6 +131,39 @@ namespace InventoryManagementSystem.Repository.Implementation
             return _mapper.Map<IEnumerable<Invoice>>(invoicesDb);
         }
 
+        /// <summary>
+        /// Get all invoices for orders created by a specific sales person
+        /// </summary>
+        /// <param name="createdBy">The sales person's user ID</param>
+        /// <returns>List of invoices for orders created by the sales person</returns>
+        public async Task<IEnumerable<Invoice>> GetInvoicesByCreatedByAsync(long createdBy)
+        {
+            _logger.LogInformation("Fetching invoices for sales person ID {CreatedBy}", createdBy);
+
+            // Get sale order IDs created by this sales person
+            var saleOrderIds = await _context.SaleOrders
+                .Where(so => so.CreatedBy == createdBy)
+                .Select(so => so.Id)
+                .ToListAsync();
+
+            if (!saleOrderIds.Any())
+            {
+                _logger.LogInformation("No sale orders found for sales person ID {CreatedBy}", createdBy);
+                return Enumerable.Empty<Invoice>();
+            }
+
+            var invoicesDb = await _context.Invoices
+                .Include(i => i.InvoiceItems)
+                .Include(i => i.InvoicePayments)
+                .Where(i => i.SaleOrderId.HasValue && saleOrderIds.Contains(i.SaleOrderId.Value))
+                .OrderByDescending(i => i.InvoiceDate)
+                .AsNoTracking()
+                .ToListAsync();
+
+            _logger.LogInformation("Found {Count} invoices for sales person ID {CreatedBy}", invoicesDb.Count, createdBy);
+            return _mapper.Map<IEnumerable<Invoice>>(invoicesDb);
+        }
+
         // ==================== WRITE OPERATIONS ====================
 
         public async Task<Invoice> AddInvoiceAsync(Invoice invoice)

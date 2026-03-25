@@ -1,0 +1,20 @@
+// Sales Invoices Styles
+.sales-invoices {
+  .table {
+    th {
+      font-weight: 600;
+      color: #666;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+    
+    td {
+      vertical-align: middle;
+    }
+  }
+
+  .invoice-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}

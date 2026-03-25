@@ -18,7 +18,7 @@ namespace InventoryManagementSystem.Validation
                 .GreaterThan(0).WithMessage("Amount must be greater than 0");
 
             RuleFor(x => x.PaymentMethod)
-                .NotEmpty().WithMessage("PaymentMethod is required");
+                .IsInEnum().WithMessage("PaymentMethod is invalid");
 
             RuleFor(x => x.PaymentDate)
                 .NotEmpty().WithMessage("PaymentDate is required");

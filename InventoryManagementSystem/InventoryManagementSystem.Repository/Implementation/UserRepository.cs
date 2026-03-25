@@ -68,5 +68,34 @@ namespace InventoryManagementSystem.Repository.Implementation
                 .ToListAsync();
             return _mapper.Map<List<User>>(users);
         }
+
+        /// <summary>
+        /// Get all customers served by a specific sales person
+        /// </summary>
+        /// <param name="salesPersonId">The sales person's user ID</param>
+        /// <returns>List of customers served by the sales person</returns>
+        public async Task<IEnumerable<User>> GetCustomersBySalesPersonIdAsync(long salesPersonId)
+        {
+            // Get distinct customer IDs from sale orders created by this sales person
+            var customerIds = await _context.SaleOrders
+                .Where(so => so.CreatedBy == salesPersonId)
+                .Select(so => so.CustomerId)
+                .Distinct()
+                .ToListAsync();
+
+            if (!customerIds.Any())
+            {
+                return Enumerable.Empty<User>();
+            }
+
+            var customers = await _context.Users
+                .AsNoTracking()
+                .Include(u => u.Role)
+                .Include(u => u.Status)
+                .Where(u => customerIds.Contains(u.Id))
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<User>>(customers);
+        }
     }
 }

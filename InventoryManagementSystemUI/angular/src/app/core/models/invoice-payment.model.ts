@@ -7,12 +7,11 @@
  * Payment Method enum matching backend PaymentMethod enum
  */
 export enum PaymentMethod {
-  Cash = 'Cash',
-  Card = 'Card',
-  BankTransfer = 'BankTransfer',
-  UPI = 'UPI',
-  Cheque = 'Cheque',
-  Other = 'Other'
+  Cash = 1,
+  Card = 2,
+  UPI = 3,
+  BankTransfer = 4,
+  Cheque = 5
 }
 
 /**
@@ -69,7 +68,7 @@ export interface Payment {
   salesPersonId?: number;
   salesPersonName?: string;
   amount: number;
-  paymentMethod: PaymentMethod;
+  paymentMethod: PaymentMethod | string | number;
   paymentDate: Date | string;
   referenceNumber?: string;
   createdDate: Date | string;
@@ -88,7 +87,7 @@ export interface PaymentCreate {
   customerId?: number;
   salesPersonId?: number;
   amount: number;
-  paymentMethod: PaymentMethod;
+  paymentMethod: PaymentMethod | string | number;
   paymentDate: Date | string;
   referenceNumber?: string;
 }
@@ -103,7 +102,7 @@ export interface PaymentUpdate {
   customerId?: number;
   salesPersonId?: number;
   amount: number;
-  paymentMethod: PaymentMethod;
+  paymentMethod: PaymentMethod | string | number;
   paymentDate: Date | string;
   referenceNumber?: string;
 }
@@ -162,50 +161,51 @@ export function getStatusClass(statusId: number): string {
 /**
  * Helper function to get payment method label
  */
-export function getPaymentMethodLabel(method: PaymentMethod | string): string {
-  switch (method) {
+export function getPaymentMethodLabel(method: PaymentMethod | string | number): string {
+  const methodNum = typeof method === 'string' ? parseInt(method, 10) : method;
+
+  switch (methodNum) {
     case PaymentMethod.Cash:
-    case 'Cash':
+    case 1:
       return 'Cash';
     case PaymentMethod.Card:
-    case 'Card':
+    case 2:
       return 'Card';
-    case PaymentMethod.BankTransfer:
-    case 'BankTransfer':
-      return 'Bank Transfer';
     case PaymentMethod.UPI:
-    case 'UPI':
+    case 3:
       return 'UPI';
+    case PaymentMethod.BankTransfer:
+    case 4:
+      return 'Bank Transfer';
     case PaymentMethod.Cheque:
-    case 'Cheque':
+    case 5:
       return 'Cheque';
-    case PaymentMethod.Other:
-    case 'Other':
-      return 'Other';
     default:
-      return method;
+      return 'Unknown';
   }
 }
 
 /**
  * Helper function to get payment method CSS class
  */
-export function getPaymentMethodClass(method: PaymentMethod | string): string {
-  switch (method) {
+export function getPaymentMethodClass(method: PaymentMethod | string | number): string {
+  const methodNum = typeof method === 'string' ? parseInt(method, 10) : method;
+
+  switch (methodNum) {
     case PaymentMethod.Cash:
-    case 'Cash':
+    case 1:
       return 'badge bg-success';
     case PaymentMethod.Card:
-    case 'Card':
+    case 2:
       return 'badge bg-info';
-    case PaymentMethod.BankTransfer:
-    case 'BankTransfer':
-      return 'badge bg-primary';
     case PaymentMethod.UPI:
-    case 'UPI':
+    case 3:
       return 'badge bg-warning';
+    case PaymentMethod.BankTransfer:
+    case 4:
+      return 'badge bg-primary';
     case PaymentMethod.Cheque:
-    case 'Cheque':
+    case 5:
       return 'badge bg-secondary';
     default:
       return 'badge bg-light text-dark';

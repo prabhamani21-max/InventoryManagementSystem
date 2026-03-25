@@ -74,6 +74,31 @@ namespace InventoryManagementSystem.Controllers
             });
         }
 
+        /// <summary>
+        /// Get sale orders created by the currently logged-in sales person
+        /// </summary>
+        /// <returns>List of sale orders created by the current sales person</returns>
+        [HttpGet("my-sales")]
+        public async Task<IActionResult> GetMySalesOrders()
+        {
+            var userId = _currentUser?.UserId;
+            if (userId == null || userId <= 0)
+            {
+                _logger.LogWarning("Unable to determine current user ID");
+                return Unauthorized(new { success = false, message = "Unable to determine user identity" });
+            }
+
+            _logger.LogInformation("Fetching sale orders created by sales person ID: {UserId}", userId);
+            var saleOrders = await _saleOrderService.GetSaleOrdersBySalesPersonAsync(userId.Value);
+            var saleOrderDtos = _mapper.Map<IEnumerable<SaleOrderDto>>(saleOrders);
+            
+            return Ok(new
+            {
+                success = true,
+                data = saleOrderDtos
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateSaleOrder([FromBody] SaleOrderDto dto)
         {
@@ -126,17 +151,17 @@ namespace InventoryManagementSystem.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSaleOrder(int id)
+        public async Task<IActionResult> DeleteSaleOrder(long id)
         {
             _logger.LogInformation("Deleting sale order ID: {Id}", id);
-
+ 
             var result = await _saleOrderService.DeleteSaleOrderAsync(id);
             if (!result)
             {
                 _logger.LogWarning("Sale order not found for deletion ID: {Id}", id);
                 return NotFound("Sale order not found");
             }
-
+ 
             _logger.LogInformation("Sale order deleted successfully ID: {Id}", id);
             return NoContent();
         }

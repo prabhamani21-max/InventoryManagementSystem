@@ -13,6 +13,7 @@ namespace InventoryManagementSystem.Common.Models
         public long CustomerId { get; set; }
         public string OrderNumber { get; set; }
         public DateTime OrderDate { get; set; }
+        public long SalesPersonId { get;set;  }
         /* ---------------- EXCHANGE AWARENESS (MINIMAL) ---------- */
 
         /// <summary>

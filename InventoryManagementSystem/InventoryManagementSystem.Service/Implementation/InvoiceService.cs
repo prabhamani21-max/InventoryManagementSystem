@@ -171,6 +171,25 @@ namespace InventoryManagementSystem.Service.Implementation
         }
 
         /// <summary>
+        /// Get all invoices for orders created by a specific sales person
+        /// </summary>
+        /// <param name="createdBy">The sales person's user ID</param>
+        /// <returns>List of invoices for orders created by the sales person</returns>
+        public async Task<List<InvoiceResponseDto>> GetInvoicesByCreatedByAsync(long createdBy)
+        {
+            _logger.LogInformation("Fetching invoices for sales person ID {CreatedBy}", createdBy);
+            var invoices = await _invoiceRepo.GetInvoicesByCreatedByAsync(createdBy);
+            var response = new List<InvoiceResponseDto>();
+            foreach (var invoice in invoices)
+            {
+                response.Add(await MapToResponseDtoAsync(invoice));
+            }
+
+            _logger.LogInformation("Found {Count} invoices for sales person ID {CreatedBy}", response.Count, createdBy);
+            return response;
+        }
+
+        /// <summary>
         /// Convert number to words - delegates to INumberToWordsConverter
         /// </summary>
         public string NumberToWords(decimal number)

@@ -399,7 +399,7 @@ export class Step4PaymentComponent implements OnInit, OnDestroy {
     if (customerId) {
       // Get current URL for redirecting back after KYC completion
       const returnUrl = this.router.createUrlTree(['../payment'], { relativeTo: this.route }).toString();
-      this.router.navigate(['/jewelleryManagement/admin/userkyc/add'], {
+      this.router.navigate(['jewelleryManagement/admin/userkyc/add'], {
         queryParams: { 
           customerId: customerId,
           returnUrl: returnUrl
