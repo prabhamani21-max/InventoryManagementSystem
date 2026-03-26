@@ -31,22 +31,14 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllInvoiceItems()
         {
-            try
-            {
-                _logger.LogInformation("Fetching all invoice items");
-                var invoiceItems = await _invoiceItemService.GetAllInvoiceItemsAsync();
+            _logger.LogInformation("Fetching all invoice items");
+            var invoiceItems = await _invoiceItemService.GetAllInvoiceItemsAsync();
 
-                return Ok(new
-                {
-                    success = true,
-                    data = invoiceItems
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to retrieve all invoice items");
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving invoice items" });
-            }
+                success = true,
+                data = invoiceItems
+            });
         }
 
         /// <summary>
@@ -57,27 +49,19 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInvoiceItemById(long id)
         {
-            try
-            {
-                _logger.LogInformation("Fetching invoice item with ID: {Id}", id);
-                var invoiceItem = await _invoiceItemService.GetInvoiceItemByIdAsync(id);
+            _logger.LogInformation("Fetching invoice item with ID: {Id}", id);
+            var invoiceItem = await _invoiceItemService.GetInvoiceItemByIdAsync(id);
 
-                if (invoiceItem == null)
-                {
-                    return NotFound(new { success = false, message = "Invoice item not found" });
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    data = invoiceItem
-                });
-            }
-            catch (Exception ex)
+            if (invoiceItem == null)
             {
-                _logger.LogError(ex, "Failed to retrieve invoice item with ID: {Id}", id);
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the invoice item" });
+                return NotFound(new { success = false, message = "Invoice item not found" });
             }
+
+            return Ok(new
+            {
+                success = true,
+                data = invoiceItem
+            });
         }
 
         /// <summary>
@@ -88,22 +72,14 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("invoice/{invoiceId}")]
         public async Task<IActionResult> GetInvoiceItemsByInvoiceId(long invoiceId)
         {
-            try
-            {
-                _logger.LogInformation("Fetching invoice items for invoice ID: {InvoiceId}", invoiceId);
-                var invoiceItems = await _invoiceItemService.GetInvoiceItemsByInvoiceIdAsync(invoiceId);
+            _logger.LogInformation("Fetching invoice items for invoice ID: {InvoiceId}", invoiceId);
+            var invoiceItems = await _invoiceItemService.GetInvoiceItemsByInvoiceIdAsync(invoiceId);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = invoiceItems
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to retrieve invoice items for invoice ID: {InvoiceId}", invoiceId);
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving invoice items" });
-            }
+                success = true,
+                data = invoiceItems
+            });
         }
     }
 }

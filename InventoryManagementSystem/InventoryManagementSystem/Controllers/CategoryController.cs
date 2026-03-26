@@ -20,7 +20,6 @@ namespace InventoryManagementSystem.Controllers
         public CategoryController(ICategoryService categoryService, ILogger<CategoryController> logger)
         {
             _categoryService = categoryService;
-            _logger = logger;
         }
 
         /// <summary>
@@ -29,21 +28,13 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
-            try
+            var categories = await _categoryService.GetAllCategoriesAsync();
+
+            return Ok(new
             {
-                var categories = await _categoryService.GetAllCategoriesAsync();
-                
-                return Ok(new
-                {
-                    success = true,
-                    data = categories
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to retrieve categories");
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving categories" });
-            }
+                success = true,
+                data = categories
+            });
         }
 
         /// <summary>
@@ -52,26 +43,18 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
-            try
-            {
-                var category = await _categoryService.GetCategoryByIdAsync(id);
-                
-                if (category == null)
-                {
-                    return NotFound(new { success = false, message = "Category not found" });
-                }
+            var category = await _categoryService.GetCategoryByIdAsync(id);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = category
-                });
-            }
-            catch (Exception ex)
+            if (category == null)
             {
-                _logger.LogError(ex, "Failed to retrieve category {CategoryId}", id);
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the category" });
+                return NotFound(new { success = false, message = "Category not found" });
             }
+
+            return Ok(new
+            {
+                success = true,
+                data = category
+            });
         }
 
         /// <summary>
@@ -80,26 +63,18 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetCategoryByName(string name)
         {
-            try
-            {
-                var category = await _categoryService.GetCategoryByNameAsync(name);
-                
-                if (category == null)
-                {
-                    return NotFound(new { success = false, message = "Category not found" });
-                }
+            var category = await _categoryService.GetCategoryByNameAsync(name);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = category
-                });
-            }
-            catch (Exception ex)
+            if (category == null)
             {
-                _logger.LogError(ex, "Failed to retrieve category by name {CategoryName}", name);
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the category" });
+                return NotFound(new { success = false, message = "Category not found" });
             }
+
+            return Ok(new
+            {
+                success = true,
+                data = category
+            });
         }
 
         /// <summary>
@@ -108,21 +83,13 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveCategories()
         {
-            try
+            var categories = await _categoryService.GetActiveCategoriesAsync();
+
+            return Ok(new
             {
-                var categories = await _categoryService.GetActiveCategoriesAsync();
-                
-                return Ok(new
-                {
-                    success = true,
-                    data = categories
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to retrieve active categories");
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving categories" });
-            }
+                success = true,
+                data = categories
+            });
         }
 
         /// <summary>
@@ -131,21 +98,13 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("parent/{parentId}")]
         public async Task<IActionResult> GetSubCategories(int parentId)
         {
-            try
+            var subCategories = await _categoryService.GetSubCategoriesAsync(parentId);
+
+            return Ok(new
             {
-                var subCategories = await _categoryService.GetSubCategoriesAsync(parentId);
-                
-                return Ok(new
-                {
-                    success = true,
-                    data = subCategories
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to retrieve subcategories for parent {ParentId}", parentId);
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving subcategories" });
-            }
+                success = true,
+                data = subCategories
+            });
         }
 
         /// <summary>
@@ -154,32 +113,19 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateDto categoryDto)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(new { success = false, message = "Invalid category data", errors = ModelState });
-                }
+                return BadRequest(new { success = false, message = "Invalid category data", errors = ModelState });
+            }
 
-                var category = await _categoryService.CreateCategoryAsync(categoryDto);
+            var category = await _categoryService.CreateCategoryAsync(categoryDto);
 
-                return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, new
-                {
-                    success = true,
-                    message = "Category created successfully",
-                    data = category
-                });
-            }
-            catch (InvalidOperationException ex)
+            return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, new
             {
-                _logger.LogWarning(ex, "Category creation failed");
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Category creation failed");
-                return StatusCode(500, new { success = false, message = "An error occurred while creating the category" });
-            }
+                success = true,
+                message = "Category created successfully",
+                data = category
+            });
         }
 
         /// <summary>
@@ -188,32 +134,19 @@ namespace InventoryManagementSystem.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateCategory([FromBody] CategoryUpdateDto categoryDto)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(new { success = false, message = "Invalid category data", errors = ModelState });
-                }
+                return BadRequest(new { success = false, message = "Invalid category data", errors = ModelState });
+            }
 
-                var category = await _categoryService.UpdateCategoryAsync(categoryDto);
+            var category = await _categoryService.UpdateCategoryAsync(categoryDto);
 
-                return Ok(new
-                {
-                    success = true,
-                    message = "Category updated successfully",
-                    data = category
-                });
-            }
-            catch (InvalidOperationException ex)
+            return Ok(new
             {
-                _logger.LogWarning(ex, "Category update failed");
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Category update failed for {CategoryId}", categoryDto.Id);
-                return StatusCode(500, new { success = false, message = "An error occurred while updating the category" });
-            }
+                success = true,
+                message = "Category updated successfully",
+                data = category
+            });
         }
 
         /// <summary>
@@ -222,31 +155,18 @@ namespace InventoryManagementSystem.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            try
-            {
-                var result = await _categoryService.DeleteCategoryAsync(id);
-                
-                if (!result)
-                {
-                    return NotFound(new { success = false, message = "Category not found" });
-                }
+            var result = await _categoryService.DeleteCategoryAsync(id);
 
-                return Ok(new
-                {
-                    success = true,
-                    message = "Category deleted successfully"
-                });
-            }
-            catch (InvalidOperationException ex)
+            if (!result)
             {
-                _logger.LogWarning(ex, "Category deletion failed");
-                return BadRequest(new { success = false, message = ex.Message });
+                return NotFound(new { success = false, message = "Category not found" });
             }
-            catch (Exception ex)
+
+            return Ok(new
             {
-                _logger.LogError(ex, "Category deletion failed for {CategoryId}", id);
-                return StatusCode(500, new { success = false, message = "An error occurred while deleting the category" });
-            }
+                success = true,
+                message = "Category deleted successfully"
+            });
         }
 
         /// <summary>
@@ -255,26 +175,13 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("{id}/activate")]
         public async Task<IActionResult> ActivateCategory(int id)
         {
-            try
-            {
-                await _categoryService.ActivateCategoryAsync(id);
+            await _categoryService.ActivateCategoryAsync(id);
 
-                return Ok(new
-                {
-                    success = true,
-                    message = "Category activated successfully"
-                });
-            }
-            catch (InvalidOperationException ex)
+            return Ok(new
             {
-                _logger.LogWarning(ex, "Category activation failed");
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Category activation failed for {CategoryId}", id);
-                return StatusCode(500, new { success = false, message = "An error occurred while activating the category" });
-            }
+                success = true,
+                message = "Category activated successfully"
+            });
         }
 
         /// <summary>
@@ -283,26 +190,13 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("{id}/deactivate")]
         public async Task<IActionResult> DeactivateCategory(int id)
         {
-            try
-            {
-                await _categoryService.DeactivateCategoryAsync(id);
+            await _categoryService.DeactivateCategoryAsync(id);
 
-                return Ok(new
-                {
-                    success = true,
-                    message = "Category deactivated successfully"
-                });
-            }
-            catch (InvalidOperationException ex)
+            return Ok(new
             {
-                _logger.LogWarning(ex, "Category deactivation failed");
-                return BadRequest(new { success = false, message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Category deactivation failed for {CategoryId}", id);
-                return StatusCode(500, new { success = false, message = "An error occurred while deactivating the category" });
-            }
+                success = true,
+                message = "Category deactivated successfully"
+            });
         }
     }
 }

@@ -1,10 +1,10 @@
-using InventoryManagementSystem.Common.Enum;
-using InventoryManagementSystem.Service.Interface;
-using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+using InventoryManagementSystem.Common.Enum;
 using InventoryManagementSystem.Common.Models;
 using InventoryManagementSystem.DTO;
+using InventoryManagementSystem.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManagementSystem.Controllers
 {
@@ -36,30 +36,22 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("calculate")]
         public async Task<IActionResult> CalculateExchangeValue([FromBody] ExchangeCalculateRequestDto request)
         {
-            try
+            _logger.LogInformation("Calculating exchange value for customer {CustomerId}", request.CustomerId);
+
+            // Map DTO to Model
+            var calculationRequest = new ExchangeCalculationRequest
             {
-                _logger.LogInformation("Calculating exchange value for customer {CustomerId}", request.CustomerId);
-                
-                // Map DTO to Model
-                var calculationRequest = new ExchangeCalculationRequest
-                {
-                    CustomerId = request.CustomerId,
-                    ExchangeType = (int)request.ExchangeType,
-                    Items = _mapper.Map<List<ExchangeItemInput>>(request.Items),
-                    Notes = request.Notes
-                };
-                
-                var result = await _exchangeService.CalculateExchangeValueAsync(calculationRequest);
-                
-                // Map Model to DTO for response
-                var response = _mapper.Map<ExchangeCalculateResponseDto>(result);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error calculating exchange value");
-                return BadRequest(new { Message = ex.Message });
-            }
+                CustomerId = request.CustomerId,
+                ExchangeType = (int)request.ExchangeType,
+                Items = _mapper.Map<List<ExchangeItemInput>>(request.Items),
+                Notes = request.Notes
+            };
+
+            var result = await _exchangeService.CalculateExchangeValueAsync(calculationRequest);
+
+            // Map Model to DTO for response
+            var response = _mapper.Map<ExchangeCalculateResponseDto>(result);
+            return Ok(response);
         }
 
         /// <summary>
@@ -68,27 +60,19 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateExchangeOrder([FromBody] ExchangeOrderCreateDto request)
         {
-            try
-            {
-                _logger.LogInformation("Creating exchange order for customer {CustomerId}", request.CustomerId);
-                
-                // Map DTO to Model
-                var exchangeOrder = _mapper.Map<ExchangeOrder>(request);
-                exchangeOrder.CreatedDate = DateTime.UtcNow;
-                exchangeOrder.CreatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin;
-                exchangeOrder.StatusId = (int)StatusEnum.Active;
-                
-                var result = await _exchangeService.CreateExchangeOrderAsync(exchangeOrder);
-                
-                // Map Model to DTO for response
-                var response = _mapper.Map<ExchangeOrderDto>(result);
-                return CreatedAtAction(nameof(GetExchangeOrder), new { id = response.Id }, response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error creating exchange order");
-                return BadRequest(new { Message = ex.Message });
-            }
+            _logger.LogInformation("Creating exchange order for customer {CustomerId}", request.CustomerId);
+
+            // Map DTO to Model
+            var exchangeOrder = _mapper.Map<ExchangeOrder>(request);
+            exchangeOrder.CreatedDate = DateTime.UtcNow;
+            exchangeOrder.CreatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin;
+            exchangeOrder.StatusId = (int)StatusEnum.Active;
+
+            var result = await _exchangeService.CreateExchangeOrderAsync(exchangeOrder);
+
+            // Map Model to DTO for response
+            var response = _mapper.Map<ExchangeOrderDto>(result);
+            return Ok(response);
         }
 
         /// <summary>
@@ -97,27 +81,11 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("{orderId}/link-sale")]
         public async Task<IActionResult> LinkSaleOrder(long orderId, [FromBody] ExchangeLinkSaleDto request)
         {
-            try
-            {
-                _logger.LogInformation("Linking sale order {SaleOrderId} to exchange order {OrderId}", request.SaleOrderId, orderId);
+            _logger.LogInformation("Linking sale order {SaleOrderId} to exchange order {OrderId}", request.SaleOrderId, orderId);
 
-                var result = await _exchangeService.LinkSaleOrderAsync(orderId, request.SaleOrderId);
-                var response = _mapper.Map<ExchangeOrderDto>(result);
-                return Ok(response);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error linking sale order {SaleOrderId} to exchange order {OrderId}", request.SaleOrderId, orderId);
-                return BadRequest(new { Message = ex.Message });
-            }
+            var result = await _exchangeService.LinkSaleOrderAsync(orderId, request.SaleOrderId);
+            var response = _mapper.Map<ExchangeOrderDto>(result);
+            return Ok(response);
         }
 
         /// <summary>
@@ -126,23 +94,15 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExchangeOrder(long id)
         {
-            try
+            var result = await _exchangeService.GetExchangeOrderByIdAsync(id);
+            if (result == null)
             {
-                var result = await _exchangeService.GetExchangeOrderByIdAsync(id);
-                if (result == null)
-                {
-                    return NotFound(new { Message = $"Exchange order {id} not found" });
-                }
-                
-                // Map Model to DTO for response
-                var response = _mapper.Map<ExchangeOrderDto>(result);
-                return Ok(response);
+                return NotFound(new { Message = $"Exchange order {id} not found" });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting exchange order {Id}", id);
-                return BadRequest(new { Message = ex.Message });
-            }
+
+            // Map Model to DTO for response
+            var response = _mapper.Map<ExchangeOrderDto>(result);
+            return Ok(response);
         }
 
         /// <summary>
@@ -151,23 +111,15 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("orderNumber/{orderNumber}")]
         public async Task<IActionResult> GetExchangeOrderByOrderNumber(string orderNumber)
         {
-            try
+            var result = await _exchangeService.GetExchangeOrderByOrderNumberAsync(orderNumber);
+            if (result == null)
             {
-                var result = await _exchangeService.GetExchangeOrderByOrderNumberAsync(orderNumber);
-                if (result == null)
-                {
-                    return NotFound(new { Message = $"Exchange order {orderNumber} not found" });
-                }
-                
-                // Map Model to DTO for response
-                var response = _mapper.Map<ExchangeOrderDto>(result);
-                return Ok(response);
+                return NotFound(new { Message = $"Exchange order {orderNumber} not found" });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting exchange order {OrderNumber}", orderNumber);
-                return BadRequest(new { Message = ex.Message });
-            }
+
+            // Map Model to DTO for response
+            var response = _mapper.Map<ExchangeOrderDto>(result);
+            return Ok(response);
         }
 
         /// <summary>
@@ -176,19 +128,11 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllExchangeOrders()
         {
-            try
-            {
-                var result = await _exchangeService.GetAllExchangeOrdersAsync();
-                
-                // Map Model to DTO for response
-                var response = _mapper.Map<IEnumerable<ExchangeOrderDto>>(result);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting all exchange orders");
-                return BadRequest(new { Message = ex.Message });
-            }
+            var result = await _exchangeService.GetAllExchangeOrdersAsync();
+
+            // Map Model to DTO for response
+            var response = _mapper.Map<IEnumerable<ExchangeOrderDto>>(result);
+            return Ok(response);
         }
 
         /// <summary>
@@ -197,19 +141,11 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("customer/{customerId}")]
         public async Task<IActionResult> GetExchangeOrdersByCustomer(long customerId)
         {
-            try
-            {
-                var result = await _exchangeService.GetExchangeOrdersByCustomerIdAsync(customerId);
-                
-                // Map Model to DTO for response
-                var response = _mapper.Map<IEnumerable<ExchangeOrderDto>>(result);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting exchange orders for customer {CustomerId}", customerId);
-                return BadRequest(new { Message = ex.Message });
-            }
+            var result = await _exchangeService.GetExchangeOrdersByCustomerIdAsync(customerId);
+
+            // Map Model to DTO for response
+            var response = _mapper.Map<IEnumerable<ExchangeOrderDto>>(result);
+            return Ok(response);
         }
 
         /// <summary>
@@ -218,29 +154,13 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("{orderId}/complete")]
         public async Task<IActionResult> CompleteExchangeOrder(long orderId, [FromBody] ExchangeCompleteDto request)
         {
-            try
-            {
-                _logger.LogInformation("Completing exchange order {OrderId}", orderId);
-                
-                var result = await _exchangeService.CompleteExchangeOrderAsync(orderId, request.Notes);
-                
-                // Map Model to DTO for response
-                var response = _mapper.Map<ExchangeOrderDto>(result);
-                return Ok(response);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(new { Message = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error completing exchange order {OrderId}", orderId);
-                return BadRequest(new { Message = ex.Message });
-            }
+            _logger.LogInformation("Completing exchange order {OrderId}", orderId);
+
+            var result = await _exchangeService.CompleteExchangeOrderAsync(orderId, request.Notes);
+
+            // Map Model to DTO for response
+            var response = _mapper.Map<ExchangeOrderDto>(result);
+            return Ok(response);
         }
 
         /// <summary>
@@ -249,26 +169,15 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("{orderId}/cancel")]
         public async Task<IActionResult> CancelExchangeOrder(long orderId, [FromBody] CancelRequestDto request)
         {
-            try
+            _logger.LogInformation("Cancelling exchange order {OrderId}", orderId);
+
+            var result = await _exchangeService.CancelExchangeOrderAsync(orderId, request.Reason);
+            if (!result)
             {
-                _logger.LogInformation("Cancelling exchange order {OrderId}", orderId);
-                
-                var result = await _exchangeService.CancelExchangeOrderAsync(orderId, request.Reason);
-                if (!result)
-                {
-                    return NotFound(new { Message = $"Exchange order {orderId} not found" });
-                }
-                return Ok(new { Message = "Exchange order cancelled successfully" });
+                return NotFound(new { Message = $"Exchange order {orderId} not found" });
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error cancelling exchange order {OrderId}", orderId);
-                return BadRequest(new { Message = ex.Message });
-            }
+
+            return Ok(new { Message = "Exchange order cancelled successfully" });
         }
     }
 

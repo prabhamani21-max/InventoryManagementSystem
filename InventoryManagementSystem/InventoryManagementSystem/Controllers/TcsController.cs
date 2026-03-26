@@ -2,15 +2,13 @@ using InventoryManagementSytem.Common.Dtos;
 using InventoryManagementSystem.Service.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace InventoryManagementSystem.Controllers
 {
     /// <summary>
     /// TCS (Tax Collected at Source) API Controller
     /// Provides endpoints for TCS calculation, reporting, and Form 26Q generation
-    /// Applicable for B2C jewellery sales exceeding ₹10 lakh threshold
+    /// Applicable for B2C jewellery sales exceeding INR 10 lakh threshold
     /// </summary>
     [Authorize]
     [ApiController]
@@ -34,28 +32,21 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("calculate")]
         public async Task<IActionResult> CalculateTcs([FromBody] TcsCalculationRequestDto request)
         {
-            try
-            {
-                _logger.LogInformation(
-                    "TCS calculation requested for Customer {CustomerId}, Amount: {Amount}",
-                    request.CustomerId, request.SaleAmount);
+            _logger.LogInformation(
+                "TCS calculation requested for Customer {CustomerId}, Amount: {Amount}",
+                request.CustomerId,
+                request.SaleAmount);
 
-                var result = await _tcsService.CalculateTcsAsync(request);
+            var result = await _tcsService.CalculateTcsAsync(request);
 
-                return Ok(new
-                {
-                    success = true,
-                    message = result.IsTcsApplicable
-                        ? $"TCS applicable at {result.TcsRate * 100}%"
-                        : "TCS not applicable",
-                    data = result
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "TCS calculation failed for Customer {CustomerId}", request.CustomerId);
-                return StatusCode(500, new { success = false, message = "TCS calculation failed" });
-            }
+                success = true,
+                message = result.IsTcsApplicable
+                    ? $"TCS applicable at {result.TcsRate * 100}%"
+                    : "TCS not applicable",
+                data = result
+            });
         }
 
         /// <summary>
@@ -69,22 +60,14 @@ namespace InventoryManagementSystem.Controllers
             long customerId,
             [FromQuery] string? financialYear)
         {
-            try
-            {
-                var fy = financialYear ?? _tcsService.GetCurrentFinancialYear();
-                var result = await _tcsService.GetCustomerTcsSummaryAsync(customerId, fy);
+            var fy = financialYear ?? _tcsService.GetCurrentFinancialYear();
+            var result = await _tcsService.GetCustomerTcsSummaryAsync(customerId, fy);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = result
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to get TCS summary for Customer {CustomerId}", customerId);
-                return StatusCode(500, new { success = false, message = "Failed to retrieve TCS summary" });
-            }
+                success = true,
+                data = result
+            });
         }
 
         /// <summary>
@@ -98,21 +81,13 @@ namespace InventoryManagementSystem.Controllers
             long customerId,
             [FromQuery] string? financialYear)
         {
-            try
-            {
-                var result = await _tcsService.GetCustomerTcsTransactionsAsync(customerId, financialYear);
+            var result = await _tcsService.GetCustomerTcsTransactionsAsync(customerId, financialYear);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = result
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to get TCS transactions for Customer {CustomerId}", customerId);
-                return StatusCode(500, new { success = false, message = "Failed to retrieve TCS transactions" });
-            }
+                success = true,
+                data = result
+            });
         }
 
         /// <summary>
@@ -126,31 +101,24 @@ namespace InventoryManagementSystem.Controllers
             [FromQuery] string financialYear,
             [FromQuery] int quarter)
         {
-            try
+            if (quarter < 1 || quarter > 4)
             {
-                if (quarter < 1 || quarter > 4)
-                {
-                    return BadRequest(new { success = false, message = "Quarter must be between 1 and 4" });
-                }
-
-                _logger.LogInformation(
-                    "Form 26Q report requested for FY {FinancialYear} Q{Quarter}",
-                    financialYear, quarter);
-
-                var result = await _tcsService.GenerateForm26QReportAsync(financialYear, quarter);
-
-                return Ok(new
-                {
-                    success = true,
-                    message = $"Form 26Q generated for FY {financialYear} Q{quarter}",
-                    data = result
-                });
+                return BadRequest(new { success = false, message = "Quarter must be between 1 and 4" });
             }
-            catch (Exception ex)
+
+            _logger.LogInformation(
+                "Form 26Q report requested for FY {FinancialYear} Q{Quarter}",
+                financialYear,
+                quarter);
+
+            var result = await _tcsService.GenerateForm26QReportAsync(financialYear, quarter);
+
+            return Ok(new
             {
-                _logger.LogError(ex, "Form 26Q generation failed for FY {FinancialYear} Q{Quarter}", financialYear, quarter);
-                return StatusCode(500, new { success = false, message = "Form 26Q generation failed" });
-            }
+                success = true,
+                message = $"Form 26Q generated for FY {financialYear} Q{quarter}",
+                data = result
+            });
         }
 
         /// <summary>
@@ -164,22 +132,14 @@ namespace InventoryManagementSystem.Controllers
             [FromQuery] string financialYear,
             [FromQuery] int? quarter)
         {
-            try
-            {
-                var fy = financialYear ?? _tcsService.GetCurrentFinancialYear();
-                var result = await _tcsService.GetTcsTransactionsAsync(fy, quarter);
+            var fy = financialYear ?? _tcsService.GetCurrentFinancialYear();
+            var result = await _tcsService.GetTcsTransactionsAsync(fy, quarter);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = result
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to get TCS transactions");
-                return StatusCode(500, new { success = false, message = "Failed to retrieve TCS transactions" });
-            }
+                success = true,
+                data = result
+            });
         }
 
         /// <summary>
@@ -190,22 +150,14 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("dashboard")]
         public async Task<IActionResult> GetDashboardSummary([FromQuery] string? financialYear)
         {
-            try
-            {
-                var fy = financialYear ?? _tcsService.GetCurrentFinancialYear();
-                var result = await _tcsService.GetDashboardSummaryAsync(fy);
+            var fy = financialYear ?? _tcsService.GetCurrentFinancialYear();
+            var result = await _tcsService.GetDashboardSummaryAsync(fy);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = result
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to get TCS dashboard summary");
-                return StatusCode(500, new { success = false, message = "Failed to retrieve dashboard summary" });
-            }
+                success = true,
+                data = result
+            });
         }
 
         /// <summary>
@@ -216,26 +168,18 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTcsTransaction(long id)
         {
-            try
-            {
-                var result = await _tcsService.GetTcsTransactionByIdAsync(id);
+            var result = await _tcsService.GetTcsTransactionByIdAsync(id);
 
-                if (result == null)
-                {
-                    return NotFound(new { success = false, message = "TCS transaction not found" });
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    data = result
-                });
-            }
-            catch (Exception ex)
+            if (result == null)
             {
-                _logger.LogError(ex, "Failed to get TCS transaction {Id}", id);
-                return StatusCode(500, new { success = false, message = "Failed to retrieve TCS transaction" });
+                return NotFound(new { success = false, message = "TCS transaction not found" });
             }
+
+            return Ok(new
+            {
+                success = true,
+                data = result
+            });
         }
 
         /// <summary>
@@ -246,26 +190,18 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("invoice/{invoiceId}")]
         public async Task<IActionResult> GetTcsTransactionByInvoice(long invoiceId)
         {
-            try
-            {
-                var result = await _tcsService.GetTcsTransactionByInvoiceIdAsync(invoiceId);
+            var result = await _tcsService.GetTcsTransactionByInvoiceIdAsync(invoiceId);
 
-                if (result == null)
-                {
-                    return NotFound(new { success = false, message = "TCS transaction not found for this invoice" });
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    data = result
-                });
-            }
-            catch (Exception ex)
+            if (result == null)
             {
-                _logger.LogError(ex, "Failed to get TCS transaction for Invoice {InvoiceId}", invoiceId);
-                return StatusCode(500, new { success = false, message = "Failed to retrieve TCS transaction" });
+                return NotFound(new { success = false, message = "TCS transaction not found for this invoice" });
             }
+
+            return Ok(new
+            {
+                success = true,
+                data = result
+            });
         }
 
         /// <summary>
@@ -295,32 +231,24 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("customer/{customerId}/pan-status")]
         public async Task<IActionResult> CheckCustomerPANStatus(long customerId)
         {
-            try
-            {
-                var (hasValidPAN, panNumber) = await _tcsService.CheckCustomerPANAsync(customerId);
+            var (hasValidPAN, panNumber) = await _tcsService.CheckCustomerPANAsync(customerId);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = new
-                    {
-                        customerId,
-                        hasValidPAN,
-                        panNumber,
-                        tcsRate = hasValidPAN ? 0.1m : 1.0m,
-                        message = hasValidPAN
-                            ? "Valid PAN available. TCS rate: 0.1%"
-                            : panNumber != null
-                                ? "PAN available but not verified. TCS rate: 1%"
-                                : "No PAN available. TCS rate: 1%"
-                    }
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to check PAN status for Customer {CustomerId}", customerId);
-                return StatusCode(500, new { success = false, message = "Failed to check PAN status" });
-            }
+                success = true,
+                data = new
+                {
+                    customerId,
+                    hasValidPAN,
+                    panNumber,
+                    tcsRate = hasValidPAN ? 0.1m : 1.0m,
+                    message = hasValidPAN
+                        ? "Valid PAN available. TCS rate: 0.1%"
+                        : panNumber != null
+                            ? "PAN available but not verified. TCS rate: 1%"
+                            : "No PAN available. TCS rate: 1%"
+                }
+            });
         }
     }
 }
