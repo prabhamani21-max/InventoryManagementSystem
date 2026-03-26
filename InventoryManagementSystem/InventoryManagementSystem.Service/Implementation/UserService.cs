@@ -71,5 +71,16 @@ namespace InventoryManagementSystem.Service.Implementation
             return await _userRepository.GetAllUsersAsync();
         
         }
+
+        /// <summary>
+        /// Get all customers served by a specific sales person
+        /// </summary>
+        /// <param name="salesPersonId">The sales person's user ID</param>
+        /// <returns>List of customers served by the sales person</returns>
+        public async Task<IEnumerable<User>> GetCustomersBySalesPersonIdAsync(long salesPersonId)
+        {
+            _logger.LogInformation("Fetching customers served by sales person ID {SalesPersonId}", salesPersonId);
+            return await _userRepository.GetCustomersBySalesPersonIdAsync(salesPersonId);
+        }
     }
 }

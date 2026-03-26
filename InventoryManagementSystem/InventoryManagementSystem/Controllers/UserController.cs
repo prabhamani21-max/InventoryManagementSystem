@@ -133,5 +133,31 @@ namespace InventoryManagementSystem.Controllers
             var userDto = _mapper.Map<UserDto>(user);
             return Ok(userDto);
         }
+
+        /// <summary>
+        /// Get customers served by the currently logged-in sales person
+        /// </summary>
+        /// <returns>List of customers served by the current sales person</returns>
+        [Authorize]
+        [HttpGet("my-customers")]
+        public async Task<IActionResult> GetMyCustomers()
+        {
+            var userId = _currentUser?.UserId;
+            if (userId == null || userId <= 0)
+            {
+                _logger.LogWarning("Unable to determine current user ID");
+                return Unauthorized(new { success = false, message = "Unable to determine user identity" });
+            }
+
+            _logger.LogInformation("Fetching customers served by sales person ID: {UserId}", userId);
+            var customers = await _userService.GetCustomersBySalesPersonIdAsync(userId.Value);
+            var customerDtos = _mapper.Map<IEnumerable<UserDto>>(customers);
+
+            return Ok(new
+            {
+                success = true,
+                data = customerDtos
+            });
+        }
     }
 }

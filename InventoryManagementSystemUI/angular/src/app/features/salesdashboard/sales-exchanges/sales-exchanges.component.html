@@ -1,0 +1,95 @@
+<div class="sales-exchanges">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">My Exchanges</h4>
+    <button class="btn btn-primary" (click)="goToNewExchange()">
+      <i class="feather icon-refresh-cw me-1"></i>New Exchange
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Search</label>
+          <input type="text" class="form-control" placeholder="Search by order number..."
+            [value]="searchTerm" (input)="onSearchChange($event)">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Status</label>
+          <select class="form-select" [value]="statusFilter" (change)="onStatusFilterChange($event)">
+            <option value="">All Status</option>
+            <option value="1">Active</option>
+            <option value="2">Inactive</option>
+            <option value="3">Pending</option>
+            <option value="4">Completed</option>
+            <option value="5">Cancelled</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-outline-secondary" (click)="clearFilters()">
+            <i class="feather icon-x me-1"></i>Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 text-muted">Loading your exchanges...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredExchanges.length === 0" class="text-center py-5">
+    <i class="feather icon-refresh-cw" style="font-size: 3rem; color: #ccc;"></i>
+    <h5 class="mt-3 text-muted">No Exchanges Found</h5>
+    <p class="text-muted">You haven't created any exchanges yet.</p>
+    <button class="btn btn-primary" (click)="goToNewExchange()">
+      <i class="feather icon-refresh-cw me-1"></i>Create Your First Exchange
+    </button>
+  </div>
+
+  <!-- Exchanges Table -->
+  <div *ngIf="!isLoading && filteredExchanges.length > 0" class="card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Order Number</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Credit Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let exchange of filteredExchanges">
+               <td>{{ exchange.orderNumber }}</td>
+               <td>{{ formatDate(exchange.exchangeDate) }}</td>
+               <td>
+                 <span [class]="getStatusClass(exchange.statusId)">
+                   {{ getStatusLabel(exchange.statusId) }}
+                 </span>
+               </td>
+               <td>{{ formatAmount(exchange.totalCreditAmount) }}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary me-1" (click)="viewExchangeDetails(exchange.id)" title="View Details">
+                  <i class="feather icon-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-warning" (click)="editExchange(exchange.id)" title="Edit">
+                  <i class="feather icon-edit"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

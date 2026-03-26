@@ -108,6 +108,24 @@ namespace InventoryManagementSystem.Repository.Implementation
             return true;
         }
 
+        /// <summary>
+        /// Get all exchange orders created by a specific sales person
+        /// </summary>
+        /// <param name="createdBy">The sales person's user ID</param>
+        /// <returns>List of exchange orders created by the sales person</returns>
+        public async Task<IEnumerable<ExchangeOrder>> GetExchangeOrdersByCreatedByAsync(long createdBy)
+        {
+            var exchangeOrdersDb = await _context.ExchangeOrders
+                .Include(eo => eo.ExchangeItems)
+                .Include(eo => eo.Customer)
+                .Include(eo => eo.Status)
+                .AsNoTracking()
+                .Where(eo => eo.CreatedBy == createdBy)
+                .OrderByDescending(eo => eo.ExchangeDate)
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<ExchangeOrder>>(exchangeOrdersDb);
+        }
+
         public async Task<(decimal RatePerGram, decimal PurityPercentage)> GetCurrentRateWithPurityAsync(int purityId)
         {
             var purity = await _context.Purities

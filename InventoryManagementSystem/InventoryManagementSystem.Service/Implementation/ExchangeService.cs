@@ -107,6 +107,18 @@ namespace InventoryManagementSystem.Service.Implementation
             return await EnrichExchangeOrdersAsync(orders);
         }
 
+        /// <summary>
+        /// Get all exchange orders created by a specific sales person
+        /// </summary>
+        /// <param name="createdBy">The sales person's user ID</param>
+        /// <returns>List of exchange orders created by the sales person</returns>
+        public async Task<IEnumerable<ExchangeOrder>> GetExchangeOrdersByCreatedByAsync(long createdBy)
+        {
+            _logger.LogInformation("Fetching exchange orders created by sales person ID {CreatedBy}", createdBy);
+            var orders = await _exchangeRepository.GetExchangeOrdersByCreatedByAsync(createdBy);
+            return await EnrichExchangeOrdersAsync(orders);
+        }
+
         public async Task<IEnumerable<ExchangeOrder>> GetAllExchangeOrdersAsync()
         {
             var orders = await _exchangeRepository.GetAllExchangeOrdersAsync();

@@ -7,7 +7,6 @@ import { Router, RouterLink, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { RoleEnum } from 'src/app/core/enums/role.enum';
 
 @Component({
   selector: 'app-sign-in',
@@ -55,21 +54,7 @@ export class SignInComponent {
 
           if (token && decodedToken) {
             this.toastr.success('Login successful!');
-            const roleId = decodedToken.roleId;
-            switch (roleId) {
-              case RoleEnum.SuperAdmin.toString():
-                this.router.navigate(['/jewelleryManagement/admin/analytics']);
-                break;
-                  case RoleEnum.Manager.toString():
-                this.router.navigate(['/jewelleryManagement/admin/analytics']);
-                break;
-                 case RoleEnum.Sales.toString():
-                this.router.navigate(['/jewelleryManagement/admin/exchange']);
-                break;
-                 case RoleEnum.Customer.toString():
-                this.router.navigate(['/jewelleryManagement/admin/customer']);
-                break;
-            }
+            this.router.navigate(this.authService.getHomeRoute(decodedToken.roleId));
           } else {
             this.toastr.error('Authentication failed. Please try again.');
             this.isLoading = false;

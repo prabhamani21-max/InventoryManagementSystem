@@ -40,7 +40,7 @@ namespace InventoryManagementSystem.Service.Implementation
             _logger = logger;
         }
 
-        public async Task<SaleOrderItem> GetSaleOrderItemByIdAsync(int id)
+        public async Task<SaleOrderItem> GetSaleOrderItemByIdAsync(long id)
         {
             return await _saleOrderItemRepository.GetSaleOrderItemByIdAsync(id);
         }
@@ -238,7 +238,7 @@ namespace InventoryManagementSystem.Service.Implementation
         /// <summary>
         /// Deletes a sale order item and releases the reserved stock
         /// </summary>
-        public async Task<bool> DeleteSaleOrderItemAsync(int id)
+        public async Task<bool> DeleteSaleOrderItemAsync(long id)
         {
             // Get the item to find the jewellery item and quantity
             var item = await _saleOrderItemRepository.GetSaleOrderItemByIdAsync(id);
@@ -246,7 +246,7 @@ namespace InventoryManagementSystem.Service.Implementation
             {
                 return false;
             }
-
+            
             // Delete the item
             var deleted = await _saleOrderItemRepository.DeleteSaleOrderItemAsync(id);
             if (deleted)

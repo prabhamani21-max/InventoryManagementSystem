@@ -75,6 +75,38 @@ namespace InventoryManagementSystem.Controllers
         }
 
         /// <summary>
+        /// Get invoices for orders created by the currently logged-in sales person
+        /// </summary>
+        /// <returns>List of invoices for orders created by the current sales person</returns>
+        [HttpGet("my-sales-invoices")]
+        public async Task<IActionResult> GetMySalesInvoices()
+        {
+            try
+            {
+                var userId = _currentUser?.UserId;
+                if (userId == null || userId <= 0)
+                {
+                    _logger.LogWarning("Unable to determine current user ID");
+                    return Unauthorized(new { success = false, message = "Unable to determine user identity" });
+                }
+
+                _logger.LogInformation("Fetching invoices for sales person ID: {UserId}", userId);
+                var invoices = await _invoiceService.GetInvoicesByCreatedByAsync(userId.Value);
+
+                return Ok(new
+                {
+                    success = true,
+                    data = invoices
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to retrieve sales person invoices");
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving your invoices" });
+            }
+        }
+
+        /// <summary>
         /// Generate invoice from a sale order
         /// </summary>
         /// <param name="request">Invoice generation request</param>
@@ -199,49 +231,26 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("by-number/download")]
         public async Task<IActionResult> DownloadInvoicePdfByNumber([FromQuery] string invoiceNumber)
         {
-            return await DownloadInvoicePdfByNumberInternal(invoiceNumber);
-        }
-
-        /// <summary>
-        /// Legacy download route for invoice numbers that do not contain '/'.
-        /// </summary>
-        /// <param name="invoiceNumber">Invoice number</param>
-        /// <returns>PDF file</returns>
-        [HttpGet("by-number/{invoiceNumber}/download")]
-        public async Task<IActionResult> DownloadInvoicePdfByNumberLegacy(string invoiceNumber)
-        {
-            return await DownloadInvoicePdfByNumberInternal(invoiceNumber);
-        }
-
-        private async Task<IActionResult> DownloadInvoicePdfByNumberInternal(string invoiceNumber)
-        {
-            try
+            if (string.IsNullOrWhiteSpace(invoiceNumber))
             {
-                if (string.IsNullOrWhiteSpace(invoiceNumber))
-                {
-                    _logger.LogWarning("PDF download requested without an invoice number");
-                    return BadRequest(new { success = false, message = "Invoice number is required" });
-                }
-
-                _logger.LogInformation("PDF download requested for invoice: {InvoiceNumber}", invoiceNumber);
-
-                var pdfBytes = await _pdfService.GenerateInvoicePdfByNumberAsync(invoiceNumber);
-
-                if (pdfBytes == null || pdfBytes.Length == 0)
-                {
-                    _logger.LogWarning("PDF generation returned no content for invoice {InvoiceNumber}", invoiceNumber);
-                    return NotFound(new { success = false, message = "Invoice not found or could not generate PDF" });
-                }
-
-                var fileName = $"Invoice_{invoiceNumber}.pdf";
-                return File(pdfBytes, "application/pdf", fileName);
+                _logger.LogWarning("PDF download requested without an invoice number");
+                return BadRequest(new { success = false, message = "Invoice number is required" });
             }
-            catch (Exception ex)
+
+            _logger.LogInformation("PDF download requested for invoice: {InvoiceNumber}", invoiceNumber);
+
+            var pdfBytes = await _pdfService.GenerateInvoicePdfByNumberAsync(invoiceNumber);
+
+            if (pdfBytes == null || pdfBytes.Length == 0)
             {
-                _logger.LogError(ex, "Failed to generate PDF for invoice {InvoiceNumber}", invoiceNumber);
-                return StatusCode(500, new { success = false, message = "An error occurred while generating the invoice PDF" });
+                _logger.LogWarning("PDF generation returned no content for invoice {InvoiceNumber}", invoiceNumber);
+                return NotFound(new { success = false, message = "Invoice not found or could not generate PDF" });
             }
+
+            var fileName = $"Invoice_{invoiceNumber}.pdf";
+            return File(pdfBytes, "application/pdf", fileName);
         }
+
 
         /// <summary>
         /// Generate bulk invoices for multiple sale orders

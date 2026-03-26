@@ -40,7 +40,7 @@ namespace InventoryManagementSystem.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSaleOrderItemById(int id)
+        public async Task<IActionResult> GetSaleOrderItemById(long id)
         {
             _logger.LogInformation("Fetching sale order item by ID: {Id}", id);
             var saleOrderItem = await _saleOrderItemService.GetSaleOrderItemByIdAsync(id);
@@ -140,17 +140,17 @@ namespace InventoryManagementSystem.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSaleOrderItem(int id)
+        public async Task<IActionResult> DeleteSaleOrderItem(long id)
         {
             _logger.LogInformation("Deleting sale order item ID: {Id}", id);
-
+ 
             var result = await _saleOrderItemService.DeleteSaleOrderItemAsync(id);
             if (!result)
             {
                 _logger.LogWarning("Sale order item not found for deletion ID: {Id}", id);
                 return NotFound("Sale order item not found");
             }
-
+ 
             _logger.LogInformation("Sale order item deleted successfully ID: {Id}", id);
             return NoContent();
         }

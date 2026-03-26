@@ -30,6 +30,13 @@ namespace InventoryManagementSystem.Service.Interface
         Task<IEnumerable<ExchangeOrder>> GetExchangeOrdersByCustomerIdAsync(long customerId);
 
         /// <summary>
+        /// Get all exchange orders created by a specific sales person
+        /// </summary>
+        /// <param name="createdBy">The sales person's user ID</param>
+        /// <returns>List of exchange orders created by the sales person</returns>
+        Task<IEnumerable<ExchangeOrder>> GetExchangeOrdersByCreatedByAsync(long createdBy);
+
+        /// <summary>
         /// Get all exchange orders
         /// </summary>
         Task<IEnumerable<ExchangeOrder>> GetAllExchangeOrdersAsync();

@@ -149,6 +149,36 @@ namespace InventoryManagementSystem.Controllers
         }
 
         /// <summary>
+        /// Get exchange orders created by the currently logged-in sales person
+        /// </summary>
+        /// <returns>List of exchange orders created by the current sales person</returns>
+        [HttpGet("my-exchanges")]
+        public async Task<IActionResult> GetMyExchanges()
+        {
+            try
+            {
+                var userId = _currentUser?.UserId;
+                if (userId == null || userId <= 0)
+                {
+                    _logger.LogWarning("Unable to determine current user ID");
+                    return Unauthorized(new { success = false, message = "Unable to determine user identity" });
+                }
+
+                _logger.LogInformation("Fetching exchange orders created by sales person ID: {UserId}", userId);
+                var result = await _exchangeService.GetExchangeOrdersByCreatedByAsync(userId.Value);
+                
+                // Map Model to DTO for response
+                var response = _mapper.Map<IEnumerable<ExchangeOrderDto>>(result);
+                return Ok(new { success = true, data = response });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting exchange orders for sales person");
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Complete exchange order after linked sale and invoice validation.
         /// </summary>
         [HttpPost("{orderId}/complete")]

@@ -58,6 +58,13 @@ namespace InventoryManagementSystem.Service.Interface
         Task<List<InvoiceResponseDto>> GetInvoicesByPartyIdAsync(long partyId);
 
         /// <summary>
+        /// Get all invoices for orders created by a specific sales person
+        /// </summary>
+        /// <param name="createdBy">The sales person's user ID</param>
+        /// <returns>List of invoices for orders created by the sales person</returns>
+        Task<List<InvoiceResponseDto>> GetInvoicesByCreatedByAsync(long createdBy);
+
+        /// <summary>
         /// Convert number to words (for grand total in words)
         /// </summary>
         /// <param name="number">Number to convert</param>

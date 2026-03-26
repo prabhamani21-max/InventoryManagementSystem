@@ -1,3 +1,5 @@
+using InventoryManagementSytem.Common.Enums;
+
 namespace InventoryManagementSystem.DTO
 {
     public class PaymentDto
@@ -7,10 +9,8 @@ namespace InventoryManagementSystem.DTO
         public string OrderType { get; set; }
         public long? CustomerId { get; set; }
         public string? CustomerName { get; set; }
-        public long? SalesPersonId { get; set; }
-        public string? SalesPersonName { get; set; }
         public decimal Amount { get; set; }
-        public string PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public DateTime PaymentDate { get; set; }
         public string? ReferenceNumber { get; set; }
         public int StatusId { get; set; }

@@ -43,6 +43,5 @@ msbuild.err
 msbuild.wrn
 
 # Ignore logs
-Api/SalexiHRSystem/Logs/
+InventoryManagementSystem/InventoryManagementSystem/Logs/
 
-/.dotnet-home/.dotnet

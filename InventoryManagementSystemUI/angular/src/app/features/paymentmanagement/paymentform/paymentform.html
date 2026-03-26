@@ -125,26 +125,38 @@
             placeholder="Enter reference number (optional)">
         </div>
 
-        <!-- Customer ID -->
+        <!-- Customer -->
         <div class="col-md-6 mb-3">
-          <label for="customerId" class="form-label">Customer ID</label>
-          <input 
-            type="number" 
-            class="form-control" 
+          <label for="customerId" class="form-label">Customer</label>
+          <select 
+            class="form-select" 
             id="customerId" 
-            formControlName="customerId"
-            placeholder="Enter Customer ID (optional)">
+            formControlName="customerId">
+            <option [ngValue]="null">Select customer</option>
+            @for (customer of customers; track customer.id) {
+              <option [ngValue]="customer.id">
+                {{ customer.name }}
+              </option>
+            }
+          </select>
+          <small class="text-muted">Select the customer for this payment (optional)</small>
         </div>
 
-        <!-- Sales Person ID -->
+        <!-- Sales Person -->
         <div class="col-md-6 mb-3">
-          <label for="salesPersonId" class="form-label">Sales Person ID</label>
-          <input 
-            type="number" 
-            class="form-control" 
+          <label for="salesPersonId" class="form-label">Sales Person</label>
+          <select 
+            class="form-select" 
             id="salesPersonId" 
-            formControlName="salesPersonId"
-            placeholder="Enter Sales Person ID (optional)">
+            formControlName="salesPersonId">
+            <option [ngValue]="null">Select sales person</option>
+            @for (salesPerson of salesPeople; track salesPerson.id) {
+              <option [ngValue]="salesPerson.id">
+                {{ salesPerson.name }}
+              </option>
+            }
+          </select>
+          <small class="text-muted">Sales person who handled the payment (optional)</small>
         </div>
 
         <!-- Status -->

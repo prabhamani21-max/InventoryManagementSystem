@@ -110,14 +110,14 @@ export class Invoicepaymenttable implements OnInit {
   /**
    * Get payment method label
    */
-  getPaymentMethodLabel(method: string): string {
+  getPaymentMethodLabel(method: string | number): string {
     return getPaymentMethodLabel(method);
   }
 
   /**
    * Get payment method CSS class
    */
-  getPaymentMethodClass(method: string): string {
+  getPaymentMethodClass(method: string | number): string {
     return getPaymentMethodClass(method);
   }
 

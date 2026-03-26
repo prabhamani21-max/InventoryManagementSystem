@@ -18,11 +18,12 @@ namespace InventoryManagementSystem.Repository.Implementation
             _mapper = mapper;
         }
 
-        public async Task<SaleOrder> GetSaleOrderByIdAsync(int id)
+        public async Task<SaleOrder> GetSaleOrderByIdAsync(long id)
         {
             var saleOrderDb = await _context.SaleOrders
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
+                .Include(p => p.SalesPerson)
                 .Include(s => s.ExchangeOrder)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Id == id);
@@ -35,6 +36,7 @@ namespace InventoryManagementSystem.Repository.Implementation
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
                 .Include(s => s.ExchangeOrder)
+                .Include(s => s.SalesPerson)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.ExchangeOrderId == exchangeOrderId);
 
@@ -47,6 +49,8 @@ namespace InventoryManagementSystem.Repository.Implementation
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
                 .Include(s => s.ExchangeOrder)
+                                .Include(s => s.SalesPerson)
+
                 .AsNoTracking()
                 .ToListAsync();
             return _mapper.Map<IEnumerable<SaleOrder>>(saleOrdersDb);
@@ -69,6 +73,7 @@ namespace InventoryManagementSystem.Repository.Implementation
             entity.CustomerId = saleOrder.CustomerId;
             entity.OrderNumber = saleOrder.OrderNumber;
             entity.OrderDate = saleOrder.OrderDate;
+            entity.SalesPersonId = saleOrder.SalesPersonId;
             entity.IsExchangeSale = saleOrder.IsExchangeSale;
             entity.ExchangeOrderId = saleOrder.ExchangeOrderId;
             entity.DeliveryDate = saleOrder.DeliveryDate;
@@ -80,7 +85,7 @@ namespace InventoryManagementSystem.Repository.Implementation
             return _mapper.Map<SaleOrder>(entity);
         }
 
-        public async Task<bool> DeleteSaleOrderAsync(int id)
+        public async Task<bool> DeleteSaleOrderAsync(long id)
         {
             var entity = await _context.SaleOrders.FindAsync(id);
             if (entity == null) return false;
@@ -100,7 +105,29 @@ namespace InventoryManagementSystem.Repository.Implementation
                 .Include(s => s.Customer)
                 .Include(s => s.Status)
                 .Include(s => s.ExchangeOrder)
+                .Include(s => s.SalesPerson)
                 .Where(s => s.CustomerId == customerId)
+                
+
+                .OrderByDescending(s => s.OrderDate)
+                .AsNoTracking()
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<SaleOrder>>(saleOrdersDb);
+        }
+
+        /// <summary>
+        /// Get all sale orders created by a specific sales person
+        /// </summary>
+        /// <param name="createdBy">The sales person's user ID</param>
+        /// <returns>List of sale orders created by the sales person</returns>
+        public async Task<IEnumerable<SaleOrder>> GetSaleOrdersBySalesPersonAsync(long salesPersonId)
+        {
+            var saleOrdersDb = await _context.SaleOrders
+                .Include(s => s.Customer)
+                .Include(s => s.Status)
+                .Include(s => s.ExchangeOrder)
+                .Include(s => s.SalesPerson)
+                .Where(s => s.SalesPersonId == salesPersonId)
                 .OrderByDescending(s => s.OrderDate)
                 .AsNoTracking()
                 .ToListAsync();

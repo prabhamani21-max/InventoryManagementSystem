@@ -23,8 +23,7 @@ namespace InventoryManagementSystem.Repository.Models
         public TransactionType OrderType { get; set; } // 'PURCHASE' or 'SALE'
         [Column("customer_id")]
         public long? CustomerId { get; set; } // Customer who paid
-        [Column("sales_person_id")]
-        public long? SalesPersonId { get; set; } // Salesperson who processed the sale
+
         [Required]
         [Column("amount")]
         public decimal Amount { get; set; }
@@ -50,8 +49,7 @@ namespace InventoryManagementSystem.Repository.Models
         public int StatusId { get; set; }
         [ForeignKey("CustomerId")]
         public virtual UserDb? Customer { get; set; }
-        [ForeignKey(nameof(SalesPersonId))]
-        public virtual UserDb? SalesPerson { get; set; }
+    
         [ForeignKey(nameof(StatusId))]
 
         public virtual GenericStatusDb Status { get; set; }

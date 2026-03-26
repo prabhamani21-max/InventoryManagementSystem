@@ -72,7 +72,7 @@ namespace InventoryManagementSystem.Controllers
                 var validation = await _paymentValidationService.ValidatePaymentAsync(
                     customerId,
                     dto.Amount,
-                    dto.PaymentMethod,
+                    dto.PaymentMethod.ToString(),
                     orderTotal
                 );
 
