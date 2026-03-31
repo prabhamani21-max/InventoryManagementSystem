@@ -85,7 +85,7 @@ namespace InventoryManagementSystem.Controllers
                 "Sale order item created successfully with automatic calculation. ID: {Id}, TotalAmount: {TotalAmount}",
                 createdDto.Id,
                 createdDto.TotalAmount);
-            return CreatedAtAction(nameof(GetSaleOrderItemById), new { id = createdDto.Id }, createdDto);
+            return Ok(createdDto);
         }
 
         [HttpPost]
@@ -107,7 +107,7 @@ namespace InventoryManagementSystem.Controllers
             var createdDto = _mapper.Map<SaleOrderItemDto>(createdSaleOrderItem);
 
             _logger.LogInformation("Sale order item created successfully ID: {Id}", createdDto.Id);
-            return CreatedAtAction(nameof(GetSaleOrderItemById), new { id = createdDto.Id }, createdDto);
+            return Ok(createdDto);
         }
 
         [HttpPut("{id}")]

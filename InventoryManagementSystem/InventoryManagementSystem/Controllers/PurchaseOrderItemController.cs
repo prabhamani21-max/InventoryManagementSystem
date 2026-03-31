@@ -65,7 +65,7 @@ namespace InventoryManagementSystem.Controllers
             var createdDto = _mapper.Map<PurchaseOrderItemDto>(createdPurchaseOrderItem);
 
             _logger.LogInformation("Purchase order item created successfully ID: {Id}", createdDto.Id);
-            return CreatedAtAction(nameof(GetPurchaseOrderItemById), new { id = createdDto.Id }, createdDto);
+            return Ok(createdDto);
         }
 
         [HttpPut("{id}")]

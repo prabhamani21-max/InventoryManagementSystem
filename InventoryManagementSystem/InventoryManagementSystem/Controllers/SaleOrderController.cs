@@ -121,7 +121,7 @@ namespace InventoryManagementSystem.Controllers
             var createdDto = _mapper.Map<SaleOrderDto>(createdSaleOrder);
 
             _logger.LogInformation("Sale order created successfully ID: {Id}, OrderNumber: {OrderNumber}", createdDto.Id, createdDto.OrderNumber);
-            return CreatedAtAction(nameof(GetSaleOrderById), new { id = createdDto.Id }, createdDto);
+            return Ok (createdDto);
         }
 
         [HttpPut("{id}")]

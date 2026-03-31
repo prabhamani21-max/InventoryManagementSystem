@@ -101,7 +101,7 @@ try
     builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
     builder.Services.AddScoped<IInvoiceItemRepository, InvoiceItemRepository>();
     builder.Services.AddScoped<IInvoicePaymentRepository, InvoicePaymentRepository>();
-    builder.Services.AddScoped<ITcsRepository, TcsRepository>();
+    builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
     // Services
     builder.Services.AddScoped<IStatusService, StatusService>();
     builder.Services.AddScoped<IUserService, UserService>();
@@ -137,7 +137,6 @@ try
     builder.Services.AddScoped<IInvoiceBuilderService, InvoiceBuilderService>();
     builder.Services.AddScoped<IInvoiceTaxService, InvoiceTaxService>();
     builder.Services.AddScoped<IInvoiceNumberService, InvoiceNumberService>();
-    builder.Services.AddScoped<ITcsService, TcsService>();
     builder.Services.AddScoped<IInvoiceItemService, InvoiceItemService>();
 
     // SignalR Services
@@ -223,7 +222,6 @@ builder.Services.AddScoped<InventoryManagementSystem.Service.Interface.IJwtServi
     });
 
     // Register Database Seeder
-    builder.Services.AddScoped<InventoryManagementSystem.Repository.Data.DatabaseSeeder>();
 
     var app = builder.Build();
 

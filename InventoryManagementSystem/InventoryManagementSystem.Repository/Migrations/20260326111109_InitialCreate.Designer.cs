@@ -3,6 +3,7 @@ using System;
 using InventoryManagementSystem.Repository.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InventoryManagementSystem.Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260326111109_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2025,8 +2028,6 @@ namespace InventoryManagementSystem.Repository.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.HasIndex("RoleId");
-
                     b.HasIndex("StatusId");
 
                     b.HasIndex("UpdatedBy");
@@ -2986,8 +2987,8 @@ namespace InventoryManagementSystem.Repository.Migrations
                         .IsRequired();
 
                     b.HasOne("InventoryManagementSystem.Repository.Models.RoleDb", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
+                        .WithOne("Users")
+                        .HasForeignKey("InventoryManagementSystem.Repository.Models.UserDb", "RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -3102,7 +3103,8 @@ namespace InventoryManagementSystem.Repository.Migrations
 
             modelBuilder.Entity("InventoryManagementSystem.Repository.Models.RoleDb", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("Users")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

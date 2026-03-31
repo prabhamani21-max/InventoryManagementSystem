@@ -65,7 +65,7 @@ namespace InventoryManagementSystem.Controllers
             var createdDto = _mapper.Map<WarehouseDto>(createdWarehouse);
 
             _logger.LogInformation("Warehouse created successfully ID: {Id}", createdDto.Id);
-            return CreatedAtAction(nameof(GetWarehouseById), new { id = createdDto.Id }, createdDto);
+            return Ok(createdDto);
         }
 
         [HttpPut("{id}")]
