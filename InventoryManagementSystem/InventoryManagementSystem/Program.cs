@@ -212,10 +212,14 @@ builder.Services.AddScoped<InventoryManagementSystem.Service.Interface.IJwtServi
     var audience = config["Jwt:Audience"];
     return new InventoryManagementSystem.Service.Implementation.JwtService(key, issuer, audience);
 });
+    var allowedOrigins = builder.Configuration
+    .GetSection("AllowedOrigins")
+    .Get<string[]>();
+
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAngularApp",
-            builder => builder.WithOrigins("http://localhost:4200")
+            builder => builder.WithOrigins(allowedOrigins!)
                               .AllowAnyHeader()
                               .AllowAnyMethod()
                               .AllowCredentials());
@@ -246,7 +250,7 @@ builder.Services.AddScoped<InventoryManagementSystem.Service.Interface.IJwtServi
         }
     });
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
+    if (!app.Environment.IsProduction())
     {
         app.UseSwagger();
         app.UseSwaggerUI();
