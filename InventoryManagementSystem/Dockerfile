@@ -5,7 +5,7 @@ WORKDIR /src
 COPY . .
 
 # Restore solution
-RUN dotnet restore InventoryManagementSystem/InventoryManagementSystem.sln
+RUN dotnet restore InventoryManagementSystem/InventoryManagementSystem.slnx
 
 # Publish API
 RUN dotnet publish InventoryManagementSystem/InventoryManagementSystem/InventoryManagementSystem.csproj -c Release -o /app/publish
