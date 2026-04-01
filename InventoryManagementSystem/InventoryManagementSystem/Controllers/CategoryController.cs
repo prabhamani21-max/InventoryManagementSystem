@@ -120,10 +120,11 @@ namespace InventoryManagementSystem.Controllers
 
             var category = await _categoryService.CreateCategoryAsync(categoryDto);
 
-            return Ok
-            (
-               category
-            );
+            return Ok(new
+            {
+                success = true,
+                data = category
+            });
         }
 
         /// <summary>

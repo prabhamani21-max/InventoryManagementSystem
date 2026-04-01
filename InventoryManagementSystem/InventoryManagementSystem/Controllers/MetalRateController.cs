@@ -210,7 +210,6 @@ namespace InventoryManagementSystem.Controllers
                 Percentage = purity?.Percentage ?? 0,
                 CurrentRatePerGram = rate.RatePerGram,
                 EffectiveDate = rate.EffectiveDate,
-                LastUpdated = rate.CreatedDate
             };
         }
 
@@ -227,7 +226,6 @@ namespace InventoryManagementSystem.Controllers
                 MetalName = metal?.Name ?? string.Empty,
                 RatePerGram = rate.RatePerGram,
                 EffectiveDate = rate.EffectiveDate,
-                CreatedDate = rate.CreatedDate,
                 StatusId = rate.StatusId
             };
         }
@@ -242,7 +240,6 @@ namespace InventoryManagementSystem.Controllers
                 PurityName = purity?.Name ?? string.Empty,
                 RatePerGram = rate.RatePerGram,
                 EffectiveDate = rate.EffectiveDate,
-                CreatedDate = rate.CreatedDate
             };
         }
     }
