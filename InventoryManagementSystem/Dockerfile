@@ -1,16 +1,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy entire solution (VERY IMPORTANT)
 COPY . .
 
-# Restore solution
-RUN dotnet restore InventoryManagementSystem.slnx
+# ✅ Restore using project instead of solution
+RUN dotnet restore InventoryManagementSystem/InventoryManagementSystem/InventoryManagementSystem.csproj
 
-# Publish API
+# Build & publish
 RUN dotnet publish InventoryManagementSystem/InventoryManagementSystem/InventoryManagementSystem.csproj -c Release -o /app/publish
 
-# Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
