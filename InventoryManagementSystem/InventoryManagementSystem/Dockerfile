@@ -1,11 +1,19 @@
-# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
-COPY . .
-RUN dotnet publish -c Release -o out
+WORKDIR /src
 
-# Runtime stage
+# Copy entire solution (VERY IMPORTANT)
+COPY . .
+
+# Restore solution
+RUN dotnet restore InventoryManagementSystem/InventoryManagementSystem.sln
+
+# Publish API
+RUN dotnet publish InventoryManagementSystem/InventoryManagementSystem/InventoryManagementSystem.csproj -c Release -o /app/publish
+
+# Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/out .
+
+COPY --from=build /app/publish .
+
 ENTRYPOINT ["dotnet", "InventoryManagementSystem.dll"]
