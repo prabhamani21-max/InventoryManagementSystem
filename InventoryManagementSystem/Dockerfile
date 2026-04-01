@@ -1,13 +1,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# Copies everything from the folder where the Dockerfile is (Image 2)
 COPY . .
 
-# ✅ Restore using project instead of solution
-RUN dotnet restore InventoryManagementSystem/InventoryManagementSystem/InventoryManagementSystem.csproj
+# ✅ Correct path relative to the Dockerfile
+RUN dotnet restore InventoryManagementSystem/InventoryManagementSystem.csproj
 
-# Build & publish
-RUN dotnet publish InventoryManagementSystem/InventoryManagementSystem/InventoryManagementSystem.csproj -c Release -o /app/publish
+# Build & publish using the same corrected path
+RUN dotnet publish InventoryManagementSystem/InventoryManagementSystem.csproj -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
