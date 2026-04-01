@@ -11,7 +11,6 @@ namespace InventoryManagementSystem.DTO
         public string? MetalName { get; set; }
         public decimal RatePerGram { get; set; }
         public DateTime EffectiveDate { get; set; }
-        public DateTime CreatedDate { get; set; }
         public int StatusId { get; set; }
     }
 
@@ -50,7 +49,6 @@ namespace InventoryManagementSystem.DTO
         public decimal Percentage { get; set; }
         public decimal CurrentRatePerGram { get; set; }
         public DateTime EffectiveDate { get; set; }
-        public DateTime? LastUpdated { get; set; }
     }
 
     public class MetalRateHistoryDto
@@ -60,6 +58,5 @@ namespace InventoryManagementSystem.DTO
         public string PurityName { get; set; } = string.Empty;
         public decimal RatePerGram { get; set; }
         public DateTime EffectiveDate { get; set; }
-        public DateTime CreatedDate { get; set; }
     }
 }

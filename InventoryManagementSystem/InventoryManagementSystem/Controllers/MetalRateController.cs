@@ -112,14 +112,14 @@ namespace InventoryManagementSystem.Controllers
                 EffectiveDate = dto.EffectiveDate,
                 CreatedDate = DateTime.UtcNow,
                 CreatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin,
-                StatusId = 1 // Active status
+                StatusId = (int)StatusEnum.Active// Active status
             };
 
             var result = await _metalRateService.AddMetalRateAsync(metalRate);
 
             var response = await MapToMetalRateDto(result);
 
-            return CreatedAtAction(nameof(GetCurrentRateByPurity), new { purityId = result.PurityId }, response);
+            return Ok (response);
         }
 
         /// <summary>
@@ -210,7 +210,6 @@ namespace InventoryManagementSystem.Controllers
                 Percentage = purity?.Percentage ?? 0,
                 CurrentRatePerGram = rate.RatePerGram,
                 EffectiveDate = rate.EffectiveDate,
-                LastUpdated = rate.CreatedDate
             };
         }
 
@@ -227,7 +226,6 @@ namespace InventoryManagementSystem.Controllers
                 MetalName = metal?.Name ?? string.Empty,
                 RatePerGram = rate.RatePerGram,
                 EffectiveDate = rate.EffectiveDate,
-                CreatedDate = rate.CreatedDate,
                 StatusId = rate.StatusId
             };
         }
@@ -242,7 +240,6 @@ namespace InventoryManagementSystem.Controllers
                 PurityName = purity?.Name ?? string.Empty,
                 RatePerGram = rate.RatePerGram,
                 EffectiveDate = rate.EffectiveDate,
-                CreatedDate = rate.CreatedDate
             };
         }
     }

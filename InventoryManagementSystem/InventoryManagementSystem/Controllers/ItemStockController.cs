@@ -79,7 +79,7 @@ namespace InventoryManagementSystem.Controllers
             var createdDto = _mapper.Map<ItemStockDto>(createdItemStock);
 
             _logger.LogInformation("Item stock created successfully ID: {Id}", createdDto.Id);
-            return CreatedAtAction(nameof(GetItemStockById), new { id = createdDto.Id }, createdDto);
+            return Ok(createdDto);
         }
 
         [HttpPut("{id}")]

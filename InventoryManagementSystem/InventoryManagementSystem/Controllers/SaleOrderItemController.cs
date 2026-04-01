@@ -1,5 +1,4 @@
 using AutoMapper;
-using FluentValidation;
 using InventoryManagementSystem.Common.Enum;
 using InventoryManagementSystem.Common.Models;
 using InventoryManagementSystem.DTO;
@@ -18,19 +17,17 @@ namespace InventoryManagementSystem.Controllers
         private readonly ILogger<SaleOrderItemController> _logger;
         private readonly IMapper _mapper;
         private readonly ICurrentUser _currentUser;
-      //  private readonly IValidator<CreateSaleOrderItemDto> _createValidator;
 
         public SaleOrderItemController(
             ISaleOrderItemService saleOrderItemService,
             IMapper mapper,
             ILogger<SaleOrderItemController> logger,
-            ICurrentUser currentUser
-)        {
+            ICurrentUser currentUser)
+        {
             _saleOrderItemService = saleOrderItemService;
             _mapper = mapper;
             _logger = logger;
             _currentUser = currentUser;
-        //    _createValidator = createValidator;
         }
 
         [HttpGet]
@@ -52,6 +49,7 @@ namespace InventoryManagementSystem.Controllers
                 _logger.LogWarning("Sale order item not found for ID: {Id}", id);
                 return NotFound("Sale order item not found");
             }
+
             var saleOrderItemDto = _mapper.Map<SaleOrderItemDto>(saleOrderItem);
             return Ok(saleOrderItemDto);
         }
@@ -72,42 +70,31 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("calculate")]
         public async Task<IActionResult> CreateSaleOrderItemWithCalculation([FromBody] CreateSaleOrderItemDto dto)
         {
-            // Validate the input DTO
-            //var validationResult = await _createValidator.ValidateAsync(dto);
-            //if (!validationResult.IsValid)
-            //{
-            //    _logger.LogWarning("Validation failed for CreateSaleOrderItemDto: {Errors}", validationResult.Errors);
-            //    return BadRequest(validationResult.Errors);
-            //}
-
             _logger.LogInformation("Creating sale order item with automatic price calculation for JewelleryItemId: {JewelleryItemId}", dto.JewelleryItemId);
 
-            try
-            {
-                var createdSaleOrderItem = await _saleOrderItemService.CreateSaleOrderItemWithCalculationAsync(
-                    saleOrderId: dto.SaleOrderId,
-                    jewelleryItemId: dto.JewelleryItemId,
-                    discountAmount: dto.DiscountAmount,
-                    gstPercentage: dto.GstPercentage,
-                    stoneAmount: dto.StoneAmount,
-                    quantity: dto.Quantity);
-                var createdDto = _mapper.Map<SaleOrderItemDto>(createdSaleOrderItem);
+            var createdSaleOrderItem = await _saleOrderItemService.CreateSaleOrderItemWithCalculationAsync(
+                saleOrderId: dto.SaleOrderId,
+                jewelleryItemId: dto.JewelleryItemId,
+                discountAmount: dto.DiscountAmount,
+                gstPercentage: dto.GstPercentage,
+                stoneAmount: dto.StoneAmount,
+                quantity: dto.Quantity);
+            var createdDto = _mapper.Map<SaleOrderItemDto>(createdSaleOrderItem);
 
-                _logger.LogInformation("Sale order item created successfully with automatic calculation. ID: {Id}, TotalAmount: {TotalAmount}", 
-                    createdDto.Id, createdDto.TotalAmount);
-                return CreatedAtAction(nameof(GetSaleOrderItemById), new { id = createdDto.Id }, createdDto);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning("Failed to create sale order item: {Message}", ex.Message);
-                return BadRequest(new { Message = ex.Message });
-            }
+            _logger.LogInformation(
+                "Sale order item created successfully with automatic calculation. ID: {Id}, TotalAmount: {TotalAmount}",
+                createdDto.Id,
+                createdDto.TotalAmount);
+            return Ok(createdDto);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateSaleOrderItem([FromBody] SaleOrderItemDto dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             _logger.LogInformation("Creating sale order item");
 
@@ -120,13 +107,16 @@ namespace InventoryManagementSystem.Controllers
             var createdDto = _mapper.Map<SaleOrderItemDto>(createdSaleOrderItem);
 
             _logger.LogInformation("Sale order item created successfully ID: {Id}", createdDto.Id);
-            return CreatedAtAction(nameof(GetSaleOrderItemById), new { id = createdDto.Id }, createdDto);
+            return Ok(createdDto);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSaleOrderItem(int id, [FromBody] SaleOrderItemDto dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             _logger.LogInformation("Updating sale order item ID: {Id}", id);
 

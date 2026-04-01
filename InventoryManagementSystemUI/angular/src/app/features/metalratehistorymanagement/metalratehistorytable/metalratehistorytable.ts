@@ -51,7 +51,7 @@ export class Metalratehistorytable implements OnInit {
   endDate: string = '';
 
   // Table columns for current rates
-  currentRateColumns: string[] = ['metalName', 'purityName', 'percentage', 'currentRatePerGram', 'effectiveDate', 'lastUpdated', 'actions'];
+  currentRateColumns: string[] = ['metalName', 'purityName', 'percentage', 'currentRatePerGram', 'effectiveDate', 'actions'];
   
   // Table columns for all rates history
   historyColumns: string[] = ['metalName', 'purityName', 'ratePerGram', 'effectiveDate', 'createdDate', 'actions'];

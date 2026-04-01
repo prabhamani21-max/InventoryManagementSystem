@@ -1,5 +1,4 @@
 ﻿using System;
-using InventoryManagementSytem.Common.Enums;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -13,9 +12,6 @@ namespace InventoryManagementSystem.Repository.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:making_charge_type", "per_gram,percentage,fixed");
-
             migrationBuilder.CreateTable(
                 name: "category",
                 columns: table => new
@@ -38,7 +34,8 @@ namespace InventoryManagementSystem.Repository.Migrations
                         name: "FK_category_category_parent_id",
                         column: x => x.parent_id,
                         principalTable: "category",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,14 +55,11 @@ namespace InventoryManagementSystem.Repository.Migrations
                     market_value = table.Column<decimal>(type: "numeric", nullable: false),
                     making_charge_deduction_percent = table.Column<decimal>(type: "numeric", nullable: false),
                     wastage_deduction_percent = table.Column<decimal>(type: "numeric", nullable: false),
-                    total_deduction_percent = table.Column<decimal>(type: "numeric", nullable: false),
                     deduction_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     credit_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     item_description = table.Column<string>(type: "text", nullable: true),
-                    status_id = table.Column<int>(type: "integer", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_by = table.Column<long>(type: "bigint", nullable: true)
+                    created_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,17 +81,13 @@ namespace InventoryManagementSystem.Repository.Migrations
                     total_market_value = table.Column<decimal>(type: "numeric", nullable: false),
                     total_deduction_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     total_credit_amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    new_purchase_amount = table.Column<decimal>(type: "numeric", nullable: true),
-                    balance_refund = table.Column<decimal>(type: "numeric", nullable: true),
-                    cash_payment = table.Column<decimal>(type: "numeric", nullable: true),
                     status_id = table.Column<int>(type: "integer", nullable: false),
                     notes = table.Column<string>(type: "text", nullable: true),
                     exchange_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     created_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
                     updated_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    updated_by = table.Column<long>(type: "bigint", nullable: true),
-                    CreatedByUserId = table.Column<long>(type: "bigint", nullable: false)
+                    updated_by = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -164,8 +154,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                     created_by = table.Column<long>(type: "bigint", nullable: false),
                     updated_by = table.Column<long>(type: "bigint", nullable: true),
                     created_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    updated_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    profile_image = table.Column<string>(type: "text", nullable: true)
+                    updated_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -175,13 +164,13 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_users_roles_role_id",
                         column: x => x.role_id,
                         principalTable: "roles",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_users_users_created_by",
                         column: x => x.created_by,
@@ -217,18 +206,19 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_metal_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_metal_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -237,10 +227,9 @@ namespace InventoryManagementSystem.Repository.Migrations
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    order_id = table.Column<int>(type: "integer", nullable: true),
+                    order_id = table.Column<long>(type: "bigint", nullable: true),
                     order_type = table.Column<int>(type: "integer", nullable: false),
                     customer_id = table.Column<long>(type: "bigint", nullable: true),
-                    sales_person_id = table.Column<long>(type: "bigint", nullable: true),
                     amount = table.Column<decimal>(type: "numeric", nullable: false),
                     payment_method = table.Column<int>(type: "integer", nullable: false),
                     payment_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -259,28 +248,25 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_payment_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_payment_users_customer_id",
                         column: x => x.customer_id,
                         principalTable: "users",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "FK_payment_users_sales_person_id",
-                        column: x => x.sales_person_id,
-                        principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_payment_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -299,7 +285,8 @@ namespace InventoryManagementSystem.Repository.Migrations
                     created_by = table.Column<long>(type: "bigint", nullable: false),
                     updated_by = table.Column<long>(type: "bigint", nullable: true),
                     updated_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    status_id = table.Column<int>(type: "integer", nullable: false)
+                    status_id = table.Column<int>(type: "integer", nullable: false),
+                    sales_person_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -308,30 +295,38 @@ namespace InventoryManagementSystem.Repository.Migrations
                         name: "FK_sale_order_exchange_order_exchange_order_id",
                         column: x => x.exchange_order_id,
                         principalTable: "exchange_order",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_generic_status_status_id",
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_users_customer_id",
                         column: x => x.customer_id,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_sale_order_users_sales_person_id",
+                        column: x => x.sales_person_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -356,18 +351,19 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_stone_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_stone_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -397,18 +393,19 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_supplier_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_supplier_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -435,24 +432,25 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_user_kyc_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_user_kyc_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_user_kyc_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -478,23 +476,25 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_warehouse_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_warehouse_users_manager_id",
                         column: x => x.manager_id,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_warehouse_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -520,24 +520,25 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_purity_metal_metal_id",
                         column: x => x.metal_id,
                         principalTable: "metal",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_purity_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_purity_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -568,24 +569,25 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_stone_rate_history_stone_stone_id",
                         column: x => x.stone_id,
                         principalTable: "stone",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_stone_rate_history_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_stone_rate_history_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -613,24 +615,25 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_purchase_order_supplier_supplier_id",
                         column: x => x.supplier_id,
                         principalTable: "supplier",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_purchase_order_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_purchase_order_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -649,7 +652,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                     purity_id = table.Column<int>(type: "integer", nullable: false),
                     gross_weight = table.Column<decimal>(type: "numeric", nullable: false),
                     net_metal_weight = table.Column<decimal>(type: "numeric", nullable: false),
-                    making_charge_type = table.Column<MakingChargeType>(type: "making_charge_type", nullable: false),
+                    making_charge_type = table.Column<string>(type: "text", nullable: false),
                     making_charge_value = table.Column<decimal>(type: "numeric", nullable: false),
                     wastage_percentage = table.Column<decimal>(type: "numeric", nullable: false),
                     is_hallmarked = table.Column<bool>(type: "boolean", nullable: false),
@@ -671,41 +674,43 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.category_id,
                         principalTable: "category",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_jewellery_item_generic_status_status_id",
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_jewellery_item_metal_metal_id",
                         column: x => x.metal_id,
                         principalTable: "metal",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_jewellery_item_purity_purity_id",
                         column: x => x.purity_id,
                         principalTable: "purity",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_jewellery_item_stone_stone_id",
                         column: x => x.stone_id,
                         principalTable: "stone",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_jewellery_item_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_jewellery_item_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -731,24 +736,25 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_metal_rate_history_purity_purity_id",
                         column: x => x.purity_id,
                         principalTable: "purity",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_metal_rate_history_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_metal_rate_history_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -783,10 +789,16 @@ namespace InventoryManagementSystem.Repository.Migrations
                     cgst_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     sgst_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     igst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_cgst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_sgst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_igst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_gst_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     total_gst_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     round_off = table.Column<decimal>(type: "numeric", nullable: false),
                     grand_total = table.Column<decimal>(type: "numeric", nullable: false),
                     grand_total_in_words = table.Column<string>(type: "text", nullable: true),
+                    exchange_credit_applied = table.Column<decimal>(type: "numeric", nullable: true),
+                    net_amount_payable = table.Column<decimal>(type: "numeric", nullable: false),
                     total_paid = table.Column<decimal>(type: "numeric", nullable: false),
                     balance_due = table.Column<decimal>(type: "numeric", nullable: false),
                     total_gold_weight = table.Column<decimal>(type: "numeric", nullable: true),
@@ -800,15 +812,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                     created_by = table.Column<long>(type: "bigint", nullable: false),
                     updated_by = table.Column<long>(type: "bigint", nullable: true),
                     updated_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    status_id = table.Column<int>(type: "integer", nullable: false),
-                    irn = table.Column<string>(type: "text", nullable: true),
-                    irn_generated_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    qr_code = table.Column<string>(type: "text", nullable: true),
-                    einvoice_status = table.Column<string>(type: "text", nullable: true),
-                    einvoice_cancelled_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    einvoice_cancel_reason = table.Column<string>(type: "text", nullable: true),
-                    acknowledgement_number = table.Column<string>(type: "text", nullable: true),
-                    acknowledgement_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                    status_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -818,28 +822,31 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_invoice_purchase_order_purchase_order_id",
                         column: x => x.purchase_order_id,
                         principalTable: "purchase_order",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_invoice_sale_order_sale_order_id",
                         column: x => x.sale_order_id,
                         principalTable: "sale_order",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_invoice_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_invoice_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -869,30 +876,31 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_inventory_transaction_jewellery_item_jewellery_item_id",
                         column: x => x.jewellery_item_id,
                         principalTable: "jewellery_item",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_inventory_transaction_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_inventory_transaction_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_inventory_transaction_warehouse_warehouse_id",
                         column: x => x.warehouse_id,
                         principalTable: "warehouse",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -919,30 +927,31 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_stock_jewellery_item_jewellery_item_id",
                         column: x => x.jewellery_item_id,
                         principalTable: "jewellery_item",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_stock_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_stock_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_stock_warehouse_warehouse_id",
                         column: x => x.warehouse_id,
                         principalTable: "warehouse",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -969,30 +978,31 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_stone_jewellery_item_item_id",
                         column: x => x.item_id,
                         principalTable: "jewellery_item",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_stone_stone_stone_id",
                         column: x => x.stone_id,
                         principalTable: "stone",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_stone_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_item_stone_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1020,30 +1030,31 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PurchaseOrderItemDB_jewellery_item_jewellery_item_id",
                         column: x => x.jewellery_item_id,
                         principalTable: "jewellery_item",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PurchaseOrderItemDB_purchase_order_purchase_order_id",
                         column: x => x.purchase_order_id,
                         principalTable: "purchase_order",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PurchaseOrderItemDB_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PurchaseOrderItemDB_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1064,7 +1075,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                     net_metal_weight = table.Column<decimal>(type: "numeric", nullable: false),
                     metal_rate_per_gram = table.Column<decimal>(type: "numeric", nullable: false),
                     metal_amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    making_charge_type = table.Column<MakingChargeType>(type: "making_charge_type", nullable: false),
+                    making_charge_type = table.Column<string>(type: "text", nullable: false),
                     making_charge_value = table.Column<decimal>(type: "numeric", nullable: false),
                     total_making_charges = table.Column<decimal>(type: "numeric", nullable: false),
                     wastage_percentage = table.Column<decimal>(type: "numeric", nullable: false),
@@ -1077,12 +1088,10 @@ namespace InventoryManagementSystem.Repository.Migrations
                     taxable_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     gst_percentage = table.Column<decimal>(type: "numeric", nullable: false),
                     gst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_gst_percentage = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_gst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    total_gst_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     total_amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    is_hallmarked = table.Column<bool>(type: "boolean", nullable: false),
-                    huid = table.Column<string>(type: "character varying(6)", maxLength: 6, nullable: true),
-                    bis_certification_number = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    hallmark_center_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    hallmark_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     created_date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
                     updated_by = table.Column<long>(type: "bigint", nullable: true),
@@ -1097,42 +1106,43 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.status_id,
                         principalTable: "generic_status",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_item_jewellery_item_jewellery_item_id",
                         column: x => x.jewellery_item_id,
                         principalTable: "jewellery_item",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_item_metal_metal_id",
                         column: x => x.metal_id,
                         principalTable: "metal",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_item_purity_purity_id",
                         column: x => x.purity_id,
                         principalTable: "purity",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_item_sale_order_sale_order_id",
                         column: x => x.sale_order_id,
                         principalTable: "sale_order",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_item_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_sale_order_item_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1162,6 +1172,11 @@ namespace InventoryManagementSystem.Repository.Migrations
                     sgst_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     igst_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     gst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_cgst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_sgst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_igst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    making_charges_gst_amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    total_gst_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     total_amount = table.Column<decimal>(type: "numeric", nullable: false),
                     is_hallmarked = table.Column<bool>(type: "boolean", nullable: false),
                     huid = table.Column<string>(type: "character varying(6)", maxLength: 6, nullable: true),
@@ -1177,19 +1192,19 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.invoice_id,
                         principalTable: "invoice",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_invoice_item_metal_metal_id",
                         column: x => x.metal_id,
                         principalTable: "metal",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_invoice_item_purity_purity_id",
                         column: x => x.purity_id,
                         principalTable: "purity",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1212,13 +1227,13 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.invoice_id,
                         principalTable: "invoice",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_invoice_payment_payment_payment_id",
                         column: x => x.payment_id,
                         principalTable: "payment",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1253,24 +1268,25 @@ namespace InventoryManagementSystem.Repository.Migrations
                         column: x => x.invoice_id,
                         principalTable: "invoice",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_tcs_transactions_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_tcs_transactions_users_customer_id",
                         column: x => x.customer_id,
                         principalTable: "users",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_tcs_transactions_users_updated_by",
                         column: x => x.updated_by,
                         principalTable: "users",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -1314,19 +1330,9 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "purity_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_exchange_item_status_id",
-                table: "exchange_item",
-                column: "status_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_exchange_item_updated_by",
-                table: "exchange_item",
-                column: "updated_by");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_exchange_order_CreatedByUserId",
+                name: "IX_exchange_order_created_by",
                 table: "exchange_order",
-                column: "CreatedByUserId");
+                column: "created_by");
 
             migrationBuilder.CreateIndex(
                 name: "IX_exchange_order_customer_id",
@@ -1337,6 +1343,11 @@ namespace InventoryManagementSystem.Repository.Migrations
                 name: "IX_exchange_order_status_id",
                 table: "exchange_order",
                 column: "status_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_exchange_order_updated_by",
+                table: "exchange_order",
+                column: "updated_by");
 
             migrationBuilder.CreateIndex(
                 name: "IX_generic_status_created_by",
@@ -1554,11 +1565,6 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "customer_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_payment_sales_person_id",
-                table: "payment",
-                column: "sales_person_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_payment_status_id",
                 table: "payment",
                 column: "status_id");
@@ -1652,6 +1658,11 @@ namespace InventoryManagementSystem.Repository.Migrations
                 name: "IX_sale_order_exchange_order_id",
                 table: "sale_order",
                 column: "exchange_order_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_sale_order_sales_person_id",
+                table: "sale_order",
+                column: "sales_person_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_sale_order_status_id",
@@ -1835,7 +1846,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "status_id",
                 principalTable: "generic_status",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_category_users_created_by",
@@ -1843,14 +1854,15 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "created_by",
                 principalTable: "users",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_category_users_updated_by",
                 table: "category",
                 column: "updated_by",
                 principalTable: "users",
-                principalColumn: "id");
+                principalColumn: "id",
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_exchange_item_exchange_order_exchange_order_id",
@@ -1858,15 +1870,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "exchange_order_id",
                 principalTable: "exchange_order",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_exchange_item_generic_status_status_id",
-                table: "exchange_item",
-                column: "status_id",
-                principalTable: "generic_status",
-                principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_exchange_item_metal_metal_id",
@@ -1874,7 +1878,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "metal_id",
                 principalTable: "metal",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_exchange_item_purity_purity_id",
@@ -1882,7 +1886,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "purity_id",
                 principalTable: "purity",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_exchange_item_users_created_by",
@@ -1890,14 +1894,7 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "created_by",
                 principalTable: "users",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_exchange_item_users_updated_by",
-                table: "exchange_item",
-                column: "updated_by",
-                principalTable: "users",
-                principalColumn: "id");
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_exchange_order_generic_status_status_id",
@@ -1905,15 +1902,15 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "status_id",
                 principalTable: "generic_status",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_exchange_order_users_CreatedByUserId",
+                name: "FK_exchange_order_users_created_by",
                 table: "exchange_order",
-                column: "CreatedByUserId",
+                column: "created_by",
                 principalTable: "users",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_exchange_order_users_customer_id",
@@ -1921,7 +1918,15 @@ namespace InventoryManagementSystem.Repository.Migrations
                 column: "customer_id",
                 principalTable: "users",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_exchange_order_users_updated_by",
+                table: "exchange_order",
+                column: "updated_by",
+                principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_generic_status_users_created_by",

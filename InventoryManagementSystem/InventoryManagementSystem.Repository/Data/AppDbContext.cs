@@ -38,15 +38,9 @@ namespace InventoryManagementSystem.Repository.Data
         public DbSet<TcsTransactionDb> TcsTransactions { get; set; }
         public DbSet<CategoryDb> Categories { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure the enum type in the public schema with snake_case name translation
-            modelBuilder.HasPostgresEnum<MakingChargeType>(
-                "public",
-                "making_charge_type",
-                new NpgsqlSnakeCaseNameTranslator()
-            );
+            base.OnModelCreating(modelBuilder);
 
             // Configure GenericStatusDb relationships
             modelBuilder.Entity<GenericStatusDb>()
@@ -61,7 +55,7 @@ namespace InventoryManagementSystem.Repository.Data
                 .HasForeignKey(g => g.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure UserDb relationships
+            // Configure UserDb self-referencing relationships
             modelBuilder.Entity<UserDb>()
                 .HasOne(u => u.CreatedByUser)
                 .WithMany()
@@ -74,15 +68,28 @@ namespace InventoryManagementSystem.Repository.Data
                 .HasForeignKey(u => u.UpdatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure RoleDb relationships
-            modelBuilder.Entity<RoleDb>()
-                .HasOne(r => r.Status)
-                .WithMany()
-                .HasForeignKey(r => r.StatusId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configure enum properties to be stored as strings instead of PostgreSQL enum types
+            modelBuilder.Entity<JewelleryItemDb>()
+                .Property(j => j.MakingChargeType)
+                .HasConversion<string>();
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<SaleOrderItemDb>()
+                .Property(s => s.MakingChargeType)
+                .HasConversion<string>();
+
+            // 1. Get all foreign keys in your entire database model
+            var foreignKeys = modelBuilder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys());
+
+            // 2. Set the delete behavior to Restrict for every single one
+            foreach (var relationship in foreignKeys)
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
+            // Optional: If you want to automate snake_case naming for all tables/columns
+            // and avoid manually typing [Column("name")] everywhere:
+            // modelBuilder.UseSnakeCaseNamingConvention(); 
         }
-
     }
 }

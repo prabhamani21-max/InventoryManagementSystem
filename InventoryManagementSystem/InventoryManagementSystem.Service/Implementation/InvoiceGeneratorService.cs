@@ -2,11 +2,9 @@ using AutoMapper;
 using InventoryManagementSytem.Common.Enums;
 using InventoryManagementSystem.Common.Enum;
 using InventoryManagementSystem.Common.Models;
-using InventoryManagementSystem.Repository.Data;
 using InventoryManagementSystem.Repository.Interface;
 using InventoryManagementSystem.Repository.Models;
 using InventoryManagementSystem.Service.Interface;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace InventoryManagementSystem.Service.Implementation
@@ -15,10 +13,11 @@ namespace InventoryManagementSystem.Service.Implementation
     /// Invoice Generator Service Implementation
     /// Orchestrates the complete invoice generation process from a sale order
     /// (SRP compliance - separates orchestration from data access)
+    /// Uses Unit of Work pattern for transaction management
     /// </summary>
     public class InvoiceGeneratorService : IInvoiceGeneratorService
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IInvoiceRepository _invoiceRepo;
         private readonly IInvoiceItemRepository _invoiceItemRepo;
         private readonly IInvoicePaymentRepository _invoicePaymentRepo;
@@ -53,7 +52,7 @@ namespace InventoryManagementSystem.Service.Implementation
         private const int CancelledStatusId = 4;
 
         public InvoiceGeneratorService(
-            AppDbContext context,
+            IUnitOfWork unitOfWork,
             IInvoiceRepository invoiceRepo,
             IInvoiceItemRepository invoiceItemRepo,
             IInvoicePaymentRepository invoicePaymentRepo,
@@ -77,7 +76,7 @@ namespace InventoryManagementSystem.Service.Implementation
             IMapper mapper,
             ILogger<InvoiceGeneratorService> logger)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _invoiceRepo = invoiceRepo;
             _invoiceItemRepo = invoiceItemRepo;
             _invoicePaymentRepo = invoicePaymentRepo;
@@ -119,7 +118,7 @@ namespace InventoryManagementSystem.Service.Implementation
                 return existingInvoice;
             }
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = await _unitOfWork.BeginTransactionAsync();
             try
             {
                 // 1. Fetch sale order using existing repository
@@ -233,7 +232,7 @@ namespace InventoryManagementSystem.Service.Implementation
                     // Audit fields
                     CreatedDate = DateTime.UtcNow,
                     CreatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin,
-                    StatusId = 1
+                    StatusId = (int)StatusEnum.Active,
                 };
 
                 // 13. Calculate payment allocation
@@ -306,7 +305,7 @@ namespace InventoryManagementSystem.Service.Implementation
         {
             _logger.LogInformation("Invoice {InvoiceNumber} cancellation requested", invoiceNumber);
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
+          using var transaction = await _unitOfWork.BeginTransactionAsync();
             try
             {
                 var invoice = await _invoiceRepo.GetInvoiceByInvoiceNumberAsync(invoiceNumber);

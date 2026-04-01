@@ -1,4 +1,5 @@
 using AutoMapper;
+using InventoryManagementSystem.Common.Enum;
 using InventoryManagementSystem.Common.Models;
 using InventoryManagementSystem.Repository.Data;
 using InventoryManagementSystem.Repository.Interface;
@@ -62,7 +63,7 @@ namespace InventoryManagementSystem.Repository.Implementation
             var categories = await _context.Categories
                 .Include(c => c.ParentCategory)
                 .Include(c => c.SubCategories)
-                .Where(c => c.StatusId == 1)
+                .Where(c => c.StatusId == (int)StatusEnum.Active)
                 .OrderBy(c => c.Name)
                 .AsNoTracking()
                 .ToListAsync();

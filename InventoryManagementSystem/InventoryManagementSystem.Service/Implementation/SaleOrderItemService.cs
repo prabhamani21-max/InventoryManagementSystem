@@ -201,7 +201,7 @@ namespace InventoryManagementSystem.Service.Implementation
                 // Audit
                 CreatedDate = DateTime.UtcNow,
                 CreatedBy = (_currentUser?.UserId > 0) ? _currentUser.UserId : (long)SystemUser.SuperAdmin,
-                StatusId = 1 // Active status
+                StatusId = (int)StatusEnum.Active // Active status
             };
 
             // 7. Create the sale order item

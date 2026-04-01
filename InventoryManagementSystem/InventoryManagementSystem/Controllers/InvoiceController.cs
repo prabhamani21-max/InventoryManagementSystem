@@ -40,22 +40,14 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("GetAllInvoices")]
         public async Task<IActionResult> GetAllInvoices()
         {
-            try
-            {
-                _logger.LogInformation("Fetching all invoices");
-                var invoices = await _invoiceService.GetAllInvoicesAsync();
+            _logger.LogInformation("Fetching all invoices");
+            var invoices = await _invoiceService.GetAllInvoicesAsync();
 
-                return Ok(new
-                {
-                    success = true,
-                    data = invoices
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to retrieve all invoices");
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving invoices" });
-            }
+                success = true,
+                data = invoices
+            });
         }
 
         /// <summary>
@@ -65,29 +57,21 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("my-invoices")]
         public async Task<IActionResult> GetMyInvoices()
         {
-            try
+            var userId = _currentUser?.UserId;
+            if (userId == null || userId <= 0)
             {
-                var userId = _currentUser?.UserId;
-                if (userId == null || userId <= 0)
-                {
-                    _logger.LogWarning("Unable to determine current user ID");
-                    return Unauthorized(new { success = false, message = "Unable to determine user identity" });
-                }
-
-                _logger.LogInformation("Fetching invoices for customer ID: {CustomerId}", userId);
-                var invoices = await _invoiceService.GetInvoicesByPartyIdAsync(userId.Value);
-
-                return Ok(new
-                {
-                    success = true,
-                    data = invoices
-                });
+                _logger.LogWarning("Unable to determine current user ID");
+                return Unauthorized(new { success = false, message = "Unable to determine user identity" });
             }
-            catch (Exception ex)
+
+            _logger.LogInformation("Fetching invoices for customer ID: {CustomerId}", userId);
+            var invoices = await _invoiceService.GetInvoicesByPartyIdAsync(userId.Value);
+
+            return Ok(new
             {
-                _logger.LogError(ex, "Failed to retrieve customer invoices");
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving your invoices" });
-            }
+                success = true,
+                data = invoices
+            });
         }
 
         /// <summary>
@@ -131,17 +115,17 @@ namespace InventoryManagementSystem.Controllers
         public async Task<IActionResult> GenerateInvoice([FromBody] InvoiceRequestDto request)
         {
             try
+        {
+            _logger.LogInformation("Invoice generation requested for Sale Order {SaleOrderId}", request.SaleOrderId);
+
+            var invoice = await _invoiceService.GenerateInvoiceAsync(request);
+
+            return Ok(new
             {
-                _logger.LogInformation("Invoice generation requested for Sale Order {SaleOrderId}", request.SaleOrderId);
-
-                var invoice = await _invoiceService.GenerateInvoiceAsync(request);
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Invoice generated successfully",
-                    data = invoice
-                });
+                success = true,
+                message = "Invoice generated successfully",
+                data = invoice
+            });
             }
             catch (InvalidOperationException ex)
             {
@@ -179,26 +163,18 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("by-number")]
         public async Task<IActionResult> GetInvoiceByNumber([FromQuery] string invoiceNumber)
         {
-            try
-            {
-                var invoice = await _invoiceService.GetInvoiceByNumberAsync(invoiceNumber);
+            var invoice = await _invoiceService.GetInvoiceByNumberAsync(invoiceNumber);
 
-                if (invoice == null)
-                {
-                    return NotFound(new { success = false, message = "Invoice not found" });
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    data = invoice
-                });
-            }
-            catch (Exception ex)
+            if (invoice == null)
             {
-                _logger.LogError(ex, "Failed to retrieve invoice {InvoiceNumber}", invoiceNumber);
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the invoice" });
+                return NotFound(new { success = false, message = "Invoice not found" });
             }
+
+            return Ok(new
+            {
+                success = true,
+                data = invoice
+            });
         }
 
         /// <summary>
@@ -209,26 +185,18 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("saleorder/{saleOrderId}")]
         public async Task<IActionResult> GetInvoiceBySaleOrderId(long saleOrderId)
         {
-            try
-            {
-                var invoice = await _invoiceService.GetInvoiceBySaleOrderIdAsync(saleOrderId);
+            var invoice = await _invoiceService.GetInvoiceBySaleOrderIdAsync(saleOrderId);
 
-                if (invoice == null)
-                {
-                    return NotFound(new { success = false, message = "Invoice not found for this sale order" });
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    data = invoice
-                });
-            }
-            catch (Exception ex)
+            if (invoice == null)
             {
-                _logger.LogError(ex, "Failed to retrieve invoice for Sale Order {SaleOrderId}", saleOrderId);
-                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the invoice" });
+                return NotFound(new { success = false, message = "Invoice not found for this sale order" });
             }
+
+            return Ok(new
+            {
+                success = true,
+                data = invoice
+            });
         }
 
         /// <summary>
@@ -239,27 +207,19 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("{id}/download")]
         public async Task<IActionResult> DownloadInvoicePdf(long id)
         {
-            try
+            _logger.LogInformation("PDF download requested for invoice ID: {InvoiceId}", id);
+
+            var pdfBytes = await _pdfService.GenerateInvoicePdfAsync(id);
+            var invoice = await _invoiceService.GetInvoiceByIdAsync(id);
+
+            if (pdfBytes == null || pdfBytes.Length == 0)
             {
-                _logger.LogInformation("PDF download requested for invoice ID: {InvoiceId}", id);
-
-                var pdfBytes = await _pdfService.GenerateInvoicePdfAsync(id);
-                var invoice = await _invoiceService.GetInvoiceByIdAsync(id);
-
-                if (pdfBytes == null || pdfBytes.Length == 0)
-                {
-                    _logger.LogWarning("PDF generation returned no content for invoice ID: {InvoiceId}", id);
-                    return NotFound(new { success = false, message = "Invoice not found or could not generate PDF" });
-                }
-
-                var fileName = $"Invoice_{invoice?.InvoiceNumber ?? id.ToString()}.pdf";
-                return File(pdfBytes, "application/pdf", fileName);
+                _logger.LogWarning("PDF generation returned no content for invoice ID: {InvoiceId}", id);
+                return NotFound(new { success = false, message = "Invoice not found or could not generate PDF" });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to generate PDF for invoice ID {InvoiceId}", id);
-                return StatusCode(500, new { success = false, message = "An error occurred while generating the invoice PDF" });
-            }
+
+            var fileName = $"Invoice_{invoice?.InvoiceNumber ?? id.ToString()}.pdf";
+            return File(pdfBytes, "application/pdf", fileName);
         }
 
         /// <summary>
@@ -300,30 +260,22 @@ namespace InventoryManagementSystem.Controllers
         [HttpPost("generate-bulk")]
         public async Task<IActionResult> GenerateBulkInvoices([FromBody] BulkInvoiceRequestDto request)
         {
-            try
+            _logger.LogInformation("Bulk invoice generation requested for {Count} sale orders", request.SaleOrderIds.Count);
+
+            var result = await _invoiceService.GenerateBulkInvoicesAsync(request);
+
+            return Ok(new
             {
-                _logger.LogInformation("Bulk invoice generation requested for {Count} sale orders", request.SaleOrderIds.Count);
-
-                var result = await _invoiceService.GenerateBulkInvoicesAsync(request);
-
-                return Ok(new
+                success = true,
+                message = $"Generated {result.TotalGenerated} invoices, {result.TotalFailed} failed",
+                data = new
                 {
-                    success = true,
-                    message = $"Generated {result.TotalGenerated} invoices, {result.TotalFailed} failed",
-                    data = new
-                    {
-                        totalGenerated = result.TotalGenerated,
-                        totalFailed = result.TotalFailed,
-                        errors = result.Errors,
-                        invoices = result.Invoices
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Bulk invoice generation failed");
-                return StatusCode(500, new { success = false, message = "An error occurred while generating bulk invoices" });
-            }
+                    totalGenerated = result.TotalGenerated,
+                    totalFailed = result.TotalFailed,
+                    errors = result.Errors,
+                    invoices = result.Invoices
+                }
+            });
         }
 
         /// <summary>
@@ -334,25 +286,17 @@ namespace InventoryManagementSystem.Controllers
         [HttpGet("number-to-words")]
         public IActionResult NumberToWords([FromQuery] decimal number)
         {
-            try
-            {
-                var words = _invoiceService.NumberToWords(number);
+            var words = _invoiceService.NumberToWords(number);
 
-                return Ok(new
-                {
-                    success = true,
-                    data = new
-                    {
-                        number = number,
-                        words = words
-                    }
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                _logger.LogError(ex, "Number to words conversion failed for {Number}", number);
-                return StatusCode(500, new { success = false, message = "An error occurred while converting number to words" });
-            }
+                success = true,
+                data = new
+                {
+                    number = number,
+                    words = words
+                }
+            });
         }
     }
 }

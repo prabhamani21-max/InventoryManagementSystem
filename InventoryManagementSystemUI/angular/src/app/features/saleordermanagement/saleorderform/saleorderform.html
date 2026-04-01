@@ -57,7 +57,7 @@
             formControlName="salesPersonId"
             [attr.disabled]="wizardMode && currentUserId ? true : null"
           >
-            <option [ngValue]="null">Select sales person</option>
+            <option ngValue="null" disabled>Select sales person</option>
             @for (salesPerson of salesPeople; track salesPerson.id) {
               <option [ngValue]="salesPerson.id">
                 {{ salesPerson.name }}

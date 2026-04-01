@@ -93,7 +93,7 @@ namespace SalexiHRSystem.Controllers
             if (roleDto.Id == null || roleDto.Id == 0)
             {
                 _logger.LogInformation("Created role with ID {Id}.", resultDto.Id);
-                return CreatedAtAction(nameof(GetRoleById), new { id = resultDto.Id }, resultDto);
+                return Ok(resultDto);
             }
 
             _logger.LogInformation("Updated role with ID {Id}.", resultDto.Id);

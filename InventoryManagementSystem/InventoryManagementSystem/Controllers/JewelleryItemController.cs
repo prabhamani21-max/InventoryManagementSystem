@@ -65,7 +65,7 @@ namespace InventoryManagementSystem.Controllers
             var createdDto = _mapper.Map<JewelleryItemDto>(createdJewelleryItem);
 
             _logger.LogInformation("Jewellery item created successfully ID: {Id}", createdDto.Id);
-            return CreatedAtAction(nameof(GetJewelleryItemById), new { id = createdDto.Id }, createdDto);
+            return Ok(createdDto);
         }
 
         [HttpPut("{id}")]

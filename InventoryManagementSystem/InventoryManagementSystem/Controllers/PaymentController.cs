@@ -104,7 +104,7 @@ namespace InventoryManagementSystem.Controllers
             var createdDto = _mapper.Map<PaymentDto>(createdPayment);
 
             _logger.LogInformation("Payment created successfully ID: {Id}", createdDto.Id);
-            return CreatedAtAction(nameof(GetPaymentById), new { id = createdDto.Id }, createdDto);
+            return Ok( createdDto);
         }
 
         [HttpPut("{id}")]

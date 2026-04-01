@@ -94,7 +94,7 @@ namespace InventoryManagementSystem.Controllers
             if (userStatusDto.Id == null || userStatusDto.Id == 0)
             {
                 _logger.LogInformation("Created user status with ID {Id}.", resultDto.Id);
-                return CreatedAtAction(nameof(GetUserStatusById), new { id = resultDto.Id }, resultDto);
+                return Ok(resultDto);
             }
 
             _logger.LogInformation("Updated user status with ID {Id}.", resultDto.Id);

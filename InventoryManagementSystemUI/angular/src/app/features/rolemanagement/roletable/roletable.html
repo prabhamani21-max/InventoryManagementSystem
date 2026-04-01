@@ -23,7 +23,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th>ID</th>
+          
             <th>Name</th>
             <th>Status</th>
             <th>Actions</th>
@@ -42,9 +42,6 @@
           }
           @for (role of roles; track role.id) {
             <tr>
-              <td>
-                <span class="fw-medium">#{{ role.id }}</span>
-              </td>
               <td>
                 <span class="fw-medium">{{ role.name }}</span>
               </td>

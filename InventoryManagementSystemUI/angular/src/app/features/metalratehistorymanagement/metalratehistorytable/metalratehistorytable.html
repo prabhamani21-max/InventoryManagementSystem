@@ -122,7 +122,6 @@
             <th>Percentage</th>
             <th>Rate Per Gram</th>
             <th>Effective Date</th>
-            <th>Last Updated</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -158,9 +157,7 @@
               <td>
                 <span class="text-muted">{{ formatDate(metalRate.effectiveDate) }}</span>
               </td>
-              <td>
-                <span class="text-muted">{{ metalRate.lastUpdated ? formatDate(metalRate.lastUpdated) : '-' }}</span>
-              </td>
+           
               <td>
                 <div class="btn-group" role="group">
                   <!-- Edit Button -->
