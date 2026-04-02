@@ -34,8 +34,7 @@ public readonly decodedTokenKey = 'userDetails';  // decoded details from jwt
       .pipe(
         tap((response) => {
           if (response.Status && response.Data.token) {
-            this.saveToken(response.Data.token);
-            this.startTokenExpirationTimer(); // Start timer on login
+            this.initializeAuthenticatedSession(response.Data.token);
           }
         }),
         map((response) => response.Data),
@@ -81,6 +80,24 @@ public readonly decodedTokenKey = 'userDetails';  // decoded details from jwt
       'Strict',
     );
   }
+
+  initializeSession(): void {
+    const token = this.token;
+    if (!token) {
+      return;
+    }
+
+    const decoded = this.persistDecodedToken(token);
+    if (!decoded) {
+      this.clearTokenExpirationTimer();
+      this.removeToken();
+      this.clearAuthData();
+      return;
+    }
+
+    this.startTokenExpirationTimer(decoded.exp);
+  }
+
   get token(): string | null {
     return this.cookieService.get(this.authSessionKey) || null;
   }
@@ -97,19 +114,7 @@ public readonly decodedTokenKey = 'userDetails';  // decoded details from jwt
     const token = this.token;
     if (!token) return null;
 
-    try {
-      const decoded = jwtDecode<CustomJwtPayload>(token);
-      const mapped: DecodedToken = {
-        userId: decoded[ClaimTypes.NAME_IDENTIFIER],
-        name: decoded[ClaimTypes.NAME],
-        roleId: decoded.RoleId,
-        exp: decoded[ClaimTypes.EXPIRATION],};
-      localStorage.setItem(this.decodedTokenKey, JSON.stringify(mapped));
-      return mapped;
-    } catch (e) {
-      console.error('Error decoding token:', e);
-      return null;
-    }
+    return this.persistDecodedToken(token);
   }
 getUserInformation(): DecodedToken | null {
   const data = localStorage.getItem(this.decodedTokenKey);
@@ -126,9 +131,42 @@ getUserInformation(): DecodedToken | null {
     if (!expiration) return true;
     return expiration < new Date();
   }
-  private startTokenExpirationTimer(): void {
-    const expiration = this.getTokenExpiration();
+
+  private initializeAuthenticatedSession(token: string): void {
+    this.saveToken(token);
+    const decoded = this.persistDecodedToken(token);
+    if (!decoded) {
+      return;
+    }
+
+    this.startTokenExpirationTimer(decoded.exp);
+  }
+
+  private persistDecodedToken(token: string): DecodedToken | null {
+    try {
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      const mapped: DecodedToken = {
+        userId: decoded[ClaimTypes.NAME_IDENTIFIER],
+        name: decoded[ClaimTypes.NAME],
+        roleId: decoded.RoleId,
+        exp: decoded[ClaimTypes.EXPIRATION],
+      };
+
+      localStorage.setItem(this.decodedTokenKey, JSON.stringify(mapped));
+      return mapped;
+    } catch (e) {
+      console.error('Error decoding token:', e);
+      return null;
+    }
+  }
+
+  private startTokenExpirationTimer(expirationEpochSeconds?: number): void {
+    const expiration = expirationEpochSeconds
+      ? new Date(expirationEpochSeconds * 1000)
+      : this.getTokenExpiration();
     if (!expiration) return;
+
+    this.clearTokenExpirationTimer();
 
     const now = new Date();
     const expiresIn = expiration.getTime() - now.getTime();
