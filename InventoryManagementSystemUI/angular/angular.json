@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "gradient-able-free-angular-admin-template": {
+    "inventory-management-system": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -67,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gradient-able-free-angular-admin-template:build:production"
+              "buildTarget": "inventory-management-system:build:production"
             },
             "development": {
-              "buildTarget": "gradient-able-free-angular-admin-template:build:development"
+              "buildTarget": "inventory-management-system:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -78,7 +78,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "gradient-able-free-angular-admin-template:build"
+            "buildTarget": "inventory-management-system:build"
           }
         },
         "lint": {
